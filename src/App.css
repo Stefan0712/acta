@@ -1,0 +1,36 @@
+:root {
+  --bottom-offset: 85px;
+}
+
+@keyframes slideFromBottom {
+  0% {
+    opacity: 0;
+    bottom: 120%;
+  }
+  70% {
+    opacity: 1;
+    bottom: 100px;
+  }
+  100% {
+    opacity: 1;
+    bottom: var(--bottom-offset);
+  }
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  font-family: "Roboto", sans-serif;
+  flex-shrink: 0;
+}
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr 75px;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+}

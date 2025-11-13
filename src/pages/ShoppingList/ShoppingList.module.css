@@ -1,0 +1,147 @@
+.shoppingList {
+    width: 100%;
+    height: 100%;
+    max-height: calc(100vh - var(--bottom-offset));
+    display: grid;
+    grid-template-rows: 50px 100px 50px 1fr auto;
+    color: var(--text-color);
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.shoppingList .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.shoppingList .createdAt {
+    opacity: 0.5;
+}
+.shoppingList .header a,
+.shoppingList .header button {
+    height: 40px;
+    width: 40px;
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+}
+.shoppingList .header a svg,
+.header button svg {
+    height: 80%;
+    width: 80%;
+    color: white;
+}
+.optionsButton svg {
+    height: 50% !important;
+    width: 50% !important;
+    justify-content: center;
+    margin-left: auto;
+}
+.listMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.listItemsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.newItemButton {
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    background-color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    animation: ShowNewItemButton 0.1s;
+}
+@keyframes ShowNewItemButton {
+    from {
+        opacity: 0;
+        right: -120%;
+    }
+    to {
+        opacity: 1;
+        right: 20px;
+    }
+}
+.newItemButton svg {
+    width: 80%;
+    height: 80%;
+}
+.pageMenu {
+    width: calc(100vw - 20px);
+    height: auto;
+    position: fixed;
+    bottom: var(--bottom-offset);
+    left: 10px;
+    border-radius: 10px;
+    background-color: var(--item-bg);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    animation: showPageMenu 0.3s;
+}
+@keyframes showPageMenu {
+    0% {
+        opacity: 0;
+        bottom: -120%;
+    }
+    70% {
+        opacity: 1;
+        bottom: calc(var(--bottom-offset) + 20px);
+    }
+    100% {
+        opacity: 1;
+        bottom: var(--bottom-offset);
+    }
+}
+.pageMenu button {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+.pageMenu button:nth-child(2) {
+    color: red;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.noItemsText {
+    width: 100%;
+    text-align: center;
+    height: 50px;
+    opacity: 0.5;
+}
+
+.categoryButtons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    overflow-x: auto;
+}
+.categoryButtons button {
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 5px;
+    border: 1px solid var(--item-bg);
+    background-color: transparent;
+    color: var(--text-color);
+}
+.categoryButtons button.selectedCategory {
+    border-color: var(--accent)
+}
