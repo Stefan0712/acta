@@ -6,7 +6,9 @@ import {
   type PurchasedItem, 
   type Category, 
   type Store, 
-  type Recipe 
+  type Group,
+  type Note,
+  type Poll
 } from './types/models';
 
 export class MyDatabase extends Dexie {
@@ -16,18 +18,22 @@ export class MyDatabase extends Dexie {
   purchasedItems!: Table<PurchasedItem>;
   categories!: Table<Category>;
   stores!: Table<Store>;
-  recipes!: Table<Recipe>;
+  groups!: Table<Group>;
+  notes!: Table<Note>;
+  polls!: Table<Poll>;
 
   constructor() {
     super('docket'); 
-    this.version(1).stores({
+    this.version(3).stores({
       shoppingLists: '_id, userId',
       products: '_id, userId, categoryId, *storeIds, *tags',
       shoppingListItems: '_id, listId, productId, isChecked',
       purchasedItems: '_id, userId, productId, storeId, purchasedAt',
       categories: '_id, name',
       stores: '_id, name',
-      recipes: '_id, userId',
+      groups:'_id, authorId, *members.userId',
+      notes: '_id, groupId',
+      polls: '_id, groupId'
     });
   }
 }

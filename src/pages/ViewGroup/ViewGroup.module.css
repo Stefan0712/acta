@@ -1,0 +1,58 @@
+.viewGroup {
+    width: 100vw;
+    height: calc(100vh - var(--bottom-offset) + 10px);
+    display: grid;
+    grid-template-rows: 50px 1fr 50px;
+    gap: 10px;
+    overflow: hidden;
+}
+.header {
+    height: 50px;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-color);
+}
+.header button,
+.header a {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+}
+.header button svg,
+.header a svg {
+    width: 70%;
+    height: 70%;
+    color: var(--text-color);
+}
+.header button svg {
+    width: 50%;
+    height: 50%;
+}
+.screenSwitcher {
+    width: 100%;
+    height: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    background-color: var(--item-bg);
+}
+.screenSwitcher button {
+    width: 100%;
+    height: 100%;
+    border: 1px solid transparent;
+    background-color: transparent;
+    font-size: 1rem;
+    color: var(--text-color);
+    transition: all 0.1s;
+}
+.screenSwitcher button.selected {
+    border-top-color: var(--accent);
+    color: var(--accent);
+    transition: all 0.1s;
+}

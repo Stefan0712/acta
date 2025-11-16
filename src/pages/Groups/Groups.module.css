@@ -1,0 +1,79 @@
+.groups {
+    height: calc(100vh - var(--bottom-offset));
+    width: 100vw;
+    display: grid;
+    grid-template-rows: 50px 1fr;
+    gap: 10px;
+}
+.groups .header {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    align-items: center;
+    padding-left: 10px;
+    color: var(--text-color);
+}
+.header button {
+    height: 50px;
+    width: 50px;
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.header button svg {
+    width: 70%;
+    height: 70%;
+    color: var(--text-color);
+}
+.noGroupsText {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+.groupsContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+
+
+/* Group Item */
+
+.group {
+    display: grid;
+    grid-template-columns: 1fr 40px;
+    height: 40px;
+    width: 100%;
+    background-color: var(--item-bg);
+    border-radius: 5px;
+    align-items: center;
+    color: var(--text-color);
+    padding: 0 10px;
+    text-decoration: none;
+}
+.group .membersCount {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 5px;
+    align-items: center;
+}
+.group .membersCount svg {
+    height: 20px;
+    width: 20px;
+    color: var(--text-color);
+}
+
+
+
+
+

@@ -3,5 +3,13 @@
     --item-bg: #28272A;
     --accent: #ffd900;
     --text-color: white;
-    --text-on-accent: #000000
+    --text-on-accent: #000000;
+    --text-muted: rgba(255, 255, 255, 0.5);
+}
+.no-items-text {
+    width: 100%;
+    padding: 50px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1rem;
 }

@@ -43,8 +43,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({itemData, upda
 
     const addNewItem = async () =>{
         const currentDate = new Date();
-        const updatedItem: ShoppingListItem = {
-            ...itemData,
+        const updatedItem: any = {
             updatedAt: currentDate,
             name,
             unit,

@@ -8,6 +8,7 @@ export interface ShoppingList {
     color: string;
     isPinned: boolean;
     isDeleted: boolean;
+    groupId?: string;
 }
 
 export interface Product {
@@ -49,6 +50,10 @@ export interface ShoppingListItem {
     tags?: string[];
     isDeleted: boolean;
     priority: "low" | "normal" | "high";
+    authorId: string;
+    assignedTo?: string | null;
+    claimedBy?: string | null;
+    deadline?: Date | null;
 }
 
 export interface PurchasedItem {
@@ -76,21 +81,59 @@ export interface Store {
     color?: string;
 }
 
-export interface Recipe {
+export interface User {
     _id: string;
-    userId: string;
     name: string;
-    description?: string;
-    instructions: string[];
-    ingredients: RecipeIngredient[]; 
-    isDeleted: boolean;
-
+    email: string;
+    avatarUrl?: string;
 }
 
-export interface RecipeIngredient {
-    productId: string; // Link to existing products
-    name: string; // Hard-copy of product name
-    quantity: number;
-    unit: string;
-    notes?: string; // Optional notes about the product
+export type GroupRole = 'owner' | 'moderator' | 'member' | 'guest';
+
+export interface GroupMember {
+    userId: string;
+    username: string;
+    role: GroupRole;
+}
+
+export interface Group {
+    _id: string;
+    name: string;
+    description: string;
+    authorId: string;
+    members: GroupMember[];
+}
+
+export interface NoteComment {
+    _id: string;
+    authorId: string;
+    username: string;
+    content: string;
+    createdAt: string;
+}
+
+export interface Note {
+    _id: string;
+    groupdId: string;
+    authorId: string;
+    title: string;
+    content: string;
+    createdAt: Date;
+    comments: NoteComment[];
+}
+
+export interface Vote {
+    userId: string;
+    answer: string;
+}
+export interface Poll {
+    _id: string;
+    groupId: string;
+    question: string;
+    createdAt: Date;
+    options: {
+        _id: string;
+        text: string;
+        votes: Vote[];
+    };
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from './EditShoppingList.module.css';
 import type { ShoppingList } from '../../types/models';
-import { ObjectId } from 'bson';
 import SwitchButton from '../SwitchButton/SwitchButton';
 import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';

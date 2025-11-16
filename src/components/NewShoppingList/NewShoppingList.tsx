@@ -8,13 +8,15 @@ import { useNotifications } from '../../Notification/NotificationContext';
 
 interface IProps {
     close: ()=>void;
+    groupId?: string;
+    addListToState: (list: ShoppingList) => void;
 }
 
-const NewShoppingList: React.FC<IProps> = ({close}) => {
+const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => {
 
     const { showNotification } = useNotifications();
 
-    const [name, setName] = useState('')
+    const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
     const [color, setColor] = useState('#FFFFF');
@@ -33,10 +35,15 @@ const NewShoppingList: React.FC<IProps> = ({close}) => {
             createdAt: currentDate,
             isDeleted: false,
         };
+        if (groupId) {
+            newList.groupId = groupId;
+        };
+        
         await db.shoppingLists.add(newList);
         showNotification("List created successfully", "success");
+        addListToState(newList);
         close();
-    }
+    };
     return ( 
         <div className={styles.newShoppingList}>
             <h3>New Shopping List</h3>

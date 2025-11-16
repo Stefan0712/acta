@@ -14,6 +14,7 @@ interface NewShoppingListItemProps {
 }
 
 const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addItemToList, close}) => {
+    const userId = localStorage.getItem('userId')
     const [name, setName] = useState('');
     const [unit, setUnit] = useState('');
     const [qty, setQty] = useState(0);
@@ -21,6 +22,8 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
     const [priority, setPriority] = useState<"low" | "normal" | "high">('normal');
+    const [assignedTo, setAssignedTo] = useState<string | null>(null);
+    const [deadline, setDeadline] = useState<Date | null>(null);
     
     const moreInputsRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +47,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
 
 
     const addNewItem = async () =>{
+        if(!userId) return;
         const currentDate = new Date();
         const newItem: ShoppingListItem = {
             _id: new ObjectId().toString(),
@@ -57,13 +61,17 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             isPinned,
             isDeleted: false,
             tags,
-            priority
+            priority,
+            authorId: userId,
         };
         if(store){
             newItem.store = store;
         }
         if(category){
             newItem.category = category;
+        }
+        if(assignedTo) {
+            newItem.assignedTo = assignedTo;
         }
         await db.shoppingListItems.add(newItem);
         addItemToList(newItem);
