@@ -1,47 +1,45 @@
-import { useEffect, useRef, useState } from 'react';
-import styles from './NewShoppingListItem.module.css';
-import { type Store, type ShoppingListItem, type Category } from '../../types/models';
+import { useState } from 'react';
+import styles from './EditItem.module.css';
+import { type Store, type ShoppingListItem, type Category, type GroupMember } from '../../types/models';
 import {IconsLibrary} from '../../assets/icons.ts';
 import StoreSelector from '../StoreSelector/StoreSelector';
 import CategorySelector from '../CategorySelector/CategorySelector';
 import { db } from '../../db';
+import UserSelector from '../UserSelector/UserSelector.tsx';
+import { loadItem } from '../../helpers/deadlineFormatter.ts';
 
 interface NewShoppingListItemProps {
     itemData: ShoppingListItem;
     updateItem: (item: ShoppingListItem) => void;
     close: () => void;
+    members?: GroupMember[];
 }
+// TODO: Add a fullscreen blur to block user from pressing other buttons while editing
 
-const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, close}) => {
+const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, close, members}) => {
+
+    const userId = localStorage.getItem('userId');
     const [name, setName] = useState(itemData.name ?? '');
     const [unit, setUnit] = useState(itemData.unit ?? '');
     const [qty, setQty] = useState(itemData.qty ?? 0);
     const [tags, setTags] = useState<string[]>(itemData.tags ?? []);
     const [description, setDescription] = useState(itemData.description ?? '');
     const [priority, setPriority] = useState<"low" | "normal" | "high">(itemData.priority ?? 'normal');
-    
-    const moreInputsRef = useRef<HTMLDivElement>(null);
+    const [assignedTo, setAssignedTo] = useState<string | null>(itemData.assignedTo ?? null);
+    const [claimedBy, setClaimedBy] = useState<string | null>(itemData.claimedBy ?? null);
+    const [dueDate, setDueDate] = useState(itemData.deadline ? loadItem(itemData.deadline).slice(0,10) : '');
+    const [dueTime, setDueTime] = useState(itemData.deadline ? loadItem(itemData.deadline).slice(11,16) : '');
+    const [store, setStore] = useState<Store | null>(itemData.store ?? null);
+    const [category, setCategory] = useState<Category | null>(itemData.category ?? null);
 
-
-    const [store, setStore] = useState<Store | null>(null);
-    const [category, setCategory] = useState<Category | null>(null);
-
-    const [showMoreInputs, setShowMoreInputs] = useState(false);
     const [showNewTag, setShowNewTag] = useState(false);
+    const [showUserSelector, setShowUserSelector] = useState(false);
 
     const [showStoreSelector, setShowStoreSelector] = useState(false);
     const [showCategorySelector, setShowCategorySelector] = useState(false);
-
-    useEffect(() => {
-        if (showMoreInputs && moreInputsRef?.current) {
-            moreInputsRef.current.style.height = `${moreInputsRef.current.scrollHeight}px`;
-        } else if(moreInputsRef?.current) {
-            moreInputsRef.current.style.height = '30px';
-        }
-    }, [showMoreInputs]);
-
-
+    // TODO : Fix update function not updating the shopping list
     const addNewItem = async () =>{
+        console.log(itemData)
         const currentDate = new Date();
         const updatedItem: any = {
             updatedAt: currentDate,
@@ -58,8 +56,20 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({itemData, upda
         if(category){
             updatedItem.category = category;
         }
+        if(assignedTo) {
+            updatedItem.assignedTo = assignedTo;
+        }
+        if(claimedBy) {
+            updatedItem.claimedBy = claimedBy;
+        }
+        if(dueDate) {
+            const timeString = dueTime || "23:59";
+            const localDateTime = new Date(`${dueDate}T${timeString}`);
+            updatedItem.deadline = localDateTime.toISOString();
+        }
+        console.log(updatedItem)
         await db.shoppingListItems.update(itemData._id, updatedItem);
-        updateItem(updatedItem);
+        updateItem({...itemData, ...updatedItem});
         close();
 
     }
@@ -69,10 +79,15 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({itemData, upda
             setShowNewTag(false);
         }
     }
+    const handleClaimItem = () => {
+        setClaimedBy(prev => prev ? null : userId);
+        setAssignedTo(null);
+    }
     return ( 
-        <div className={styles.newItem}>
+         <div className={styles.newItem}>
             {showStoreSelector ? <StoreSelector close={()=>setShowStoreSelector(false)} selectStore={(newStore)=>setStore(newStore)} currentStore={store} /> : null}
             {showCategorySelector ? <CategorySelector close={()=>setShowCategorySelector(false)} selectCategory={(newCategory)=>setCategory(newCategory)} currentCategory={category} /> : null}
+            {members && showUserSelector ? <UserSelector users={members} close={()=>setShowUserSelector(false)} selectUser={(user)=>setAssignedTo(user)} selectedUser={assignedTo} /> : null}
             <div className={styles.header}>
                 <h3>Edit Item</h3>
                 <button onClick={close}><IconsLibrary.Close /></button>
@@ -80,19 +95,27 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({itemData, upda
             <div className={styles.basicInputs}>
                 <input type="text" name="name" onChange={(e)=>setName(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
                 <input id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
-                <input type="text" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
-                <button className={styles.iconButton} onClick={addNewItem}><IconsLibrary.Save /></button>
+                <input type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
             </div>
-            <div className={`${styles.moreInputs} ${showMoreInputs ? styles.show : ''}`} ref={moreInputsRef}>
-                <button className={styles.showMoreButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>{showMoreInputs ? "Show less" : "Show more"}</button>
+            <div className={`${styles.moreInputs} ${styles.show}`}>
                 <input className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
-                
+                {members ? <div className={styles.claimButtons}>
+                    <button onClick={handleClaimItem} className={styles.userSelectorButton}>{claimedBy ? 'Claimed' : 'Claim item'}</button>
+                    {claimedBy ? null : <button onClick={()=>setShowUserSelector(true)} className={styles.userSelectorButton}>{assignedTo ? 'Assigned to an user' : 'Assign item to user'}</button>}
+                </div> : null}
                 <div className={styles.priority}>
                     <p>Priority</p>
                     <div className={styles.priorityButtons}>
                         <button onClick={()=>setPriority('low')} className={`${styles.lowPriority} ${priority === 'low' ? styles.selectedPriority : ''}`}>Low</button>
                         <button onClick={()=>setPriority('normal')} className={`${styles.normalPriority} ${priority === 'normal' ? styles.selectedPriority : ''}`}>Normal</button>
                         <button onClick={()=>setPriority('high')} className={`${styles.highPriority} ${priority === 'high' ? styles.selectedPriority : ''}`}>High</button>
+                    </div>
+                </div>
+                <div className={styles.deadline}>
+                    <p>Deadline</p>
+                    <div className={styles.deadlineInputs}>
+                        <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={styles.dateInput} min={new Date().toISOString().split("T")[0]}  />
+                        <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
                     </div>
                 </div>
                 <div className={styles.tagsContainer}>
@@ -107,13 +130,13 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({itemData, upda
                     <button style={store ? {borderColor: store.color} : {}} onClick={()=>setShowStoreSelector(true)}>{store ? store.name : 'Select Store'}</button>
                     <button style={category ? {borderColor: category.color} : {}} onClick={()=>setShowCategorySelector(true)}>{category ? category.name : 'Select Category'}</button>
                 </div>
-
+                <button className={styles.largeAddButton} onClick={addNewItem}><IconsLibrary.Save /> Save</button>
             </div>
         </div>
      );
 }
  
-export default NewShoppingListItem;
+export default EditItem;
 
 interface NewTagProps {
     addTag: (tag: string) => void;
@@ -129,3 +152,5 @@ const NewTag: React.FC<NewTagProps> = ({addTag}) => {
         </div>
     )
 }
+
+

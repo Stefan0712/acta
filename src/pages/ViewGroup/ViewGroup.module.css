@@ -11,7 +11,6 @@
     width: 100vw;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     color: var(--text-color);
 }
 .header button,
@@ -42,7 +41,8 @@
     gap: 10px;
     background-color: var(--item-bg);
 }
-.screenSwitcher button {
+.screenSwitcher button,
+.screenSwitcher a {
     width: 100%;
     height: 100%;
     border: 1px solid transparent;
@@ -50,8 +50,13 @@
     font-size: 1rem;
     color: var(--text-color);
     transition: all 0.1s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.screenSwitcher button.selected {
+.screenSwitcher button.selected,
+.screenSwitcher a.selected {
     border-top-color: var(--accent);
     color: var(--accent);
     transition: all 0.1s;

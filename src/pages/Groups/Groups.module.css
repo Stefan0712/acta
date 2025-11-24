@@ -1,6 +1,6 @@
 .groups {
-    height: calc(100vh - var(--bottom-offset));
-    width: 100vw;
+    height: calc(100dvh - var(--bottom-offset));
+    width: 100dvw;
     display: grid;
     grid-template-rows: 50px 1fr;
     gap: 10px;

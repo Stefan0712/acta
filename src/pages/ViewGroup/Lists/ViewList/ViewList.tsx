@@ -1,20 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
-import styles from './ShoppingList.module.css';
-import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList } from '../../types/models';
-import { db } from '../../db';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useNotifications } from '../../Notification/NotificationContext';
-import {IconsLibrary} from '../../assets/icons.ts';
-import NewShoppingListItem from '../../components/NewShoppingListItem/NewShoppingListItem.js';
-import { getDateAndHour } from '../../helpers/dateFormat.ts';
-import EditShoppingList from '../../components/EditShoppingList/EditShoppingList.tsx';
-import ListItem from '../../components/ListItem/ListItem.tsx';
+import styles from './ViewList.module.css';
+import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList, type GroupMember } from '../../../../types/models';
+import { db } from '../../../../db';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useNotifications } from '../../../../Notification/NotificationContext';
+import {IconsLibrary} from '../../../../assets/icons.ts';
+import NewShoppingListItem from '../../../../components/NewShoppingListItem/NewShoppingListItem.js';
+import { getDateAndHour } from '../../../../helpers/dateFormat.ts';
+import EditShoppingList from '../../../../components/EditShoppingList/EditShoppingList.tsx';
+import ShoppingListItem from '../GroupListItem/GroupListItem.tsx'
 
 
 
-const ShoppingList = () => {
+const ViewList = ({ members}: {members: GroupMember[]}) => {
 
-    const {id} = useParams();
+    const {listId} = useParams();
+    const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
     const { showNotification } = useNotifications();
 
@@ -22,7 +23,7 @@ const ShoppingList = () => {
     const [showPageMenu, setShowPageMenu] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
 
-    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedCategory, setSelectedCategory] = useState<"all" | "pinned" | "mine" | "deleted">('all');
     const [listData, setListData] = useState<IShoppingList | null>(null);
     const [listItems, setListItems] = useState<ItemType[]>([]);
 
@@ -32,11 +33,13 @@ const ShoppingList = () => {
             return listItems.filter(item=>!item.isDeleted);
         }else if(selectedCategory === 'pinned') {
             return listItems.filter(item=>item.isPinned && !item.isDeleted);
+        }else if(selectedCategory === 'mine') {
+            return listItems.filter(item=>(item.assignedTo === userId || item.claimedBy === userId) && !item.isDeleted);
         }else if(selectedCategory === 'deleted') {
             return listItems.filter(item=>item.isDeleted);
         }
         return [];
-    }, [listItems, selectedCategory]);
+    }, [listItems, selectedCategory, userId]);
 
     // Filter filtered items into completed and uncompleted
     const uncompletedItems = useMemo(()=> {
@@ -48,14 +51,14 @@ const ShoppingList = () => {
     },[filteredItems]);
 
     useEffect(()=>{
-        if (!id){
-            showNotification("No id found in the url", "error");
+        if (!listId){
+            showNotification("No id found", "error");
             return;
         }
         const fetchPageData = async () => {
             try {
-                const listDataPromise = db.shoppingLists.get(id);
-                const listItemsPromise = db.shoppingListItems.where('listId').equals(id).toArray();
+                const listDataPromise = db.shoppingLists.get(listId);
+                const listItemsPromise = db.shoppingListItems.where('listId').equals(listId).toArray();
 
                 const [listDataResponse, listItemsResponse] = await Promise.all([
                     listDataPromise,
@@ -64,6 +67,7 @@ const ShoppingList = () => {
                 if (listDataResponse) {
                     setListData(listDataResponse);
                     setListItems(listItemsResponse);
+                    console.log(listDataResponse);
                 } else {
                     showNotification('No list data found', "error");
                 }
@@ -73,7 +77,7 @@ const ShoppingList = () => {
             }
         };
         fetchPageData();
-    },[id, showNotification]);
+    },[listId, showNotification]);
 
     const deleteList = async () =>{
         try {
@@ -101,53 +105,44 @@ const ShoppingList = () => {
         setListItems(updatedList); // Updates the list of all items with the updated one
     };
 
-    if(!listData) {
-        return (
-            <div className={styles.shoppingList}>
-                <div className={styles.header}>
-                    <Link to={'/'}><IconsLibrary.BackArrow fill='white'/></Link>
-                    <h2>View List</h2>
-                </div>
-            </div>
-        )
-    } else {
+    if(listData) {
         return ( 
-            <div className={styles.shoppingList}>
+            <div className={styles.viewList}>
                 {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={deleteList} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
                 {showEdit ? <EditShoppingList close={()=>setShowEdit(false)} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
-                <div className={styles.header}>
-                    <Link to={'/'}><IconsLibrary.BackArrow fill='white'/></Link>
-                    <button className={styles.optionsButton} onClick={()=>setShowPageMenu(prev=>!prev)}><IconsLibrary.Dots stroke='white'/></button>
-                </div>
                 <div className={styles.listMeta}>
-                    <h2>{listData.name}</h2>
+                    <div className={styles.listName}>
+                        <h2>{listData.name}</h2>
+                        <button onClick={()=>setShowPageMenu(true)}><IconsLibrary.Dots /></button>
+                    </div>
                     <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
                     <p>{listData.description}</p>
                 </div>
                 <div className={styles.categoryButtons}>
                     <button className={selectedCategory === 'all' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('all')}>All</button>
                     <button className={selectedCategory === 'pinned' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('pinned')}>Pinned</button>
+                    <button className={selectedCategory === 'mine' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('mine')}>Mine</button>
                     <button className={selectedCategory === 'deleted' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('deleted')}>Deleted</button>
                 </div>
                 <div className={styles.listItemsContainer}>
                     {filteredItems && filteredItems.length > 0 ? 
                         <>
-                            {uncompletedItems.map(item=><ListItem updateItem={updateItem} key={item._id} data={item} />)}
+                            {uncompletedItems.map(item=><ShoppingListItem members={members} updateItem={updateItem} key={item._id} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
-                            {completedItems.map(item=><ListItem updateItem={updateItem} key={item._id} data={item} />)}
+                            {completedItems.map(item=><ShoppingListItem members={members} updateItem={updateItem} key={item._id} data={item} />)}
                         </>  : 
                             <p className={styles.noItemsText}>No items yet</p>
                     }
                 </div>
                 {showNewItem ? null  : <button onClick={()=>setShowNewItem(true)} className={styles.newItemButton}><IconsLibrary.Plus /></button>}
-                {showNewItem ? <NewShoppingListItem local={true} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} close={()=>setShowNewItem(false)}/> : null}
+                {showNewItem ? <NewShoppingListItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} close={()=>setShowNewItem(false)}/> : null}
             </div>
         );
     }
     
 }
  
-export default ShoppingList;
+export default ViewList;
 
 
 interface PageMenuProps {

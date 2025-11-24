@@ -15,11 +15,12 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
 
     const handleCreateGroup = async () => {
         const userId = localStorage.getItem('userId');
+        const username = localStorage.getItem('username')
         if(userId){
             try {
                 const user: GroupMember = {
                     userId,
-                    username: '',
+                    username: username ?? 'No Username',
                     role: 'owner'
                 }
                 const newGroup: Group = {

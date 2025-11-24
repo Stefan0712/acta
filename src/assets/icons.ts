@@ -28,6 +28,8 @@ import Checkmark from './checkmark.svg?react';
 import BackArrow from './back-arrow.svg?react';
 import Undo from './undo.svg?react';
 import Group from './group.svg?react';
+import Assigned from './assigned.svg?react';
+import Time from './time.svg?react'
 
 export const IconsLibrary = {
   AddUser,
@@ -59,5 +61,7 @@ export const IconsLibrary = {
   Checkmark,
   BackArrow,
   Undo,
-  Group
+  Group,
+  Assigned,
+  Time
 };

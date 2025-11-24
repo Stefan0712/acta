@@ -38,12 +38,12 @@ export interface ShoppingListItem {
     description: string;
     isPinned: boolean; // Pinned items are shown at the top of the list
     category?: {
-        _id?: string; // Link to a category used locally
+        _id: string; // Link to a category used locally
         name: string; // Hard-copy of local category name
         color: string; // Hard-copy of local category color
     };
     store?: {
-        _id?: string;
+        _id: string;
         name: string;
         color?: string;
     };
@@ -53,7 +53,7 @@ export interface ShoppingListItem {
     authorId: string;
     assignedTo?: string | null;
     claimedBy?: string | null;
-    deadline?: Date | null;
+    deadline?: string | null;
 }
 
 export interface PurchasedItem {
@@ -83,8 +83,8 @@ export interface Store {
 
 export interface User {
     _id: string;
-    name: string;
-    email: string;
+    username: string;
+    email?: string;
     avatarUrl?: string;
 }
 
@@ -136,4 +136,52 @@ export interface Poll {
         text: string;
         votes: Vote[];
     };
+}
+
+export type NotificationCategory = 
+  | 'ASSIGNMENT'
+  | 'MENTION'
+  | 'GROUP'
+  | 'REMINDER';
+
+export interface Notification {
+    _id: string;
+    recipientId: string; // The user that will see this
+    authorId?: string; // It is optional because most of the times the "system" will send them, not a user
+    groupId?: string; // Used only if the notification is from/to a group
+    category: NotificationCategory;
+    message: string; // The content of the notification
+    isRead: boolean; // Keep track if it was read or not
+    createdAt: Date; 
+    // Metadata is used for helping user navigate when it clicks/taps the notification
+    metadata?: {
+        listId?: string;
+        itemId?: string;
+        noteId?: string;
+        pollId?: string;
+    };
+}
+
+export type ActivityCategory = 
+  | 'GROUP'       // Joins, leaves, settings
+  | 'CONTENT'     // Items, notes, polls, lists
+  | 'INTERACTION'; // Assignments, claims
+
+export interface ActivityLog {
+  _id: string;
+  groupId: string;
+  createdAt: Date;
+  category: ActivityCategory; // Just for basic filtering if needed
+  
+  message: string;            // The text to display
+  authorId: string;
+  authorName: string; // Denormalized name
+
+  // Metadata for clicking (optional)
+  metadata?: {
+    listId?: string;
+    itemId?: string;
+    noteId?: string;
+    pollId?: string;
+  };
 }

@@ -36,11 +36,12 @@
     padding: 0 10px;
     align-items: center;
     display: flex;
-    justify-content: space-between;
     background-color: var(--item-bg);
     border-radius: 5px;
     color: var(--text-color);
     text-decoration: none;
+    border: 1px solid transparent;
+    text-align: start;
 }
 .deletedLists {
     display: flex;
@@ -72,21 +73,40 @@
     transition: all 0.1s
 }
 .deletedLists .list {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+}
+.deletedLists .list b {
+    height: 40px;
+    width: 100%;
+    text-align: start;
+    display: flex;
+    align-items: center;
+}
+.deletedLists .list .deleteButtons {
+    height: 40px;
+    width: 100%;
     display: grid;
-    grid-template-columns: 1fr auto 40px;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
-.list button {
+.list .deleteButtons button {
     height: 100%;
-    width: 40px;
+    width: 100%;
     background-color: transparent;
-    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-.list button svg {
-    height: 70%;
-    width: 70%;
+    gap: 5px;
+    border: none;
     color: var(--text-color);
+}
+.list .deleteButtons button svg {
+    height: 20px;
+    width: 20px;
+    color: var(--text-color);
+}
+.list .deleteButtons button:nth-child(1) {
+    color: red;
 }

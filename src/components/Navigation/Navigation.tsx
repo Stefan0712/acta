@@ -16,13 +16,13 @@ const Navigation = () => {
                 <IconsLibrary.Lists />
                 <p>Lists</p>
             </Link>
-            <Link to={'/products'}>
-                <IconsLibrary.Collection />
-                <p>Collection</p>
-            </Link>
             <Link to={'/groups'}>
                 <IconsLibrary.Group />
                 <p>Groups</p>
+            </Link>
+            <Link to={'/notifications'}>
+                <IconsLibrary.Collection />
+                <p>Notifications</p>
             </Link>
             <button onClick={()=>setShowMenu(prev=>!prev)}>
                 <IconsLibrary.Menu />

@@ -9,6 +9,10 @@ const Menu = ({close}: {close:()=>void}) => {
             <h2>Menu</h2>
             <div className={styles.section}>
                 <Link to={'/'}>
+                    <IconsLibrary.Collection />
+                    <p>Items Collection</p>
+                </Link>
+                <Link to={'/'}>
                     <IconsLibrary.Store />
                     <p>My Stores</p>
                 </Link>

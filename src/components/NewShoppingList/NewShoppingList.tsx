@@ -19,7 +19,7 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
-    const [color, setColor] = useState('#FFFFF');
+    const [color, setColor] = useState('#FFFFFF');
 
 
 
