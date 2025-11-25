@@ -56,10 +56,10 @@ const ShoppingLists = () => {
         }
     }
 
-    const getListProgress = (listId: string) => {
-        const listItems = allItems.filter(item=>item.listId === listId);
-        return 
-    }
+    // const getListProgress = (listId: string) => {
+    //     const listItems = allItems.filter(item=>item.listId === listId);
+    //     return 
+    // }
 
     return ( 
         <div className={styles.shoppingLists}>

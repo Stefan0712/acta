@@ -12,7 +12,7 @@ import ShoppingListItem from '../GroupListItem/GroupListItem.tsx'
 
 
 
-const ViewList = ({ members}: {members: GroupMember[]}) => {
+const ViewList = ({ members}: {members?: GroupMember[]}) => {
 
     const {listId} = useParams();
     const userId = localStorage.getItem('userId');
@@ -125,7 +125,7 @@ const ViewList = ({ members}: {members: GroupMember[]}) => {
                     <button className={selectedCategory === 'deleted' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('deleted')}>Deleted</button>
                 </div>
                 <div className={styles.listItemsContainer}>
-                    {filteredItems && filteredItems.length > 0 ? 
+                    {members && filteredItems && filteredItems.length > 0 ? 
                         <>
                             {uncompletedItems.map(item=><ShoppingListItem members={members} updateItem={updateItem} key={item._id} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
