@@ -1,73 +1,90 @@
-# React + TypeScript + Vite
+# 🛒 Docket
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Status](https://img.shields.io/badge/Status-Active_Development-orange) ![Tech](https://img.shields.io/badge/Tech-React_19_|_TypeScript-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
-Currently, two official plugins are available:
+> **A minimal but powerful shopping list app designed for easy group collaboration and offline-first reliability.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<p align="center">
+  <img src="https://i.imgur.com/Zd3qWYm.png" width="32%" alt="Shopping List" />
+  <img src="https://i.imgur.com/nDvxIa7.png" width="32%" alt="Item Details" />
+  <img src="https://i.imgur.com/VTqMDFV.png" width="32%" alt="Categories" />
+</p>
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+* **Core:** React 19, Vite
+* **Language:** TypeScript
+* **Data:** Dexie.js (IndexedDB Wrapper)
+* **Routing:** React Router v7
+* **Utilities:** BSON (ID generation)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 💡 Key Technical Highlights
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* **Local-First Architecture:** Built using **Dexie.js** to ensure the app works flawlessly offline with zero latency.
+* **Type Safety:** Fully typed codebase using **TypeScript** interfaces for Group, List, and Item models to prevent runtime errors.
+* **Optimistic UI:** State updates immediately for the user while persisting data in the background.
+* **Relational Data in NoSQL:** Designed a normalized database schema (Groups ↔ Lists ↔ Items) within IndexedDB to support future multi-user synchronization.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚧 Current Status & Roadmap
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+This project is currently in **Phase 2** of development. I am currently implementing the Group/Notification logic, after which I will develop the backend API.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Version 0.1: Core MVP (✅ Completed)
+- [x] Local Data Storage (Offline capability)
+- [x] Minimal local profile
+- [x] Shopping Lists & Items
+- [x] Custom Categories and Stores
+
+### Version 0.2: Groups and Notifications (🚧 In Progress)
+- [x] Data modeling for Groups
+- [x] Group list page
+- [ ] Group details page
+- [ ] Activity logs and filters
+- [ ] Group notes & polls
+- [ ] Logic for assigning and claiming list items
+
+### Version 0.3: API and Auth (📝 Planned)
+- [ ] Login / Register page
+- [ ] Authentication routes
+- [ ] CRUD Endpoints (Lists, items, groups, notes)
+- [ ] Sync logic (Local ↔ API)
+
+### Version 0.4: Polishing (📝 Planned)
+- [ ] Adaptive Layouts (Mobile/Desktop)
+- [ ] Accessibility Improvements (A11y)
+- [ ] Light Theme
+- [ ] JSON Import/Export
+
+### Version 0.5: Quality of Life (📝 Planned)
+- [ ] User Dashboard (Assignments/Activity)
+- [ ] Calendar View
+- [ ] PDF Export for printable lists
+
+---
+
+## 🚀 How to Run Locally
+
+Since the backend is undergoing changes, the frontend can be run in **Standalone Mode**:
+
+1. Clone the repository
+   ```bash
+   git clone [https://github.com/Stefan0712/docket.git](https://github.com/Stefan0712/docket.git)
+2. Install dependencies
+   ```bash
+   npm install
+3. Start the development server
+   ```bash
+   npm run dev
+
+## 👤 Author
+Stefan Vladulescu
+Portfolio: stefanvladulescu.com
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
