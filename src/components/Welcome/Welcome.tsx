@@ -16,11 +16,11 @@ const Welcome = ({close}: {close: ()=>void}) => {
         <div className={styles.welcome}>
             <div className={styles.content}>
                 <div className={styles.header}>
-                    <h3>Hewwo</h3>
+                    <h3>Helloo</h3>
                     <button onClick={close}><IconsLibrary.Close /></button>
                 </div>
                 {currentScreen === 'input' ? <UsernameInput username={username} setUsername={(s)=>setUsername(s)} /> : 
-                currentScreen === 'confirmation' ? <h2>Nice to meet you {username}-senpai ⸜(｡˃ ᵕ ˂ )⸝♡</h2> : ''}
+                currentScreen === 'confirmation' ? <h2>Welcome {username}! You are ready to go</h2> : ''}
                 <div className={styles.buttons}>
                     {currentScreen === "input" ? <button className={styles.saveButton} onClick={()=>setCurrentScreen('confirmation')}>Continue</button> : null}
                     {currentScreen === "confirmation" ? 
@@ -44,7 +44,7 @@ interface UsernameInputProps {
 const UsernameInput: React.FC<UsernameInputProps> = ({username, setUsername}) => {
     return (
         <>
-            <h2>Hewwo fwend. W-who are y-you?</h2>
+            <h2>What is your name?</h2>
             <input type='text' name='username' value={username} onChange={(e)=>setUsername(e.target.value)} minLength={1} required />
             
         </>
