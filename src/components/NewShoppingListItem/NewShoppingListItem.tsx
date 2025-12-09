@@ -7,6 +7,8 @@ import StoreSelector from '../StoreSelector/StoreSelector';
 import CategorySelector from '../CategorySelector/CategorySelector';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
+import { NotificationService } from '../../helpers/NotificationService.ts';
+import { useParams } from 'react-router-dom';
 
 interface NewShoppingListItemProps {
     listId: string;
@@ -19,7 +21,7 @@ interface NewShoppingListItemProps {
 const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addItemToList, close, members, local}) => {
     const userId = localStorage.getItem('userId');
 
-
+    console.log(listId)
     const [name, setName] = useState('');
     const [unit, setUnit] = useState('');
     const [qty, setQty] = useState(0);
@@ -31,6 +33,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     const [claimedBy, setClaimedBy] = useState<string | null>(null);
     const [dueDate, setDueDate] = useState("");
     const [dueTime, setDueTime] = useState("");
+    const [reminder, setReminder] = useState(0);
     
     const moreInputsRef = useRef<HTMLDivElement>(null);
 
@@ -49,8 +52,9 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     const addNewItem = async () =>{
         if(!userId) return;
         const currentDate = new Date();
+        const itemId = new ObjectId().toString();
         const newItem: ShoppingListItem = {
-            _id: new ObjectId().toString(),
+            _id: itemId,
             createdAt: currentDate,
             name,
             unit,
@@ -63,6 +67,8 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             tags,
             priority,
             authorId: userId,
+            isReminderSent: false,
+            reminder,
         };
         if(store){
             newItem.store = store;
@@ -72,9 +78,11 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
         }
         if(assignedTo) {
             newItem.assignedTo = assignedTo;
+            NotificationService.send({recipientId: assignedTo, category: "ASSIGNMENT", message: `${name} was assigned to you`, metadata: {listId, itemId}});
         }
         if(claimedBy) {
             newItem.claimedBy = claimedBy;
+            NotificationService.send({recipientId: userId, category: "ASSIGNMENT", message: `${name} was assigned to you`, metadata: {listId, itemId}});
         }
         if(dueDate) {
             const timeString = dueTime || "23:59";
@@ -111,6 +119,16 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
         setClaimedBy(prev => prev ? null : userId);
         setAssignedTo(null);
     }
+
+    const REMINDER_OPTIONS = [
+        { value: 0, label: "No Reminder" },
+        { value: 1, label: "1 Hour Before" },
+        { value: 2, label: "2 Hours Before" },
+        { value: 3, label: "3 Hours Before" },
+        { value: 6, label: "6 Hours Before" },
+        { value: 12, label: "12 Hours Before" },
+        { value: 24, label: "1 Day Before" },
+    ];
     return ( 
         <div className={styles.newItem}>
             {showStoreSelector ? <StoreSelector close={()=>setShowStoreSelector(false)} selectStore={(newStore)=>setStore(newStore)} currentStore={store} /> : null}
@@ -149,6 +167,15 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                         <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
                     </div>
                 </div>
+                {dueDate && dueTime ? <div className={styles.priority}>
+                    <p>Reminder</p>
+                    <select value={reminder} onChange={(e) => setReminder(parseInt(e.target.value))}>
+                        {REMINDER_OPTIONS.map((opt) => ( <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                        </option>
+                        ))}
+                    </select>
+                </div> : null}
                 <div className={styles.tagsContainer}>
                     <div className={styles.tagIcon}>
                         <IconsLibrary.Tag />

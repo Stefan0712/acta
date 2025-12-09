@@ -38,6 +38,7 @@ const ShoppingLists = () => {
             const response = await db.shoppingListItems.toArray();
             if(response && response.length > 0){
                 setAllItems(response.filter(item=>!item.isDeleted));
+                console.log(response)
             }
         } catch (error) {
             console.error(error);
@@ -55,11 +56,6 @@ const ShoppingLists = () => {
             showNotification("Failed to restore list.", "error");
         }
     }
-
-    // const getListProgress = (listId: string) => {
-    //     const listItems = allItems.filter(item=>item.listId === listId);
-    //     return 
-    // }
 
     return ( 
         <div className={styles.shoppingLists}>

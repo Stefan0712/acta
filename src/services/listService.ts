@@ -1,0 +1,89 @@
+import type { ShoppingList } from '../types/models';
+import API from './apiService';
+import axios from 'axios';
+
+interface ListCreateData {
+    name: string;
+    groupId?: string; 
+    color?: string;
+}
+
+export async function createList(data: ListCreateData): Promise<ShoppingList> {
+    try {
+        const response = await API.post('/lists', data);
+        
+        if (response.status === 201) {
+            return response.data;
+        }
+
+        throw new Error(response.data.message || 'Failed to create list.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error creating list.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+
+// Fetches lists for synchronization.
+// GET /api/lists?since=DATE
+// Returns ALL lists modified since the last sync, including deleted ones.
+export async function fetchListsForSync(lastSyncDate?: string): Promise<ShoppingList[]> {
+    const params = lastSyncDate ? { since: lastSyncDate } : {}; 
+    
+    try {
+        const response = await API.get('/lists', { params });
+
+        if (response.status === 200) {
+            return response.data; 
+        }
+        throw new Error(response.data.message || 'Failed to fetch lists.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error during list sync.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+
+// Updates an existing list's properties (e.g., name, color, isPinned).
+// PUT /api/lists/:id
+export async function updateList(listId: string, data: Partial<ListCreateData>): Promise<List> {
+    try {
+        const response = await API.put(`/lists/${listId}`, data); 
+
+        if (response.status === 200) {
+            return response.data;
+        }
+
+        throw new Error(response.data.message || 'Failed to update list.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error updating list.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+
+// Soft-deletes a list.
+// DELETE /api/lists/:id (Backend sets isDeleted: true)
+export async function deleteList(listId: string): Promise<{ message: string }> {
+    try {
+        const response = await API.delete(`/lists/${listId}`); 
+        
+        if (response.status === 200) {
+            return response.data;
+        }
+        
+        throw new Error(response.data.message || 'Failed to delete list.');
+        
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error deleting list.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}

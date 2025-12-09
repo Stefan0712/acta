@@ -59,7 +59,6 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
             try {
                 const listDataPromise = db.shoppingLists.get(listId);
                 const listItemsPromise = db.shoppingListItems.where('listId').equals(listId).toArray();
-
                 const [listDataResponse, listItemsResponse] = await Promise.all([
                     listDataPromise,
                     listItemsPromise
@@ -67,7 +66,6 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                 if (listDataResponse) {
                     setListData(listDataResponse);
                     setListItems(listItemsResponse);
-                    console.log(listDataResponse);
                 } else {
                     showNotification('No list data found', "error");
                 }
@@ -125,7 +123,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                     <button className={selectedCategory === 'deleted' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('deleted')}>Deleted</button>
                 </div>
                 <div className={styles.listItemsContainer}>
-                    {members && filteredItems && filteredItems.length > 0 ? 
+                    { filteredItems && filteredItems.length > 0 ? 
                         <>
                             {uncompletedItems.map(item=><ShoppingListItem members={members} updateItem={updateItem} key={item._id} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}

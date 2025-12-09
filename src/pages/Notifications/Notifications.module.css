@@ -1,0 +1,80 @@
+.notifications {
+    width: 100vw;
+    height: calc(100vh - var(--bottom-offset) + 10px);
+    display: grid;
+    grid-template-rows: 50px 50px 1fr;
+    gap: 10px;
+    overflow: hidden;
+    padding: 10px;
+    color: var(--text-color);
+}
+.notifications .filters {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+}
+.notifications .buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    overflow-x: auto;
+}
+.notifications .buttons button {
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 5px;
+    border: 1px solid var(--item-bg);
+    background-color: transparent;
+    color: var(--text-color);
+}
+.notifications .buttons button.selectedCategory {
+    border-color: var(--accent)
+}
+.notifications .filters fieldset {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-items: center;
+    flex-direction: row;
+}
+.notifications .filters fieldset select {
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid var(--item-bg);
+    background-color: transparent;
+    color: var(--text-color);
+    padding: 0 15px;
+}
+.notifications .filters fieldset option {
+    color: var(--text-on-accent);
+}
+.notificationsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+}
+.notification {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--item-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.notificationHeader {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+.notificationHeader .metaItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;  
+    opacity: 0.3;
+}

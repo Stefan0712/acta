@@ -14,10 +14,13 @@ import { UserProvider } from './contexts/UserContext.tsx';
 import Welcome from './components/Welcome/Welcome.tsx';
 import ViewList from './pages/ViewGroup/Lists/ViewList/ViewList.tsx';
 import Lists from './pages/ViewGroup/Lists/Lists.tsx';
+import { NotificationService } from './helpers/NotificationService.ts';
+import Notifications from './pages/Notifications/Notifications.tsx';
 
 
 function App() {
   const [showNewUserPrompt, setShowNewUserPrompt] = useState(false);
+  const [userId, setUserId] = useState<null | string>(null)
 
 
   useEffect(()=>{
@@ -31,7 +34,22 @@ function App() {
       const newId = new ObjectId().toString();
       localStorage.setItem("userId", newId);
     }
+    setUserId(localStorage.getItem("userId"));
   },[]);
+
+  useEffect(()=>{
+    if(!userId) return;
+    const checkReminders = () => {
+      NotificationService.checkLocalReminders(userId);
+    };
+    checkReminders();
+
+    const intervalId = setInterval(checkReminders, 60 * 1000);
+
+    return () => clearInterval(intervalId);
+    
+
+  },[userId])
 
   return (
     <div className="app-container">
@@ -47,7 +65,7 @@ function App() {
               <Route path='lists' element={<Lists />} />            
               <Route path="lists/:listId" element={<ViewList />} />  
             </Route>        
-            <Route path="/products" element={<Products />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/groups" element={<Groups />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

@@ -31,6 +31,7 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
     const [dueTime, setDueTime] = useState(itemData.deadline ? loadItem(itemData.deadline).slice(11,16) : '');
     const [store, setStore] = useState<Store | null>(itemData.store ?? null);
     const [category, setCategory] = useState<Category | null>(itemData.category ?? null);
+    const [reminder, setReminder] = useState(itemData.reminder ?? 0);
 
     const [showNewTag, setShowNewTag] = useState(false);
     const [showUserSelector, setShowUserSelector] = useState(false);
@@ -66,6 +67,10 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
             const timeString = dueTime || "23:59";
             const localDateTime = new Date(`${dueDate}T${timeString}`);
             updatedItem.deadline = localDateTime.toISOString();
+            if(updatedItem.deadline !== itemData.deadline) {
+                itemData.isReminderSent = false;
+            }
+            updatedItem.reminder = reminder;
         }
         console.log(updatedItem)
         await db.shoppingListItems.update(itemData._id, updatedItem);
@@ -83,6 +88,15 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
         setClaimedBy(prev => prev ? null : userId);
         setAssignedTo(null);
     }
+    const REMINDER_OPTIONS = [
+        { value: 0, label: "No Reminder" },
+        { value: 1, label: "1 Hour Before" },
+        { value: 2, label: "2 Hours Before" },
+        { value: 3, label: "3 Hours Before" },
+        { value: 6, label: "6 Hours Before" },
+        { value: 12, label: "12 Hours Before" },
+        { value: 24, label: "1 Day Before" },
+    ];
     return ( 
          <div className={styles.newItem}>
             {showStoreSelector ? <StoreSelector close={()=>setShowStoreSelector(false)} selectStore={(newStore)=>setStore(newStore)} currentStore={store} /> : null}
@@ -111,6 +125,7 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
                         <button onClick={()=>setPriority('high')} className={`${styles.highPriority} ${priority === 'high' ? styles.selectedPriority : ''}`}>High</button>
                     </div>
                 </div>
+                
                 <div className={styles.deadline}>
                     <p>Deadline</p>
                     <div className={styles.deadlineInputs}>
@@ -118,6 +133,15 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
                         <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
                     </div>
                 </div>
+                {dueDate && dueTime ? <div className={styles.priority}>
+                    <p>Reminder</p>
+                    <select value={reminder} onChange={(e) => setReminder(parseInt(e.target.value))}>
+                        {REMINDER_OPTIONS.map((opt) => ( <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                        </option>
+                        ))}
+                    </select>
+                </div> : null}
                 <div className={styles.tagsContainer}>
                     <div className={styles.tagIcon}>
                         <IconsLibrary.Tag />

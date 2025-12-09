@@ -12,7 +12,7 @@ import { formatDeadline } from '../../../../helpers/deadlineFormatter';
 interface ListItemProps {
     data: ItemInterface;
     updateItem: (item: ItemInterface) => void;
-    members: GroupMember[];
+    members?: GroupMember[];
 }
 const ListItem: React.FC<ListItemProps> = ({data, updateItem, members}) => {
 

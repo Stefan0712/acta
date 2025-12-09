@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage" : "https://stefan0712.github.io/docket",
+  "homepage": "https://stefan0712.github.io/docket",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc -b && vite build",
@@ -13,8 +13,11 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "axios": "^1.13.2",
     "bson": "^7.0.0",
     "dexie": "^4.2.1",
+    "dexie-react-hooks": "^4.2.0",
+    "dotenv": "^17.2.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.5",
@@ -22,7 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@types/node": "^24.6.0",
+    "@types/node": "^24.10.2",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",

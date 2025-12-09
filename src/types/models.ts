@@ -9,6 +9,7 @@ export interface ShoppingList {
     isPinned: boolean;
     isDeleted: boolean;
     groupId?: string;
+    isDirty: boolean;
 }
 
 export interface Product {
@@ -23,6 +24,7 @@ export interface Product {
     storeIds?: string[];
     tags?: string[];
     isDeleted: boolean;
+    isDirty: boolean;
 }
 
 export interface ShoppingListItem {
@@ -54,6 +56,9 @@ export interface ShoppingListItem {
     assignedTo?: string | null;
     claimedBy?: string | null;
     deadline?: string | null;
+    reminder: number;
+    isReminderSent: boolean;
+    isDirty: boolean;
 }
 
 export interface PurchasedItem {
@@ -67,6 +72,7 @@ export interface PurchasedItem {
     storeId: string;
     purchasedAt: Date;
     isDiscounted?: boolean;
+    isDirty: boolean;
 }
 
 export interface Category {
@@ -84,8 +90,11 @@ export interface Store {
 export interface User {
     _id: string;
     username: string;
-    email?: string;
+    email: string;
     avatarUrl?: string;
+    createdAt: string;
+    updatedAt: string;
+    isDirty: boolean;
 }
 
 export type GroupRole = 'owner' | 'moderator' | 'member' | 'guest';
@@ -102,6 +111,7 @@ export interface Group {
     description: string;
     authorId: string;
     members: GroupMember[];
+    isDirty: boolean;
 }
 
 export interface NoteComment {
@@ -110,6 +120,7 @@ export interface NoteComment {
     username: string;
     content: string;
     createdAt: string;
+    isDirty: boolean;
 }
 
 export interface Note {
@@ -120,6 +131,7 @@ export interface Note {
     content: string;
     createdAt: Date;
     comments: NoteComment[];
+    isDirty: boolean;
 }
 
 export interface Vote {
@@ -136,6 +148,7 @@ export interface Poll {
         text: string;
         votes: Vote[];
     };
+    isDirty: boolean;
 }
 
 export type NotificationCategory = 
@@ -168,20 +181,21 @@ export type ActivityCategory =
   | 'INTERACTION'; // Assignments, claims
 
 export interface ActivityLog {
-  _id: string;
-  groupId: string;
-  createdAt: Date;
-  category: ActivityCategory; // Just for basic filtering if needed
-  
-  message: string;            // The text to display
-  authorId: string;
-  authorName: string; // Denormalized name
+    _id: string;
+    groupId: string;
+    createdAt: Date;
+    category: ActivityCategory; // Just for basic filtering if needed
+    
+    message: string;            // The text to display
+    authorId: string;
+    authorName: string; // Denormalized name
 
-  // Metadata for clicking (optional)
-  metadata?: {
-    listId?: string;
-    itemId?: string;
-    noteId?: string;
-    pollId?: string;
-  };
+    // Metadata for clicking (optional)
+    metadata?: {
+        listId?: string;
+        itemId?: string;
+        noteId?: string;
+        pollId?: string;
+    };
+    isDirty: boolean;
 }
