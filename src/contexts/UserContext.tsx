@@ -33,10 +33,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
     // Backup to DB
     const userBackup: User = {
-      _id: newId,
+      _id: "local-user-id",
       username: name,
-      email: "", // Placeholder for local users
-      avatarUrl: ""
+      email: "",
+      avatarUrl: "",
     };
 
     try {

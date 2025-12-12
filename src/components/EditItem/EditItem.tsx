@@ -7,16 +7,18 @@ import CategorySelector from '../CategorySelector/CategorySelector';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
 import { loadItem } from '../../helpers/deadlineFormatter.ts';
+import { handleUpdateItem } from '../../services/itemService.ts';
 
 interface NewShoppingListItemProps {
     itemData: ShoppingListItem;
     updateItem: (item: ShoppingListItem) => void;
     close: () => void;
     members?: GroupMember[];
+    online: boolean;
 }
 // TODO: Add a fullscreen blur to block user from pressing other buttons while editing
 
-const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, close, members}) => {
+const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, close, members, online}) => {
 
     const userId = localStorage.getItem('userId');
     const [name, setName] = useState(itemData.name ?? '');
@@ -72,7 +74,13 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
             }
             updatedItem.reminder = reminder;
         }
-        console.log(updatedItem)
+        if (online) {
+            const onlineItem = await handleUpdateItem(itemData._id, updatedItem);
+            updateItem(onlineItem);
+        } else {
+            await db.shoppingListItems.add(updatedItem);
+            updateItem(updatedItem);
+        }
         await db.shoppingListItems.update(itemData._id, updatedItem);
         updateItem({...itemData, ...updatedItem});
         close();

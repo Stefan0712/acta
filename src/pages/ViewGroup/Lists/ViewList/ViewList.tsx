@@ -1,23 +1,27 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './ViewList.module.css';
 import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList, type GroupMember } from '../../../../types/models';
-import { db } from '../../../../db';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../../Notification/NotificationContext';
 import {IconsLibrary} from '../../../../assets/icons.ts';
 import NewShoppingListItem from '../../../../components/NewShoppingListItem/NewShoppingListItem.js';
 import { getDateAndHour } from '../../../../helpers/dateFormat.ts';
 import EditShoppingList from '../../../../components/EditShoppingList/EditShoppingList.tsx';
-import ShoppingListItem from '../GroupListItem/GroupListItem.tsx'
+import GroupListItem from '../GroupListItem/GroupListItem.tsx'
+import {  getList, updateList } from '../../../../services/listService.ts';
+import { getListItems } from '../../../../services/itemService.ts';
+import Loading from '../../../../components/LoadingSpinner/Loading.tsx';
+import Auth from '../../../Auth/Auth.tsx';
 
 
 
 const ViewList = ({ members}: {members?: GroupMember[]}) => {
 
-    const {listId} = useParams();
-    const userId = localStorage.getItem('userId');
+    const {listId, groupId} = useParams();
     const navigate = useNavigate();
+    const userId = localStorage.getItem('userId');
     const { showNotification } = useNotifications();
+    const [isPageLoading, setIsPageLoading] = useState(true);
 
     const [showNewItem, setShowNewItem] = useState(false);
     const [showPageMenu, setShowPageMenu] = useState(false);
@@ -50,21 +54,21 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
         return filteredItems.filter(item => item.isChecked);
     },[filteredItems]);
 
-    useEffect(()=>{
-        if (!listId){
-            showNotification("No id found", "error");
-            return;
-        }
-        const fetchPageData = async () => {
+
+    const fetchPageData = async () => {
+        if (listId) {
             try {
-                const listDataPromise = db.shoppingLists.get(listId);
-                const listItemsPromise = db.shoppingListItems.where('listId').equals(listId).toArray();
+                const listDataPromise = await getList(listId);
+                const listItemsPromise = await getListItems(listId);
                 const [listDataResponse, listItemsResponse] = await Promise.all([
                     listDataPromise,
                     listItemsPromise
                 ]);
                 if (listDataResponse) {
                     setListData(listDataResponse);
+                    if(listDataResponse) {
+                        setIsPageLoading(false)
+                    }
                     setListItems(listItemsResponse);
                 } else {
                     showNotification('No list data found', "error");
@@ -73,41 +77,57 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                 console.error("Failed to fetch page data:" , error);
                 showNotification("Error loading list", "error")
             }
-        };
-        fetchPageData();
+        }
+    };
+
+
+    useEffect(()=>{
+        if (!listId){
+            showNotification("No id found", "error");
+            return;
+        }else {
+            fetchPageData();
+        }
     },[listId, showNotification]);
 
-    const deleteList = async () =>{
-        try {
-            await db.shoppingLists.update(listData?._id, {isDeleted: true});
-            showNotification("Shopping list deleted", "success");
-            navigate('/');
-        } catch (error) {
-            console.error(error);
-            showNotification("Failed to delete list.", "error");
+    const handleDeleteList = async () =>{
+        if(listId) {
+            try {
+                await updateList(listId,{isDeleted: true});
+                showNotification("Shopping list deleted", "success");
+                navigate('/');
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to delete list.", "error");
+            }
         }
     }
     const restoreList = async () =>{
-        try {
-            await db.shoppingLists.update(listData?._id, {isDeleted: false});
-            showNotification("Shopping list restored", "success");
+       if(listId) {
+         try {
+            await updateList(listId, {isDeleted: false})
+            showNotification("List restored", "success");
             navigate('/');
         } catch (error) {
             console.error(error);
             showNotification("Failed to restore list.", "error");
         }
+       }
     }
     // Optimistically update item list
     const updateItem = (updatedItem: ItemType) => {
         const updatedList = listItems.map(item=>item._id===updatedItem._id ? updatedItem : item)
         setListItems(updatedList); // Updates the list of all items with the updated one
     };
-
-    if(listData) {
+    if (!localStorage.getItem('jwt-token')){
+        return <Auth />
+    }else if (isPageLoading) {
+        return <Loading />
+    } else if(listData) {
         return ( 
             <div className={styles.viewList}>
-                {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={deleteList} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
-                {showEdit ? <EditShoppingList close={()=>setShowEdit(false)} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
+                {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={handleDeleteList} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
+                {showEdit ? <EditShoppingList close={()=>setShowEdit(false)} online={true} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
                 <div className={styles.listMeta}>
                     <div className={styles.listName}>
                         <h2>{listData.name}</h2>
@@ -125,15 +145,15 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                 <div className={styles.listItemsContainer}>
                     { filteredItems && filteredItems.length > 0 ? 
                         <>
-                            {uncompletedItems.map(item=><ShoppingListItem members={members} updateItem={updateItem} key={item._id} data={item} />)}
+                            {uncompletedItems.map(item=><GroupListItem members={members} online={true} updateItemLocally={updateItem} key={item._id} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
-                            {completedItems.map(item=><ShoppingListItem members={members} updateItem={updateItem} key={item._id} data={item} />)}
+                            {completedItems.map(item=><GroupListItem members={members} online={true} updateItemLocally={updateItem} key={item._id} data={item} />)}
                         </>  : 
                             <p className={styles.noItemsText}>No items yet</p>
                     }
                 </div>
                 {showNewItem ? null  : <button onClick={()=>setShowNewItem(true)} className={styles.newItemButton}><IconsLibrary.Plus /></button>}
-                {showNewItem ? <NewShoppingListItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} close={()=>setShowNewItem(false)}/> : null}
+                {showNewItem && listId ? <NewShoppingListItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} close={()=>setShowNewItem(false)}/> : null}
             </div>
         );
     }

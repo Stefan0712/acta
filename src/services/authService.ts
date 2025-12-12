@@ -1,3 +1,4 @@
+import { useNotifications } from '../Notification/NotificationContext';
 import type { User } from '../types/models';
 import API from './apiService';
 import axios from 'axios';
@@ -18,15 +19,14 @@ export interface AuthResponse {
 
 // User Registration
 // POST /api/auth/register
-export async function register(data: UserRegisterData): Promise<User> {
+export async function register(data: UserRegisterData): Promise<AuthResponse> {
     try {
         const response = await API.post('/auth/register', data); // Send new user credentials
         
         // Check for 201 Created status
         if (response.status === 201) {
-            const { user, token }: AuthResponse = response.data; // Destructure user and token
-            localStorage.setItem('jwt_token', token); // Store the token
-            return user; // Return the user object
+            const AuthResponse: AuthResponse = response.data; // Destructure user and token
+            return AuthResponse; // Return the user object
         }
 
         throw new Error(response.data.message || 'Registration failed.');
@@ -41,15 +41,14 @@ export async function register(data: UserRegisterData): Promise<User> {
 
 // User Login
 // POST /api/auth/login
-export async function login(data: UserLoginData): Promise<User> {
+export async function login(data: UserLoginData): Promise<AuthResponse> {
     try {
         const response = await API.post('/auth/login', data); // Send credentials
-        
+        console.log(response)
         // Check for 200 OK status
         if (response.status === 200) {
-            const { user, token }: AuthResponse = response.data; // Destructure user and token
-            localStorage.setItem('jwt_token', token); // Store the token
-            return user; // Return the user object
+            const AuthResponse: AuthResponse = response.data; // Destructure user and token
+            return AuthResponse; // Return the user object
         }
 
         throw new Error(response.data.message || 'Login failed.');
@@ -88,5 +87,5 @@ export async function getMe(): Promise<User> {
 // User Logout
 export function logout(): void {
     // We only need to clear the token locally, as the token is stateless on the server
-    localStorage.removeItem('jwt_token'); 
+    localStorage.removeItem('jwt-token'); 
 }

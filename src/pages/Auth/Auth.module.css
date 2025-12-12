@@ -1,0 +1,80 @@
+.auth {
+    width: 100dvw;
+    height: calc(100dvh - var(--bottom-offset));
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    color: var(--text-color);
+}
+.authContainer {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.login,
+.register {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+.forgotPasswordLink {
+    width: 100%;
+    text-align: end;
+    color: var(--accent);
+    text-decoration: underline;
+}
+.bottomLink {
+    margin-top: auto;
+    margin-bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+.bottomLink b {
+    color: var(--accent);
+    text-decoration: underline;
+    cursor: pointer;
+}
+form button {
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    border: none;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+.validations {
+    display: flex;
+    flex-direction: column;
+    gap: 5px
+}
+.validations .rule {
+    padding-left: 10px;
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 10px;
+}
+.validations .rule.active{
+    color: var(--accent);
+}
+.validations .circle {
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--text-color);
+    border-radius: 100px;
+}

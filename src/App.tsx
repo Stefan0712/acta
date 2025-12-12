@@ -3,7 +3,6 @@ import './App.css'
 import Navigation from './components/Navigation/Navigation.tsx';
 import ShoppingLists from './pages/ShoppingLists/ShoppingLists.tsx';
 import ShoppingList from './pages/ShoppingList/ShoppingList.tsx';
-import Products from './pages/Products/Products.tsx';
 import Settings from './pages/Settings/Settings.tsx';
 import { NotificationDisplay } from './Notification/NotificationDisplay.tsx';
 import { useEffect, useState } from 'react';
@@ -16,6 +15,8 @@ import ViewList from './pages/ViewGroup/Lists/ViewList/ViewList.tsx';
 import Lists from './pages/ViewGroup/Lists/Lists.tsx';
 import { NotificationService } from './helpers/NotificationService.ts';
 import Notifications from './pages/Notifications/Notifications.tsx';
+import Manage from './pages/ViewGroup/Manage/Manage.tsx';
+import AcceptInvite from './pages/Groups/AcceptInvite/AcceptInvite.tsx';
 
 
 function App() {
@@ -24,15 +25,10 @@ function App() {
 
 
   useEffect(()=>{
-    const userId = localStorage.getItem('userId');
     const username = localStorage.getItem('username');
 
     if(!username) {
       setShowNewUserPrompt(true);
-    }
-    if(!userId) {
-      const newId = new ObjectId().toString();
-      localStorage.setItem("userId", newId);
     }
     setUserId(localStorage.getItem("userId"));
   },[]);
@@ -64,10 +60,12 @@ function App() {
               <Route index element={<Lists />} />            
               <Route path='lists' element={<Lists />} />            
               <Route path="lists/:listId" element={<ViewList />} />  
+              <Route path='manage' element={<Manage />} />            
             </Route>        
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/groups" element={<Groups />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/invite" element={<AcceptInvite />} />
           </Routes>
         </main>
         <Navigation />

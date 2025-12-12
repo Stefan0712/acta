@@ -30,56 +30,15 @@ export class MyDatabase extends Dexie {
 
   constructor() {
     super('docket'); 
-
-    this.version(3).stores({
-      shoppingLists: '_id, userId, groupId',
-      products: '_id, userId, categoryId, *storeIds, *tags',
-      shoppingListItems: '_id, listId, productId, isChecked',
-      purchasedItems: '_id, userId, productId, storeId, purchasedAt',
+    // Added more indexes
+    this.version(9).stores({
+      shoppingLists: '_id, authorId, groupId, isDirty',
+      shoppingListItems: '_id, authorId, listId, productId, isChecked, isDirty',
       categories: '_id, name',
       stores: '_id, name',
-      groups:'_id, authorId, *members.userId',
-      notes: '_id, groupId',
-      polls: '_id, groupId',
-    });
-    // Added notifications and categories
-    this.version(4).stores({
-      shoppingLists: '_id, userId, groupId',
-      products: '_id, userId, categoryId, *storeIds, *tags',
-      shoppingListItems: '_id, listId, productId, isChecked',
-      purchasedItems: '_id, userId, productId, storeId, purchasedAt',
-      categories: '_id, name',
-      stores: '_id, name',
-      groups:'_id, authorId, *members.userId',
-      notes: '_id, groupId',
-      polls: '_id, groupId',
-      notifications: '_id, recipientId, isRead, groupId, [groupId+category]',
-    });
-    // Added a new profile table for user data backup
-    this.version(5).stores({
-      shoppingLists: '_id, userId, groupId',
-      products: '_id, userId, categoryId, *storeIds, *tags',
-      shoppingListItems: '_id, listId, productId, isChecked',
-      purchasedItems: '_id, userId, productId, storeId, purchasedAt',
-      categories: '_id, name',
-      stores: '_id, name',
-      groups:'_id, authorId, *members.userId',
-      notes: '_id, groupId',
-      polls: '_id, groupId',
-      notifications: '_id, recipientId, isRead, groupId, [groupId+category]',
-      profile: '_id',
-    });
-    // Separated notifications into notifications and activity logs
-    this.version(6).stores({
-      shoppingLists: '_id, userId, groupId',
-      products: '_id, userId, categoryId, *storeIds, *tags',
-      shoppingListItems: '_id, listId, productId, isChecked',
-      purchasedItems: '_id, userId, productId, storeId, purchasedAt',
-      categories: '_id, name',
-      stores: '_id, name',
-      groups:'_id, authorId, *members.userId',
-      notes: '_id, groupId',
-      polls: '_id, groupId',
+      groups:'_id, authorId, *members.userId, isDirty',
+      notes: '_id, groupId, authorId, isDirty',
+      polls: '_id, groupId, authorId, isDirty',
       notifications: '_id, recipientId, isRead, groupId, [groupId+category]',
       activityLogs: '_id, recipientId, groupId, [groupId+category], [groupId+createdAt]',
       profile: '_id',

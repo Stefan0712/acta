@@ -7,14 +7,16 @@ import { useEffect, useRef, useState } from 'react';
 import { getDateAndHour } from '../../../../helpers/dateFormat';
 import EditItem from '../../../../components/EditItem/EditItem';
 import { formatDeadline } from '../../../../helpers/deadlineFormatter';
+import { handleUpdateItem } from '../../../../services/itemService';
 
 
 interface ListItemProps {
     data: ItemInterface;
-    updateItem: (item: ItemInterface) => void;
+    updateItemLocally: (item: ItemInterface) => void;
     members?: GroupMember[];
+    online: boolean;
 }
-const ListItem: React.FC<ListItemProps> = ({data, updateItem, members}) => {
+const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, online}) => {
 
     const {showNotification} = useNotifications();
     const metaRef = useRef<HTMLDivElement>(null);
@@ -34,8 +36,14 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItem, members}) => {
     const toggleCheck = async () =>{
         try {
             const newValue = !data.isChecked;
-            await db.shoppingListItems.update(data._id, {isChecked: newValue});
-            updateItem({...data, isChecked: newValue});
+            if(online){
+                const onlineItem = await handleUpdateItem(data._id, {isChecked: newValue});
+                console.log(online)
+                updateItemLocally(onlineItem)
+            } else {
+                await db.shoppingListItems.update(data._id, {isChecked: newValue});
+                updateItemLocally({...data, isChecked: newValue});
+            }
         } catch (error) {
             console.error(error);
             showNotification("Failed to check item", "error")
@@ -44,8 +52,13 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItem, members}) => {
     const togglePin = async () =>{
         try {
             const newValue = !data.isPinned;
-            await db.shoppingListItems.update(data._id, {isPinned: newValue});
-            updateItem({...data, isPinned: newValue});
+            if(online){
+                const onlineItem = await handleUpdateItem(data._id, {isPinned: newValue});
+                updateItemLocally(onlineItem)
+            } else {
+                await db.shoppingListItems.update(data._id, {isPinned: newValue});
+                updateItemLocally({...data, isPinned: newValue});
+            }
             showNotification(newValue ? "Item pinned!" : "Item unpinned", "success");
         } catch (error) {
             console.error(error);
@@ -55,8 +68,13 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItem, members}) => {
     const handleDelete = async () =>{
         try {
             const newValue = !data.isDeleted;
-            await db.shoppingListItems.update(data._id, {isDeleted: newValue});
-            updateItem({...data, isDeleted: newValue});
+            if(online){
+                const onlineItem = await handleUpdateItem(data._id, {isDeleted: newValue});
+                updateItemLocally(onlineItem)
+            } else {
+                await db.shoppingListItems.update(data._id, {isDeleted: newValue});
+                updateItemLocally({...data, isDeleted: newValue});
+            }
             showNotification(newValue ? "Item deleted succesfully." : "Item restored succesfully.", "success");
         } catch (error) {
             console.error(error);
@@ -67,12 +85,12 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItem, members}) => {
     if(data){
         return ( 
             <div className={`${styles.item} ${expandItem ? styles.expandedItem : ''}`}>
-                {showEdit ? <EditItem itemData={data} updateItem={updateItem} members={members} close={()=>setShowEdit(false)} /> : null}
+                {showEdit ? <EditItem online={online} itemData={data} updateItem={updateItemLocally} members={members} close={()=>setShowEdit(false)} /> : null}
                 <div className={styles.mainSection}>
                     <div className={styles.checkbox} onClick={toggleCheck}>
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
                     </div>
-                    <p onClick={()=>setExpandItem(prev=>!prev)}>{data.name}</p>
+                    <p onClick={()=>setExpandItem(prev=>!prev)}>2p{data.name}</p>
                     <b>{data.qty} {data.unit}</b>
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>

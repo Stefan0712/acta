@@ -5,6 +5,8 @@ import { ObjectId } from 'bson';
 import SwitchButton from '../SwitchButton/SwitchButton';
 import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
+import { createList } from '../../services/listService';
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
     close: ()=>void;
@@ -15,33 +17,45 @@ interface IProps {
 const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => {
 
     const { showNotification } = useNotifications();
+    const navigate = useNavigate();
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
     const [color, setColor] = useState('#FFFFFF');
 
-
+    console.log(groupId)
 
     const handleSaveList = async () => {
         const currentDate = new Date();
         const newList: ShoppingList = {
-            _id: new ObjectId().toString(),
             name,
             description,
             color,
             isPinned,
-            userId: 'local',
+            authorId: localStorage.getItem('userId') ?? 'local-user-id',
             createdAt: currentDate,
             isDeleted: false,
+            isDirty: true
         };
         if (groupId) {
             newList.groupId = groupId;
         };
+        if (!groupId) {
+            const localId = new ObjectId().toString();
+            newList._id = localId;
+            newList.clientId = localId;
+        }
         
-        await db.shoppingLists.add(newList);
+        if( groupId ) {
+            const apiResponse = await createList(newList);
+            navigate(`/group/${groupId}/lists/${apiResponse._id}`);
+        }else {
+            await db.shoppingLists.add(newList);
+            
+            addListToState(newList)
+        }
         showNotification("List created successfully", "success");
-        addListToState(newList);
         close();
     };
     return ( 

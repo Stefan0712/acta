@@ -1,6 +1,6 @@
 .notifications {
-    width: 100vw;
-    height: calc(100vh - var(--bottom-offset) + 10px);
+    width: 100dvw;
+    height: calc(100dvh - var(--bottom-offset) + 10px);
     display: grid;
     grid-template-rows: 50px 50px 1fr;
     gap: 10px;

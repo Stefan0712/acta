@@ -1,9 +1,9 @@
 .viewList {
     width: 100%;
     height: 100%;
-    max-height: calc(100vh - var(--bottom-offset));
+    max-height: calc(100dvh - var(--bottom-offset));
     display: grid;
-    grid-template-rows: minmax(100px, 150px) 50px 1fr;
+    grid-template-rows: auto 50px 1fr;
     color: var(--text-color);
     padding: 10px;
     position: relative;

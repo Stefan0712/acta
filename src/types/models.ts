@@ -1,15 +1,16 @@
 export interface ShoppingList {
-    _id: string;
+    _id?: string;
     name: string;
     description?: string;
     createdAt: Date;
     updatedAt?: Date;
-    userId: string;
     color: string;
     isPinned: boolean;
     isDeleted: boolean;
     groupId?: string;
     isDirty: boolean;
+    authorId: string;
+    clientId?: string | null;
 }
 
 export interface Product {
@@ -20,7 +21,7 @@ export interface Product {
     defaultQty: number; 
     unit: string;
     categoryId: string;
-    userId: string;
+    authorId: string;
     storeIds?: string[];
     tags?: string[];
     isDeleted: boolean;
@@ -59,11 +60,12 @@ export interface ShoppingListItem {
     reminder: number;
     isReminderSent: boolean;
     isDirty: boolean;
+    clientId: string | null;
 }
 
 export interface PurchasedItem {
     _id: string;
-    userId: string;
+    authorId: string;
     productId?: string; // Link to an existing product but optinoal in case the product gets deleted
     name: string; 
     unit: string;
@@ -108,10 +110,17 @@ export interface GroupMember {
 export interface Group {
     _id: string;
     name: string;
-    description: string;
+    description?: string;
     authorId: string;
     members: GroupMember[];
     isDirty: boolean;
+    isDeleted: boolean;
+    createdAt: string;
+    updatedAt?: string;
+    clientId: string | null;
+    listCount?: number;
+    noteCount?: number;
+    pollCount?: number;
 }
 
 export interface NoteComment {
@@ -121,6 +130,7 @@ export interface NoteComment {
     content: string;
     createdAt: string;
     isDirty: boolean;
+    clientId: string | null;
 }
 
 export interface Note {
@@ -132,6 +142,7 @@ export interface Note {
     createdAt: Date;
     comments: NoteComment[];
     isDirty: boolean;
+    clientId: string | null;
 }
 
 export interface Vote {
@@ -141,6 +152,7 @@ export interface Vote {
 export interface Poll {
     _id: string;
     groupId: string;
+    authorId: string;
     question: string;
     createdAt: Date;
     options: {
@@ -149,6 +161,7 @@ export interface Poll {
         votes: Vote[];
     };
     isDirty: boolean;
+    clientId: string | null;
 }
 
 export type NotificationCategory = 
@@ -198,4 +211,29 @@ export interface ActivityLog {
         pollId?: string;
     };
     isDirty: boolean;
+}
+export interface Invite {
+    token: string;
+    groupId: string;
+    createdBy: string;
+    expiresAt: Date;
+    maxUses: number;
+    usesCount: number;
+}
+export interface InviteLookupData {
+    group: {
+        _id: string;
+        name: string;
+        memberCount: number;
+    };
+    invitation: {
+        groupId: string;
+        createdBy: string;
+        isExpired: boolean;
+        maxUses: number;
+        usesCount: number;
+        token: string;
+        message?: string;
+    };
+    userIsAuthenticated: boolean;
 }

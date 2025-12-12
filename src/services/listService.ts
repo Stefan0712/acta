@@ -6,6 +6,7 @@ interface ListCreateData {
     name: string;
     groupId?: string; 
     color?: string;
+    isDeleted?: boolean;
 }
 
 export async function createList(data: ListCreateData): Promise<ShoppingList> {
@@ -26,27 +27,39 @@ export async function createList(data: ListCreateData): Promise<ShoppingList> {
     }
 }
 
-// Fetches lists for synchronization.
-// GET /api/lists?since=DATE
-// Returns ALL lists modified since the last sync, including deleted ones.
-export async function fetchListsForSync(lastSyncDate?: string): Promise<ShoppingList[]> {
-    const params = lastSyncDate ? { since: lastSyncDate } : {}; 
-    
+// Get a list by id
+export async function getList(listId: string): Promise<ShoppingList> {
     try {
-        const response = await API.get('/lists', { params });
-
+        const response = await API.get(`/lists/${listId}`);
         if (response.status === 200) {
-            return response.data; 
+            return {...response.data, isDirty: false};
         }
-        throw new Error(response.data.message || 'Failed to fetch lists.');
+        throw new Error(response.data.message || 'Failed to get list.');
 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.message || 'Server error during list sync.');
+            throw new Error(error.response.data.message || 'Server error fetching list.');
         }
         throw new Error('Network error or unknown issue.');
     }
 }
+// Get all lists of a group
+export async function getGroupLists(groupId: string): Promise<ShoppingList[]> {
+    try {
+        const response = await API.get(`/lists?groupId=${groupId}`);
+        if (response.status === 200) {
+            return response.data;
+        }
+        throw new Error(response.data.message || 'Failed to get lists.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error fetching lists.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+
 
 // Updates an existing list's properties (e.g., name, color, isPinned).
 // PUT /api/lists/:id

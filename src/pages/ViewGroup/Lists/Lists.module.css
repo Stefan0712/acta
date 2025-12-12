@@ -84,6 +84,10 @@
     display: flex;
     align-items: center;
 }
+.list a {
+    color: var(--text-color);
+    text-decoration: none;
+}
 .deletedLists .list .deleteButtons {
     height: 40px;
     width: 100%;

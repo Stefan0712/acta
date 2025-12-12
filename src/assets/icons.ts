@@ -29,9 +29,21 @@ import BackArrow from './back-arrow.svg?react';
 import Undo from './undo.svg?react';
 import Group from './group.svg?react';
 import Assigned from './assigned.svg?react';
-import Time from './time.svg?react'
+import Time from './time.svg?react';
+import Copy from './copy.svg?react';
+import Login from './login.svg?react';
+import Logout from './logout.svg?react';
+import List from './list.svg?react';
+import Poll from './poll.svg?react';
+import Note from './note.svg?react';
+import History from './history.svg?react';
 
 export const IconsLibrary = {
+  List,
+  Poll,
+  Note,
+  History,
+  Copy,
   AddUser,
   Arrow,
   CirclePlus,
@@ -63,5 +75,7 @@ export const IconsLibrary = {
   Undo,
   Group,
   Assigned,
-  Time
+  Time,
+  Login, 
+  Logout
 };

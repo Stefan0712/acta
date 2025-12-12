@@ -2,52 +2,64 @@ import { useEffect, useState } from 'react';
 import styles from './Groups.module.css';
 import NewGroup from './NewGroup';
 import { type Group } from '../../types/models';
-import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { IconsLibrary } from '../../assets/icons';
 import { Link } from 'react-router-dom';
+import Auth from '../Auth/Auth';
+import { getMyGroups } from '../../services/groupService';
+import Loading from '../../components/LoadingSpinner/Loading';
 
 
 const Groups = () => {
     
-    const userId = localStorage.getItem('userId');
+    const userToken = localStorage.getItem('jwt-token');
     const { showNotification } = useNotifications();
 
     const [showNewGroup, setShowNewGroup] = useState(false);
     const [groups, setGroups] = useState<Group[]>([]);
 
+    const [isLoading, setIsLoading] = useState(true);
 
 
-    const getGroups = async () =>{
-        if(userId) {
+    const fetchAndSync = async () => {
+        if(userToken) {
             try {
-                const response = await db.groups.toArray();
-                setGroups(response);
+                const apiResponse = await getMyGroups();
+                setGroups(apiResponse);
+                console.log(apiResponse);
+                setIsLoading(false);
             } catch (error) {
                 console.error(error);
-                showNotification("Failed to get groups", "error");
+                showNotification("Something went wrong!", "error");
             }
         }
     }
-
+    
     useEffect(()=>{
-        if(userId) {
-            getGroups();
-        }
-    }, []);
+        fetchAndSync();
+    }, [userToken])
 
-    return ( 
-        <div className={styles.groups}>
-            {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} addGroup={(newGroup)=>setGroups(prev=>[...prev, newGroup])} /> : null}
-            <div className={styles.header}>
-                <h2>My Groups</h2>
-                <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button>
+
+
+
+    if(!userToken) {
+        return (<Auth />)
+    }else if (isLoading) {
+        return (<Loading />)
+    } else {
+        return ( 
+            <div className={styles.groups}>
+                {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} addGroup={(newGroup)=>setGroups(prev=>[...prev, newGroup])} /> : null}
+                <div className={styles.header}>
+                    <h2>My Groups</h2>
+                    <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button>
+                </div>
+                <div className={styles.groupsContainer}>
+                    {groups?.length > 0 ? groups.map(item=><Group key={item._id} data={item} />) : <p className={styles.noGroupsText}>You have no groups. Create one or join one.</p>}
+                </div>
             </div>
-            <div className={styles.groupsContainer}>
-                {groups?.length > 0 ? groups.map(item=><Group key={item._id} data={item} />) : <p className={styles.noGroupsText}>You have no groups. Create one or join one.</p>}
-            </div>
-        </div>
-     );
+         );
+    }
 }
  
 export default Groups;
@@ -56,10 +68,27 @@ const Group = ({data}: {data: Group}) => {
 
     return (
         <Link to={`/group/${data._id}`} className={styles.group}>
-            <h3>{data.name}</h3>
-            <div className={styles.membersCount}>
-                <IconsLibrary.Group />
-                <b>{data.members.length}</b>
+            <div className={styles.top}>
+                <h3>{data.name}</h3>
+                <IconsLibrary.BackArrow style={{transform: 'rotateZ(180deg'}} />
+            </div>
+            <div className={styles.bottom}>
+                <div className={styles.metaItem}>
+                    <IconsLibrary.List />
+                    <p>{data.listCount ?? 0}</p>
+                </div>
+                <div className={styles.metaItem}>
+                    <IconsLibrary.Note />
+                    <p>{data.noteCount ?? 0}</p>
+                </div>
+                <div className={styles.metaItem}>
+                    <IconsLibrary.Poll />
+                    <p>{data.pollCount ?? 0}</p>
+                </div>
+                <div className={styles.metaItem}>
+                    <IconsLibrary.Group />
+                    <b>{data.members.length}</b>
+                </div>
             </div>
         </Link>
     )

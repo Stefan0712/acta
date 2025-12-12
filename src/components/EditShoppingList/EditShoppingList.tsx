@@ -4,14 +4,16 @@ import type { ShoppingList } from '../../types/models';
 import SwitchButton from '../SwitchButton/SwitchButton';
 import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
+import { updateList } from '../../services/listService';
 
 interface IProps {
     close: ()=>void;
     listData: ShoppingList;
     updateData: (data: ShoppingList) => void;
+    online?: boolean;
 }
 
-const EditShoppingList: React.FC<IProps> = ({close, listData, updateData}) => {
+const EditShoppingList: React.FC<IProps> = ({close, listData, updateData, online}) => {
 
     const { showNotification } = useNotifications();
 
@@ -33,10 +35,20 @@ const EditShoppingList: React.FC<IProps> = ({close, listData, updateData}) => {
             isDeleted: false,
             updatedAt: currentDate,
         };
-        await db.shoppingLists.update(listData._id, updatedList);
-        showNotification("List updated successfully", "success");
-        updateData(updatedList)
-        close();
+        try {
+            if(online && listData._id){
+                const apiResponse = await updateList(listData._id, updatedList)
+                updateData(apiResponse)
+            } else {
+                await db.shoppingLists.update(listData._id, updatedList);
+                updateData(updatedList)
+            }
+            showNotification("List updated successfully", "success");
+            close();
+        } catch (error) {
+            console.error(error)
+            showNotification("Failed to update list", "error")
+        }
     };
 
     // Fill in data received from the shopping list

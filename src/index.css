@@ -5,6 +5,7 @@
     --text-color: white;
     --text-on-accent: #000000;
     --text-muted: rgba(255, 255, 255, 0.5);
+    --border: rgba(211, 211, 211, 0.3);
 }
 .no-items-text {
     width: 100%;

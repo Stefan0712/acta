@@ -7,13 +7,15 @@ import { useEffect, useRef, useState } from 'react';
 import { getDateAndHour } from '../../helpers/dateFormat';
 import { formatDeadline } from '../../helpers/deadlineFormatter';
 import EditItem from '../EditItem/EditItem';
+import { handleUpdateItem } from '../../services/itemService';
 
 
 interface ListItemProps {
     data: ItemInterface;
-    updateItem: (item: ItemInterface) => void;
+    updateItemLocally: (item: ItemInterface) => void;
+    online: boolean;
 }
-const ListItem: React.FC<ListItemProps> = ({data, updateItem}) => {
+const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, online}) => {
 
     const {showNotification} = useNotifications();
     const metaRef = useRef<HTMLDivElement>(null);
@@ -33,8 +35,14 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItem}) => {
     const toggleCheck = async () =>{
         try {
             const newValue = !data.isChecked;
-            await db.shoppingListItems.update(data._id, {isChecked: newValue});
-            updateItem({...data, isChecked: newValue});
+            if(online){
+                const onlineItem = await handleUpdateItem(data._id, {isChecked: newValue});
+                console.log(online)
+                updateItemLocally(onlineItem)
+            } else {
+                await db.shoppingListItems.update(data._id, {isChecked: newValue});
+                updateItemLocally({...data, isChecked: newValue});
+            }
         } catch (error) {
             console.error(error);
             showNotification("Failed to check item", "error")
@@ -43,8 +51,13 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItem}) => {
     const togglePin = async () =>{
         try {
             const newValue = !data.isPinned;
-            await db.shoppingListItems.update(data._id, {isPinned: newValue});
-            updateItem({...data, isPinned: newValue});
+            if(online){
+                const onlineItem = await handleUpdateItem(data._id, {isPinned: newValue});
+                updateItemLocally(onlineItem)
+            } else {
+                await db.shoppingListItems.update(data._id, {isPinned: newValue});
+                updateItemLocally({...data, isPinned: newValue});
+            }
             showNotification(newValue ? "Item pinned!" : "Item unpinned", "success");
         } catch (error) {
             console.error(error);
@@ -54,8 +67,13 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItem}) => {
     const handleDelete = async () =>{
         try {
             const newValue = !data.isDeleted;
-            await db.shoppingListItems.update(data._id, {isDeleted: newValue});
-            updateItem({...data, isDeleted: newValue});
+            if(online){
+                const onlineItem = await handleUpdateItem(data._id, {isDeleted: newValue});
+                updateItemLocally(onlineItem)
+            } else {
+                await db.shoppingListItems.update(data._id, {isDeleted: newValue});
+                updateItemLocally({...data, isDeleted: newValue});
+            }
             showNotification(newValue ? "Item deleted succesfully." : "Item restored succesfully.", "success");
         } catch (error) {
             console.error(error);
@@ -66,13 +84,13 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItem}) => {
     if(data){
         return ( 
             <div className={`${styles.item} ${expandItem ? styles.expandedItem : ''}`}>
-                {showEdit ? <EditItem itemData={data} updateItem={updateItem} close={()=>setShowEdit(false)} /> : null}
+                {showEdit ? <EditItem online={online} itemData={data} updateItem={updateItemLocally} close={()=>setShowEdit(false)} /> : null}
                 <div className={styles.mainSection}>
                     <div className={styles.checkbox} onClick={toggleCheck}>
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
                     </div>
                     <div onClick={()=>setExpandItem(prev=>!prev)} className={styles.mainInfo}>
-                        <p>{data.name}</p>
+                        <p>1{data.name}</p>
                         {!expandItem ? <div className={styles.twoCols}>
                             <div className={styles.col}>
                                 <IconsLibrary.Category />

@@ -132,9 +132,9 @@ const ShoppingList = () => {
                 <div className={styles.listItemsContainer}>
                     {filteredItems && filteredItems.length > 0 ? 
                         <>
-                            {uncompletedItems.map(item=><ListItem updateItem={updateItem} key={item._id} data={item} />)}
+                            {uncompletedItems.map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
-                            {completedItems.map(item=><ListItem updateItem={updateItem} key={item._id} data={item} />)}
+                            {completedItems.map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
                         </>  : 
                             <p className={styles.noItemsText}>No items yet</p>
                     }

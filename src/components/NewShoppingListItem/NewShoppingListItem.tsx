@@ -8,20 +8,19 @@ import CategorySelector from '../CategorySelector/CategorySelector';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
 import { NotificationService } from '../../helpers/NotificationService.ts';
-import { useParams } from 'react-router-dom';
+import { createItem } from '../../services/itemService.ts';
 
 interface NewShoppingListItemProps {
     listId: string;
     addItemToList: (item: ShoppingListItem) => void;
     close: () => void;
     members?: GroupMember[];
-    local?: boolean;
+    online?: boolean;
 }
 
-const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addItemToList, close, members, local}) => {
+const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addItemToList, close, members, online}) => {
     const userId = localStorage.getItem('userId');
 
-    console.log(listId)
     const [name, setName] = useState('');
     const [unit, setUnit] = useState('');
     const [qty, setQty] = useState(0);
@@ -89,8 +88,13 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             const localDateTime = new Date(`${dueDate}T${timeString}`);
             newItem.deadline = localDateTime.toISOString();
         }
-        await db.shoppingListItems.add(newItem);
-        addItemToList(newItem);
+        if( online ) {
+            const onlineItem = await createItem(newItem);
+            addItemToList(onlineItem);
+        } else {
+            await db.shoppingListItems.add(newItem);
+            addItemToList(newItem);
+        }
         clearInputs();
 
     }
@@ -148,7 +152,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                 <button className={styles.showMoreButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>{showMoreInputs ? "Show less" : "Show more"}</button>
                 <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
 
-                {!local ? <div className={styles.claimButtons}>
+                {online ? <div className={styles.claimButtons}>
                     <button onClick={handleClaimItem} className={styles.userSelectorButton}>{claimedBy ? 'Claimed' : 'Claim item'}</button>
                     {claimedBy ? null : <button onClick={()=>setShowUserSelector(true)} className={styles.userSelectorButton}>{assignedTo ? 'Assigned to an user' : 'Assign item to user'}</button>}
                 </div> : null}

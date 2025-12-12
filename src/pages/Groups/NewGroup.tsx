@@ -2,44 +2,57 @@ import { useState } from 'react';
 import styles from './NewGroup.module.css';
 import type { Group, GroupMember } from '../../types/models';
 import { ObjectId } from 'bson';
-import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
+import { createGroup } from '../../services/groupService';
+import { useNavigate } from 'react-router-dom';
 
 const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Group) => void}) => {
 
     const { showNotification } = useNotifications();
+    const navigate = useNavigate();
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [isCreating, setIsCreating] = useState(false)
 
 
     const handleCreateGroup = async () => {
         const userId = localStorage.getItem('userId');
-        const username = localStorage.getItem('username')
-        if(userId){
+        const username = localStorage.getItem('username');
+
+        if(userId && username){
+            const user: GroupMember = {
+                userId,
+                username: username,
+                role: 'owner',
+            }
+            const newId = new ObjectId().toString();
+            const newGroup: Group = {
+                _id: newId,
+                authorId: userId,
+                name: name ?? "My group",
+                description,
+                isDeleted: false,
+                isDirty: true,
+                createdAt: new Date().toISOString(),
+                members: [user],
+                clientId: newId
+            }
+            setIsCreating(true);
             try {
-                const user: GroupMember = {
-                    userId,
-                    username: username ?? 'No Username',
-                    role: 'owner'
+                const groupResponse = await createGroup(newGroup);
+                if(groupResponse){
+                    addGroup(groupResponse)
+                    showNotification("Group created successfully", "success");
+                    navigate(`/group/${groupResponse._id}`)
+                    close();
                 }
-                const newGroup: Group = {
-                    _id: new ObjectId().toString(),
-                    authorId: userId,
-                    name: name ?? "My group",
-                    description,
-                    members: [user],
-                }
-                await db.groups.add(newGroup);
-                addGroup(newGroup)
-                showNotification("Group created successfully", "success");
-                close();
             } catch (error) {
                 console.error(error);
-                showNotification("Failed to create group", "error");
+            } finally {
+                setIsCreating(false)
             }
         }
-        
     }
     return ( 
         <div className={styles.newGroup}>
@@ -55,7 +68,7 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                 </fieldset>
                 <div className={styles.buttons}>
                     <button onClick={close}>Close</button>
-                    <button onClick={handleCreateGroup}>Create</button>
+                    <button onClick={handleCreateGroup} disabled={isCreating}>{isCreating ? 'Saving...' : 'Create'}</button>
                 </div>
             </div>
         </div>

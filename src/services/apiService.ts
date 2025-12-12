@@ -1,7 +1,6 @@
 import axios, { type AxiosInstance } from 'axios';
 
-const BASE_URL: string = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
+const BASE_URL: string = import.meta.env.VITE_API_URL;
 const API: AxiosInstance = axios.create({
     baseURL: BASE_URL,
     headers: {
@@ -11,7 +10,7 @@ const API: AxiosInstance = axios.create({
 });
 
 API.interceptors.request.use(config => {
-    const token = localStorage.getItem('jwt_token'); 
+    const token = localStorage.getItem('jwt-token'); 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -22,7 +21,7 @@ API.interceptors.request.use(config => {
 
 API.interceptors.response.use(response => response, error => {
     if (axios.isAxiosError(error) && error.response && error.response.status === 401) {
-        localStorage.removeItem('jwt_token');
+        localStorage.removeItem('jwt-token');
     }
     return Promise.reject(error);
 });

@@ -1,0 +1,23 @@
+.acceptInvite {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    height: calc(100dvh - var(--bottom-offset));
+    width: 100dvw;
+    color: var(--text-color);
+    padding: 20px;
+}
+.acceptInvite .header{
+    height: 50px;
+    width: 100%;
+}
+.acceptInvite button {
+    width: 100%;
+    height: 50px;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    border-radius: 5px;
+    border: none;
+}
