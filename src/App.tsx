@@ -8,7 +8,6 @@ import { NotificationDisplay } from './Notification/NotificationDisplay.tsx';
 import { useEffect, useState } from 'react';
 import Groups from './pages/Groups/Groups.tsx';
 import ViewGroup from './pages/ViewGroup/ViewGroup.tsx';
-import { ObjectId } from 'bson';
 import { UserProvider } from './contexts/UserContext.tsx';
 import Welcome from './components/Welcome/Welcome.tsx';
 import ViewList from './pages/ViewGroup/Lists/ViewList/ViewList.tsx';
@@ -17,6 +16,7 @@ import { NotificationService } from './helpers/NotificationService.ts';
 import Notifications from './pages/Notifications/Notifications.tsx';
 import Manage from './pages/ViewGroup/Manage/Manage.tsx';
 import AcceptInvite from './pages/Groups/AcceptInvite/AcceptInvite.tsx';
+import GroupDashboard from './pages/ViewGroup/GroupDashboard/GroupDashboard.tsx';
 
 
 function App() {
@@ -57,7 +57,7 @@ function App() {
             <Route path="/" element={<ShoppingLists />} />
             <Route path="/list/:id" element={<ShoppingList />} />
             <Route path="/group/:groupId" element={<ViewGroup />}>
-              <Route index element={<Lists />} />            
+              <Route index element={<GroupDashboard />} />            
               <Route path='lists' element={<Lists />} />            
               <Route path="lists/:listId" element={<ViewList />} />  
               <Route path='manage' element={<Manage />} />            

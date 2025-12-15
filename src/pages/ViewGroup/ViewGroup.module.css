@@ -1,13 +1,13 @@
 .viewGroup {
     width: 100vw;
-    height: calc(100dvh - var(--bottom-offset) + 10px);
+    height: var(--page-height);
     display: grid;
-    grid-template-rows: 50px 1fr 50px;
+    grid-template-rows: var(--page-header-height) 1fr;
     gap: 10px;
     overflow: hidden;
 }
 .header {
-    height: 50px;
+    height: var(--page-header-height);
     width: 100vw;
     display: flex;
     align-items: center;
@@ -34,38 +34,8 @@
     width: 50%;
     height: 50%;
 }
-.screenSwitcher {
-    width: 100%;
-    height: 50px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 10px;
-    background-color: var(--item-bg);
-}
-.screenSwitcher button,
-.screenSwitcher a {
-    width: 100%;
-    height: 100%;
-    border: 1px solid transparent;
-    background-color: transparent;
-    font-size: 1rem;
-    color: var(--text-color);
-    transition: all 0.1s;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.screenSwitcher button.selected,
-.screenSwitcher a.selected {
-    border-top-color: var(--accent);
-    color: var(--accent);
-    transition: all 0.1s;
-}
 
-
-
-.viewGroup .menu {
+.viewGroup .deleteMenu {
     width: 100dvw;
     height: calc(100dvh - var(--bottom-offset));
     z-index: 10;
@@ -76,17 +46,45 @@
     display: flex;
     align-items: center;
 }
+.viewGroup .menu {
+    position: fixed;
+    top: var(--page-header-height);
+    right: 10px;
+    background-color: var(--item-bg);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 10px;
+    animation: showMenu 0.2s;
+}
+.viewGroup .menu button,
+.viewGroup .menu a {
+    padding: 0 10px;
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    background-color: transparent;
+    text-align: start;
+    border: none;
+    color: var(--text-color);
+    z-index: 100;
+    text-decoration: none;
+    font-size: 0.8rem;
+    width: 100%;
+}
 @keyframes showMenu {
     from {
-        transform: translateY(120%);
+        transform: scale(0);
         opacity: 0;
     }
     to {
-        transform: translateY(0%);
+        transform: scale(1);
         opacity: 1;
     }
 }
-.viewGroup .menu .menuContent,
+
 .viewGroup .menu .deleteConfirmation {
     background-color: var(--item-bg);
     border: 1px solid var(--item-border);
@@ -99,34 +97,7 @@
     align-items: center;
     animation: showMenu 0.2s;
 }
-.viewGroup .menu .menuContent h3 {
-    padding: 10px;
-    width: 100%;
-}
-.menuContent button,
-.menuContent a {
-    height: 50px;
-    width: 100%;
-    background-color: transparent;
-    border: none;
-    color: var(--text-color);
-    border-bottom: 1px solid rgba(211, 211, 211, 0.1);
-    flex-shrink: 0;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.menuContent button:last-child {
-    border-bottom: none;
-}
-.menuContent .buttons {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--bg-primary);
-    width: calc(100% - 20px);
-    border-radius: 10px;
-}
+
 
 .deleteConfirmation {
     padding: 10px 20px;

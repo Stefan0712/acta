@@ -69,12 +69,11 @@ const Group = ({data}: {data: Group}) => {
     return (
         <Link to={`/group/${data._id}`} className={styles.group}>
             <div className={styles.top}>
-                <h3>{data.name}</h3>
-                <IconsLibrary.BackArrow style={{transform: 'rotateZ(180deg'}} />
+                <h2>{data.name}</h2>
             </div>
             <div className={styles.bottom}>
                 <div className={styles.metaItem}>
-                    <IconsLibrary.List />
+                    <IconsLibrary.List2 />
                     <p>{data.listCount ?? 0}</p>
                 </div>
                 <div className={styles.metaItem}>

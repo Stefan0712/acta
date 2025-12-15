@@ -1,11 +1,17 @@
 :root {
-    --bg-primary: #1A1A1A;
+    --bg-primary: #0e0e0e;
     --item-bg: #28272A;
     --accent: #ffd900;
     --text-color: white;
     --text-on-accent: #000000;
     --text-muted: rgba(255, 255, 255, 0.5);
     --border: rgba(211, 211, 211, 0.3);
+    --page-header-height: 75px;
+    --navigation-height: 75px;
+    --page-height: calc(100dvh - var(--navigation-height));
+    --white-50: rgba(255, 255, 255, 0.5);
+    --white-25: rgba(255, 255, 255, 0.25);
+    --white-10: rgba(255, 255, 255, 0.1);
 }
 .no-items-text {
     width: 100%;

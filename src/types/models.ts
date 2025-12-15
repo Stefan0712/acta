@@ -11,6 +11,8 @@ export interface ShoppingList {
     isDirty: boolean;
     authorId: string;
     clientId?: string | null;
+    totalItemsCounter?: number;
+    completedItemsCounter?: number;
 }
 
 export interface Product {

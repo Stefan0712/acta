@@ -3,18 +3,40 @@
     height: 100%;
     width: 100%;
     padding: 10px;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 40px 1fr;
     gap: 10px;
+}
+.filters {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.filters button {
+    height: 100%;
+    padding: 0 10px;
+    border: 1px solid rgba(211, 211, 211, 0.2);
+    border-radius: 10px;
+    background-color: transparent;
+    color: var(--text-color);
+}
+.filters button.selectedFilter {
+    background-color: var(--accent);
+    color: var(--text-on-accent);
 }
 .listsContainer {
     display: flex;
     flex-direction: column;
     gap: 10px;
     overflow-y: auto;
+    height: 100%;
+    width: 100%;
 }
 .newListButton {
-    width: 100%;
+    width: 50px;
+    border-radius: 100%;
     height: 50px;
     border: 1px solid transparent;
     background-color: var(--accent);
@@ -22,95 +44,80 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    border-radius: 5px;
+    position: fixed;
+    bottom: calc(var(--navigation-height) + 20px);
+    right: 10px;
 }
 .newListButton svg {
     height: 30px;
     width: 30px;
     color: var(--text-on-accent);
 }
+
 .list {
     width: 100%;
-    height: 40px;
-    padding: 0 10px;
-    align-items: center;
+    padding: 10px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
     background-color: var(--item-bg);
     border-radius: 5px;
-    color: var(--text-color);
-    text-decoration: none;
-    border: 1px solid transparent;
-    text-align: start;
 }
-.deletedLists {
+.listInfo {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 40px;
-    overflow: hidden;
     color: var(--text-color);
+    text-decoration: none;
 }
-.deletedLists.expand {
-    height: auto;
+.listInfo a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
 }
-.deletedHeader {
+
+.listProgress {
+    width: 100%;
+    height: 30px;
     display: grid;
-    grid-template-columns: 1fr 30px;
-    align-items: center;
+    grid-template-columns: 1fr 50px;
     gap: 10px;
-    height: 40px;
-    width: 100%;
-    color: var(--text-color);
-}
-.deletedLists.expand .deletedHeader svg {
-    transform: rotateZ(-90deg);
-    transition: all 0.1s
-}
-.deletedHeader svg {
-    height: 20px;
-    width: 20px;
-    transition: all 0.1s
-}
-.deletedLists .list {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-}
-.deletedLists .list b {
-    height: 40px;
-    width: 100%;
-    text-align: start;
-    display: flex;
     align-items: center;
 }
-.list a {
-    color: var(--text-color);
-    text-decoration: none;
-}
-.deletedLists .list .deleteButtons {
-    height: 40px;
+.progressBarBackground {
+    height: 12px;
     width: 100%;
+    border-radius: 25px;
+    background-color: var(--bg-primary);
+}
+.progressBar {
+    height: 12px;
+    border-radius: 20px;
+}
+.deleteButtons {
+    width: 100%;
+    height: 30px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--white-10);
+    padding-top: 10px;
 }
-.list .deleteButtons button {
-    height: 100%;
+.deleteButtons button {
     width: 100%;
+    height: 100%;
     background-color: transparent;
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    border: none;
+    gap: 10px;
     color: var(--text-color);
 }
-.list .deleteButtons button svg {
-    height: 20px;
-    width: 20px;
-    color: var(--text-color);
-}
-.list .deleteButtons button:nth-child(1) {
+.deleteButtons button:first-child {
     color: red;
 }

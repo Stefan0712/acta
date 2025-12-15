@@ -13,16 +13,16 @@ const Navigation = () => {
         <div className={styles.navigation}>
             {showMenu ? <Menu close={()=>setShowMenu(false)} /> : null}
             <Link to={'/'}>
+                <IconsLibrary.Dashboard />
+                <p>Home</p>
+            </Link>
+            <Link to={'/'}>
                 <IconsLibrary.Lists />
                 <p>Lists</p>
             </Link>
             <Link to={'/groups'}>
                 <IconsLibrary.Group />
                 <p>Groups</p>
-            </Link>
-            <Link to={'/notifications'}>
-                <IconsLibrary.Collection />
-                <p>Notifications</p>
             </Link>
             <button onClick={()=>setShowMenu(prev=>!prev)}>
                 <IconsLibrary.Menu />

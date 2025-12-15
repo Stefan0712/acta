@@ -37,8 +37,22 @@ import List from './list.svg?react';
 import Poll from './poll.svg?react';
 import Note from './note.svg?react';
 import History from './history.svg?react';
+import Activity from './activity.svg?react';
+import Calendar from './calendar.svg?react';
+import Comment from './comment.svg?react';
+import Dashboard from './dashboard.svg?react';
+import List2 from './list2.svg?react';
+import Poll2 from './poll2.svg?react';
+import Search from './search.svg?react';
 
 export const IconsLibrary = {
+  Activity,
+  Calendar,
+  Comment,
+  Dashboard,
+  List2,
+  Poll2,
+  Search,
   List,
   Poll,
   Note,

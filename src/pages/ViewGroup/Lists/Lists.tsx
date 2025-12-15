@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './Lists.module.css';
 import type { ShoppingList } from '../../../types/models';
 import { IconsLibrary } from '../../../assets/icons';
@@ -15,12 +15,13 @@ const Lists = () => {
     const {showNotification} = useNotifications();
     const [showNewList, setShowNewList] = useState(false);
     const [lists, setLists] = useState<ShoppingList[]>([]);
-    const [showDeleted, setShowDeleted] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedFilter, setSelectedFilter] = useState('active');
     
     useEffect(()=>{
         getLists();
     },[groupId]);
+
     const getLists = async () => {
         if (!groupId) return;
         try {
@@ -34,6 +35,27 @@ const Lists = () => {
             setIsLoading(false); 
         }
     };
+
+    const filteredLists = useMemo(() => {
+        if (!lists) return [];
+
+        return lists.filter(list => {
+            const isListCompleted = list.completedItemsCounter === list.totalItemsCounter;
+            switch (selectedFilter) {
+                case 'active':
+                    return !list.isDeleted && !isListCompleted;
+                case 'completed':
+                    return !list.isDeleted && isListCompleted;
+
+                case 'deleted':
+                    return list.isDeleted === true;
+                default:
+                    return false;
+            }
+        });
+    }, [lists, selectedFilter]);
+
+
     if (!localStorage.getItem('jwt-token')) {
         return ( <Auth /> )
     } else if(isLoading) {
@@ -41,22 +63,17 @@ const Lists = () => {
     } else if (lists) {
         return ( 
             <div className={styles.lists}>
+                <div className={styles.filters}>
+                    <button onClick={()=>setSelectedFilter('active')} className={selectedFilter === 'active' ? styles.selectedFilter : ''}>Active</button>
+                    <button onClick={()=>setSelectedFilter('completed')} className={selectedFilter === 'completed' ? styles.selectedFilter : ''}>Completed</button>
+                    <button onClick={()=>setSelectedFilter('deleted')} className={selectedFilter === 'deleted' ? styles.selectedFilter : ''}>Deleted</button>
+                </div>
                 <div className={styles.listsContainer}>
                     {showNewList ? <NewShoppingList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} groupId={groupId} /> : null}
                     {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
                         <IconsLibrary.Plus />
-                        <b>New List</b>
                     </button>}
-                    {lists?.length > 0 ? lists.filter(item=>!item.isDeleted).map((list, index)=><List data={list} key={index} />) : <p className='no-items-text'>There are no lists.</p>}
-                    <div className={`${styles.deletedLists} ${showDeleted ? styles.expand : ''}`}>
-                        {lists?.length > 0 ? <div className={`${styles.deletedLists} ${showDeleted ? styles.expand : ''}`}>
-                            <div className={styles.deletedHeader} onClick={()=>setShowDeleted(prev=>!prev)}>
-                                <h4>Deleted</h4>
-                                <IconsLibrary.Arrow />
-                            </div>
-                            {lists.filter(item=>item.isDeleted).map((list, index)=><List updateLists={getLists} data={list} key={index} />) }
-                        </div> : null}
-                    </div>
+                    {filteredLists?.length > 0 ? filteredLists.map((list, index)=><List data={list} key={index} />) : <p className='no-items-text'>There are no lists.</p>}
                 </div>
             </div>
         );
@@ -69,17 +86,15 @@ export default Lists;
 
 interface ListProps {
     data: ShoppingList;
-    updateLists: ()=>void;
 }
 
-const List: React.FC<ListProps> = ({data, updateLists}) => {
+const List: React.FC<ListProps> = ({data}) => {
     const {showNotification} = useNotifications();
 
     const restoreList = async () =>{
         if(data._id) {
             try {
                 await updateList(data._id, {isDeleted: false});
-                updateLists();
                 showNotification("List restored", "success");
             } catch (error) {
                 console.error(error);
@@ -91,7 +106,6 @@ const List: React.FC<ListProps> = ({data, updateLists}) => {
         if(data._id) {
             try {
                 await deleteList(data._id);
-                updateLists();
                 showNotification("List deleted permanently", "success");
             } catch (error) {
                 console.error(error);
@@ -101,7 +115,16 @@ const List: React.FC<ListProps> = ({data, updateLists}) => {
     }
     return (
         <div className={styles.list}>
-            <Link to={`lists/${data._id}`}>{data.name}</Link>
+            <div className={styles.listInfo}>
+                 <Link to={`${data._id}`}>{data.name}</Link>
+                {data.description ? <p className={styles.listDescription}>{data.description}</p> : null }    
+                <div className={styles.listProgress}>
+                    <div className={styles.progressBarBackground}>
+                        <div className={styles.progressBar} style={{backgroundColor: data.color, width: data?.totalItemsCounter === 0 ? '0px' : `${((data.completedItemsCounter ?? 0)/(data.totalItemsCounter ?? 0))*100}%`}} />
+                    </div>
+                    <b>{data.completedItemsCounter}/{data.totalItemsCounter}</b>
+                </div>
+            </div>
             {data.isDeleted ? <div className={styles.deleteButtons}>
                 <button onClick={permanentlyDelete}><IconsLibrary.Delete />Permanently Delete</button>
                 <button onClick={restoreList}><IconsLibrary.Undo />Restore</button>

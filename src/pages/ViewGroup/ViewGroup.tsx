@@ -9,7 +9,6 @@ import Auth from '../Auth/Auth';
 import Loading from '../../components/LoadingSpinner/Loading';
 import EditGroup from '../Groups/EditGroup';
 
-type ScreenTypes = "lists" | "notes" | "manage";
 const ViewGroup = () => {
 
     const {groupId} = useParams();
@@ -17,7 +16,6 @@ const ViewGroup = () => {
     const navigate = useNavigate();
 
     const [groupData, setGroupData] = useState<Group | null>();
-    const [currentScreen, setCurrentScreen] = useState<ScreenTypes>("lists");
     const [isLoading, setIsLoading] = useState(true);
 
     const [showMenu, setShowMenu] = useState(false);
@@ -51,23 +49,17 @@ const ViewGroup = () => {
     }else if(groupData && groupId) {
         return ( 
             <div className={styles.viewGroup}>
-                {showMenu ? <Menu close={()=>setShowMenu(false)} showEdit={()=>setShowEdit(true)} groupId={groupId} setCurrentScreen={(newScreen: ScreenTypes)=>setCurrentScreen(newScreen)} /> : null}
+                {showMenu ? <Menu close={()=>setShowMenu(false)} showEdit={()=>setShowEdit(true)} groupId={groupId} /> : null}
                 {showEdit ? <EditGroup groupId={groupId} close={()=>setShowEdit(false)} handleLocalUpdate={(newData)=>setGroupData(newData)}/> : null}    
                 <div className={styles.header}>
                     <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
                     <h3>{groupData.name}</h3>
                     <button onClick={()=>setShowMenu(prev=>!prev)}>
-                        <IconsLibrary.Dots />
+                        <IconsLibrary.Settings />
                     </button>
                 </div>
                 <div className={styles.content}>
                     <Outlet />
-                </div>
-                <div className={styles.screenSwitcher}>
-                    <Link to={'lists'} className={currentScreen === "lists" ? styles.selected : ""} onClick={()=>setCurrentScreen('lists')}>Lists</Link>
-                    <button className={currentScreen === "notes" ? styles.selected : ""} onClick={()=>setCurrentScreen('notes')}>Notes</button>
-                    <button className={currentScreen === "notes" ? styles.selected : ""} onClick={()=>setCurrentScreen('notes')}>Polls</button>
-                    <button className={currentScreen === "notes" ? styles.selected : ""} onClick={()=>setCurrentScreen('notes')}>Activity</button>
                 </div>
             </div>
         );
@@ -78,7 +70,7 @@ const ViewGroup = () => {
 export default ViewGroup;
 
 
-const Menu = ({close, showEdit, groupId, setCurrentScreen}: {close: ()=> void, showEdit: ()=>void, groupId: string, setCurrentScreen: (newScreen: ScreenTypes) => void}) => {
+const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void, groupId: string}) => {
     
     const [showDelete, setShowDelete] = useState(false);
     const handleLeaveGroup = () =>{
@@ -94,18 +86,12 @@ const Menu = ({close, showEdit, groupId, setCurrentScreen}: {close: ()=> void, s
 
     return (
         <div className={styles.menu}>
-            {showDelete ? <DeleteConfirmation close={()=>setShowDelete(false)} groupId={groupId} />  :
-            <div className={styles.menuContent}>
-                <h3>Group menu</h3>
-                <div className={styles.buttons}>
-                    <Link to={'manage'} onClick={()=>(setCurrentScreen('manage'), close())}>Manage</Link>
-                    <button onClick={handleEdit}>Edit Group</button>
-                    <button onClick={handleDelete}>Delete Group</button>
-                    <button onClick={handleLeaveGroup}>Leave Group</button>
-                    <button onClick={close}>Close</button>
-                </div>
-            </div> }
-            
+            {showDelete ? <div className={styles.deleteMenu}><DeleteConfirmation close={()=>setShowDelete(false)} groupId={groupId} /> </div>  : null}
+            <Link to={'manage'} onClick={()=>close()}><IconsLibrary.Group /><p>Manage Group</p></Link>
+            <button onClick={handleEdit}><IconsLibrary.Edit /><p>Edit Group</p></button>
+            <button onClick={handleDelete}><IconsLibrary.Delete /><p>Delete Group</p></button>
+            <button onClick={handleLeaveGroup}><IconsLibrary.Logout /><p>Leave Group</p></button>
+            <button onClick={close}>Close</button>            
         </div>
     )
 }
