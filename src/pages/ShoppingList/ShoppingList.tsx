@@ -9,6 +9,7 @@ import NewShoppingListItem from '../../components/NewShoppingListItem/NewShoppin
 import { getDateAndHour } from '../../helpers/dateFormat.ts';
 import EditShoppingList from '../../components/EditShoppingList/EditShoppingList.tsx';
 import ListItem from '../../components/ListItem/ListItem.tsx';
+import Loading from '../../components/LoadingSpinner/Loading.tsx';
 
 
 
@@ -103,12 +104,7 @@ const ShoppingList = () => {
 
     if(!listData) {
         return (
-            <div className={styles.shoppingList}>
-                <div className={styles.header}>
-                    <Link to={'/'}><IconsLibrary.BackArrow fill='white'/></Link>
-                    <h2>View List</h2>
-                </div>
-            </div>
+           <Loading />
         )
     } else {
         return ( 

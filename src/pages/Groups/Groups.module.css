@@ -5,28 +5,33 @@
     grid-template-rows: 50px 1fr;
     gap: 10px;
 }
-.groups .header {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 1fr 50px;
+.header {
+    height: var(--page-header-height);
+    width: 100vw;
+    display: flex;
     align-items: center;
-    padding-left: 10px;
+    justify-content: space-between;
     color: var(--text-color);
 }
-.header button {
+.header button,
+.header a {
     height: 50px;
     width: 50px;
-    background-color: transparent;
-    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: transparent;
+    border: none;
 }
-.header button svg {
+.header button svg,
+.header a svg {
     width: 70%;
     height: 70%;
     color: var(--text-color);
+}
+.header button svg {
+    width: 50%;
+    height: 50%;
 }
 .noGroupsText {
     width: 100%;
@@ -45,7 +50,25 @@
     padding: 10px;
 }
 
-
+.addButton {
+    width: 50px;
+    border-radius: 100%;
+    height: 50px;
+    border: 1px solid transparent;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: calc(var(--navigation-height) + 20px);
+    right: 10px;
+}
+.addButton svg {
+    height: 30px;
+    width: 30px;
+    color: var(--text-on-accent);
+}
 
 /* Group Item */
 
@@ -77,15 +100,14 @@
 }
 .group .bottom {
     width: 100%;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 10px;
     align-items: center;
-    padding-bottom: 10px;
+    padding: 10px;
+    border-top: 1px solid var(--white-10);
 }
 .group .bottom .metaItem {
-    padding: 5px 10px;
-    background-color: var(--bg-primary);
-    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;

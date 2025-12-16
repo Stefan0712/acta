@@ -4,7 +4,7 @@ import NewGroup from './NewGroup';
 import { type Group } from '../../types/models';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { IconsLibrary } from '../../assets/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Auth from '../Auth/Auth';
 import { getMyGroups } from '../../services/groupService';
 import Loading from '../../components/LoadingSpinner/Loading';
@@ -14,6 +14,7 @@ const Groups = () => {
     
     const userToken = localStorage.getItem('jwt-token');
     const { showNotification } = useNotifications();
+    const navigate = useNavigate();
 
     const [showNewGroup, setShowNewGroup] = useState(false);
     const [groups, setGroups] = useState<Group[]>([]);
@@ -50,9 +51,11 @@ const Groups = () => {
         return ( 
             <div className={styles.groups}>
                 {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} addGroup={(newGroup)=>setGroups(prev=>[...prev, newGroup])} /> : null}
+                <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button>
                 <div className={styles.header}>
+                    <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
                     <h2>My Groups</h2>
-                    <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button>
+                    <button><IconsLibrary.Bell /></button>
                 </div>
                 <div className={styles.groupsContainer}>
                     {groups?.length > 0 ? groups.map(item=><Group key={item._id} data={item} />) : <p className={styles.noGroupsText}>You have no groups. Create one or join one.</p>}

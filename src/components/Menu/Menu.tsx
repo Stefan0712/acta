@@ -15,9 +15,9 @@ const Menu = ({close}: {close:()=>void}) => {
     return ( 
         <div className={styles.menu}>
             <h2>Menu</h2>
-            <p>Username: {localStorage.getItem('username')}</p>
+            {/* <p>Username: {localStorage.getItem('username')}</p>
             <p>Id: {localStorage.getItem('userId')}</p>
-            <p>Token: {isLoggedIn}</p>
+            <p>Token: {isLoggedIn}</p> */}
             <div className={styles.section}>
                 <Link to={'/'}>
                     <IconsLibrary.Collection />

@@ -1,9 +1,8 @@
 import { useRef, useState } from 'react';
 import styles from './NewShoppingListItem.module.css';
-import { type Store, type ShoppingListItem, type Category, type GroupMember } from '../../types/models';
+import { type ShoppingListItem, type Category, type GroupMember } from '../../types/models';
 import { ObjectId } from 'bson';
 import {IconsLibrary} from '../../assets/icons.ts';
-import StoreSelector from '../StoreSelector/StoreSelector';
 import CategorySelector from '../CategorySelector/CategorySelector';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
@@ -37,14 +36,12 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     const moreInputsRef = useRef<HTMLDivElement>(null);
 
 
-    const [store, setStore] = useState<Store | null>(null);
     const [category, setCategory] = useState<Category | null>(null);
 
     const [showMoreInputs, setShowMoreInputs] = useState(false);
     const [showNewTag, setShowNewTag] = useState(false);
     const [showUserSelector, setShowUserSelector] = useState(false);
 
-    const [showStoreSelector, setShowStoreSelector] = useState(false);
     const [showCategorySelector, setShowCategorySelector] = useState(false);
 
 
@@ -68,10 +65,9 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             authorId: userId,
             isReminderSent: false,
             reminder,
+            isDirty: true,
+            clientId: itemId
         };
-        if(store){
-            newItem.store = store;
-        }
         if(category){
             newItem.category = category;
         }
@@ -104,7 +100,6 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
         setQty(0);
         setDescription('');
         setCategory(null);
-        setStore(null);
         setIsPinned(false);
         setAssignedTo(null);
         setTags([]);
@@ -135,7 +130,6 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     ];
     return ( 
         <div className={styles.newItem}>
-            {showStoreSelector ? <StoreSelector close={()=>setShowStoreSelector(false)} selectStore={(newStore)=>setStore(newStore)} currentStore={store} /> : null}
             {showCategorySelector ? <CategorySelector close={()=>setShowCategorySelector(false)} selectCategory={(newCategory)=>setCategory(newCategory)} currentCategory={category} /> : null}
             {showUserSelector ? <UserSelector users={members ?? []} close={()=>setShowUserSelector(false)} selectUser={(user)=>setAssignedTo(user)} selectedUser={assignedTo} /> : null}
             <div className={styles.header}>
@@ -188,10 +182,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                     <button className={styles.iconButton} onClick={()=>setShowNewTag(prev=>!prev)}><IconsLibrary.Plus /></button>
                 </div>
                 {showNewTag ? <NewTag addTag={addTag}/> : null}
-                <div className={styles.twoCols}>
-                    <button style={store ? {borderColor: store.color} : {}} onClick={()=>setShowStoreSelector(true)}>{store ? store.name : 'Select Store'}</button>
-                    <button style={category ? {borderColor: category.color} : {}} onClick={()=>setShowCategorySelector(true)}>{category ? category.name : 'Select Category'}</button>
-                </div>
+                <button style={category ? {borderColor: category.color} : {}} onClick={()=>setShowCategorySelector(true)}>{category ? category.name : 'Select Category'}</button>
                 {showMoreInputs ? <button className={styles.largeAddButton} onClick={addNewItem}><IconsLibrary.Plus /> Add Item</button> : null}
             </div>
         </div>

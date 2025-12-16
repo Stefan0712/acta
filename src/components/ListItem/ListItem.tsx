@@ -90,33 +90,17 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, online}) =>
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
                     </div>
                     <div onClick={()=>setExpandItem(prev=>!prev)} className={styles.mainInfo}>
-                        <p>1{data.name}</p>
-                        {!expandItem ? <div className={styles.twoCols}>
-                            <div className={styles.col}>
-                                <IconsLibrary.Category />
-                                <p>{data?.category?.name ?? 'No category'}</p>
-                            </div>
-                            <div className={styles.col}>
-                                <IconsLibrary.Store />
-                                <p>{data?.store?.name ?? 'No store'}</p>
-                            </div>
-                        </div> : null}
+                        <p>{data.name}</p>
                     </div>
                     <b>{data.qty} {data.unit}</b>
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>
                     <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>
                     {data.description ? <p>{data.description}</p> : null }
-                    {expandItem ? <div className={styles.twoCols}>
-                            <div className={styles.col}>
-                                <IconsLibrary.Category />
-                                <p>{data?.category?.name ?? 'No category'}</p>
-                            </div>
-                            <div className={styles.col}>
-                                <IconsLibrary.Store />
-                                <p>{data?.store?.name ?? 'No store'}</p>
-                            </div>
-                        </div> : null}
+                    <div className={styles.col}>
+                        <IconsLibrary.Category />
+                        <p>{data?.category?.name ?? 'No category'}</p>
+                    </div>
                      <div className={styles.deadline}>
                         <IconsLibrary.Time />
                         {data.deadline ? <p>Due {formatDeadline(data.deadline)}</p> : <p>No deadline</p>}

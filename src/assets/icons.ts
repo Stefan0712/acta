@@ -44,8 +44,10 @@ import Dashboard from './dashboard.svg?react';
 import List2 from './list2.svg?react';
 import Poll2 from './poll2.svg?react';
 import Search from './search.svg?react';
+import Bell from './bell.svg?react';
 
 export const IconsLibrary = {
+  Bell,
   Activity,
   Calendar,
   Comment,
