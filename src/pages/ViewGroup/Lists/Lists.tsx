@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import styles from './Lists.module.css';
 import type { ShoppingList } from '../../../types/models';
 import { IconsLibrary } from '../../../assets/icons';
-import NewShoppingList from '../../../components/NewShoppingList/NewShoppingList';
+import NewList from '../../../components/NewList/NewList';
 import { Link, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../Notification/NotificationContext';
 import { deleteList, getGroupLists, updateList } from '../../../services/listService';
@@ -69,7 +69,7 @@ const Lists = () => {
                     <button onClick={()=>setSelectedFilter('deleted')} className={selectedFilter === 'deleted' ? styles.selectedFilter : ''}>Deleted</button>
                 </div>
                 <div className={styles.listsContainer}>
-                    {showNewList ? <NewShoppingList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} groupId={groupId} /> : null}
+                    {showNewList ? <NewList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} groupId={groupId} /> : null}
                     {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
                         <IconsLibrary.Plus />
                     </button>}

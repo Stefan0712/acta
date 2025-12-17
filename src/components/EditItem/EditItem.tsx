@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import styles from './EditItem.module.css';
-import { type Store, type ShoppingListItem, type Category, type GroupMember } from '../../types/models';
+import { type ShoppingListItem, type GroupMember } from '../../types/models';
 import {IconsLibrary} from '../../assets/icons.ts';
-import StoreSelector from '../StoreSelector/StoreSelector';
-import CategorySelector from '../CategorySelector/CategorySelector';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
 import { loadItem } from '../../helpers/deadlineFormatter.ts';
@@ -31,15 +29,11 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
     const [claimedBy, setClaimedBy] = useState<string | null>(itemData.claimedBy ?? null);
     const [dueDate, setDueDate] = useState(itemData.deadline ? loadItem(itemData.deadline).slice(0,10) : '');
     const [dueTime, setDueTime] = useState(itemData.deadline ? loadItem(itemData.deadline).slice(11,16) : '');
-    const [store, setStore] = useState<Store | null>(itemData.store ?? null);
-    const [category, setCategory] = useState<Category | null>(itemData.category ?? null);
     const [reminder, setReminder] = useState(itemData.reminder ?? 0);
 
     const [showNewTag, setShowNewTag] = useState(false);
     const [showUserSelector, setShowUserSelector] = useState(false);
 
-    const [showStoreSelector, setShowStoreSelector] = useState(false);
-    const [showCategorySelector, setShowCategorySelector] = useState(false);
     // TODO : Fix update function not updating the shopping list
     const addNewItem = async () =>{
         console.log(itemData)
@@ -53,12 +47,6 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
             tags,
             priority
         };
-        if(store){
-            updatedItem.store = store;
-        }
-        if(category){
-            updatedItem.category = category;
-        }
         if(assignedTo) {
             updatedItem.assignedTo = assignedTo;
         }
@@ -107,8 +95,6 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
     ];
     return ( 
          <div className={styles.newItem}>
-            {showStoreSelector ? <StoreSelector close={()=>setShowStoreSelector(false)} selectStore={(newStore)=>setStore(newStore)} currentStore={store} /> : null}
-            {showCategorySelector ? <CategorySelector close={()=>setShowCategorySelector(false)} selectCategory={(newCategory)=>setCategory(newCategory)} currentCategory={category} /> : null}
             {members && showUserSelector ? <UserSelector users={members} close={()=>setShowUserSelector(false)} selectUser={(user)=>setAssignedTo(user)} selectedUser={assignedTo} /> : null}
             <div className={styles.header}>
                 <h3>Edit Item</h3>
@@ -158,10 +144,6 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
                     <button className={styles.iconButton} onClick={()=>setShowNewTag(prev=>!prev)}><IconsLibrary.Plus /></button>
                 </div>
                 {showNewTag ? <NewTag addTag={addTag}/> : null}
-                <div className={styles.twoCols}>
-                    <button style={store ? {borderColor: store.color} : {}} onClick={()=>setShowStoreSelector(true)}>{store ? store.name : 'Select Store'}</button>
-                    <button style={category ? {borderColor: category.color} : {}} onClick={()=>setShowCategorySelector(true)}>{category ? category.name : 'Select Category'}</button>
-                </div>
                 <button className={styles.largeAddButton} onClick={addNewItem}><IconsLibrary.Save /> Save</button>
             </div>
         </div>

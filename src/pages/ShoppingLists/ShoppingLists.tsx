@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './ShoppingLists.module.css';
-import NewShoppingList from '../../components/NewShoppingList/NewShoppingList';
+import NewList from '../../components/NewList/NewList';
 import { type ShoppingListItem, type ShoppingList } from '../../types/models';
 import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
@@ -93,7 +93,7 @@ const ShoppingLists = () => {
                 <button onClick={()=>setSelectedFilter('deleted')} className={selectedFilter === 'deleted' ? styles.selectedFilter : ''}>Deleted</button>
             </div>
             <div className={styles.listsContainer}>
-                {showNewList ? <NewShoppingList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} /> : null}
+                {showNewList ? <NewList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} /> : null}
                 {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
                     <IconsLibrary.Plus />
                 </button>}

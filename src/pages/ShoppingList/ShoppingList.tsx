@@ -5,9 +5,9 @@ import { db } from '../../db';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../Notification/NotificationContext';
 import {IconsLibrary} from '../../assets/icons.ts';
-import NewShoppingListItem from '../../components/NewShoppingListItem/NewShoppingListItem.js';
+import NewShoppingListItem from '../../components/NewItem/NewItem.js';
 import { getDateAndHour } from '../../helpers/dateFormat.ts';
-import EditShoppingList from '../../components/EditShoppingList/EditShoppingList.tsx';
+import EditShoppingList from '../../components/EditList/EditList.tsx';
 import ListItem from '../../components/ListItem/ListItem.tsx';
 import Loading from '../../components/LoadingSpinner/Loading.tsx';
 

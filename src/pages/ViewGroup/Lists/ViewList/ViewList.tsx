@@ -4,9 +4,9 @@ import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList, 
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../../Notification/NotificationContext';
 import {IconsLibrary} from '../../../../assets/icons.ts';
-import NewShoppingListItem from '../../../../components/NewShoppingListItem/NewShoppingListItem.js';
+import NewItem from '../../../../components/NewItem/NewItem';
 import { getDateAndHour } from '../../../../helpers/dateFormat.ts';
-import EditShoppingList from '../../../../components/EditShoppingList/EditShoppingList.tsx';
+import EditList from '../../../../components/EditList/EditList';
 import GroupListItem from '../GroupListItem/GroupListItem.tsx'
 import {  getList, updateList } from '../../../../services/listService.ts';
 import { getListItems } from '../../../../services/itemService.ts';
@@ -128,7 +128,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
         return ( 
             <div className={styles.viewList}>
                 {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={handleDeleteList} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
-                {showEdit ? <EditShoppingList close={()=>setShowEdit(false)} online={true} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
+                {showEdit ? <EditList close={()=>setShowEdit(false)} online={true} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
                 <div className={styles.listMeta}>
                     <div className={styles.listName}>
                         <h2>{listData.name}</h2>
@@ -154,7 +154,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                     }
                 </div>
                 {showNewItem ? null  : <button onClick={()=>setShowNewItem(true)} className={styles.newItemButton}><IconsLibrary.Plus /></button>}
-                {showNewItem && listData?._id ? <NewShoppingListItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} close={()=>setShowNewItem(false)}/> : null}
+                {showNewItem && listData?._id ? <NewItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} close={()=>setShowNewItem(false)}/> : null}
             </div>
         );
     }

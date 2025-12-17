@@ -1,9 +1,8 @@
 import { useRef, useState } from 'react';
-import styles from './NewShoppingListItem.module.css';
-import { type ShoppingListItem, type Category, type GroupMember } from '../../types/models';
+import styles from './NewItem.module.css';
+import { type ShoppingListItem, type GroupMember } from '../../types/models';
 import { ObjectId } from 'bson';
 import {IconsLibrary} from '../../assets/icons.ts';
-import CategorySelector from '../CategorySelector/CategorySelector';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
 import { NotificationService } from '../../helpers/NotificationService.ts';
@@ -36,13 +35,11 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     const moreInputsRef = useRef<HTMLDivElement>(null);
 
 
-    const [category, setCategory] = useState<Category | null>(null);
 
     const [showMoreInputs, setShowMoreInputs] = useState(false);
     const [showNewTag, setShowNewTag] = useState(false);
     const [showUserSelector, setShowUserSelector] = useState(false);
 
-    const [showCategorySelector, setShowCategorySelector] = useState(false);
 
 
     const addNewItem = async () =>{
@@ -68,9 +65,6 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             isDirty: true,
             clientId: itemId
         };
-        if(category){
-            newItem.category = category;
-        }
         if(assignedTo) {
             newItem.assignedTo = assignedTo;
             NotificationService.send({recipientId: assignedTo, category: "ASSIGNMENT", message: `${name} was assigned to you`, metadata: {listId, itemId}});
@@ -99,7 +93,6 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
         setUnit('');
         setQty(0);
         setDescription('');
-        setCategory(null);
         setIsPinned(false);
         setAssignedTo(null);
         setTags([]);
@@ -130,16 +123,15 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     ];
     return ( 
         <div className={styles.newItem}>
-            {showCategorySelector ? <CategorySelector close={()=>setShowCategorySelector(false)} selectCategory={(newCategory)=>setCategory(newCategory)} currentCategory={category} /> : null}
             {showUserSelector ? <UserSelector users={members ?? []} close={()=>setShowUserSelector(false)} selectUser={(user)=>setAssignedTo(user)} selectedUser={assignedTo} /> : null}
             <div className={styles.header}>
-                <h3>Add New Item</h3>
+                <h3>New Item</h3>
                 <button onClick={close}><IconsLibrary.Close /></button>
             </div>
             <div className={styles.basicInputs} style={showMoreInputs ? {gridTemplateColumns: '2fr 1fr 1fr'} : {}}>
                 <input autoComplete="off" type="text" name="name" onChange={(e)=>setName(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
-                <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
                 <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
+                <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
                 <button className={styles.iconButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
             </div>
             <div className={`${styles.moreInputs} ${showMoreInputs ? styles.show : ''}`} ref={moreInputsRef}>
@@ -160,10 +152,8 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                 </div>
                 <div className={styles.deadline}>
                     <p>Deadline</p>
-                    <div className={styles.deadlineInputs}>
-                        <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={styles.dateInput} min={new Date().toISOString().split("T")[0]}  />
-                        <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
-                    </div>
+                    <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={styles.dateInput} min={new Date().toISOString().split("T")[0]}  />
+                    <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
                 </div>
                 {dueDate && dueTime ? <div className={styles.priority}>
                     <p>Reminder</p>
@@ -182,7 +172,6 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                     <button className={styles.iconButton} onClick={()=>setShowNewTag(prev=>!prev)}><IconsLibrary.Plus /></button>
                 </div>
                 {showNewTag ? <NewTag addTag={addTag}/> : null}
-                <button style={category ? {borderColor: category.color} : {}} onClick={()=>setShowCategorySelector(true)}>{category ? category.name : 'Select Category'}</button>
                 {showMoreInputs ? <button className={styles.largeAddButton} onClick={addNewItem}><IconsLibrary.Plus /> Add Item</button> : null}
             </div>
         </div>

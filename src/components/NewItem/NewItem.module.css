@@ -190,7 +190,7 @@
     grid-template-columns: 1fr 1fr 1fr;
 }
 .priority button {
-    height: 30px;
+    height: 40px;
     padding: 0 10px;
     border-radius: 5px;
     background-color: transparent;
@@ -263,18 +263,14 @@
     width: 25px;
 }
 .deadline {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.deadlineInputs {
     width: 100%;
     height: 40px;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: auto 2fr 1fr;
+    align-items: center;
     gap: 10px;
 }
-.deadlineInputs input {
+.deadline input {
     height: 100%;
     width: 100%;
     background-color: white;

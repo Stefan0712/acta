@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import styles from './EditShoppingList.module.css';
+import styles from './EditList.module.css';
 import type { ShoppingList } from '../../types/models';
 import SwitchButton from '../SwitchButton/SwitchButton';
 import { db } from '../../db';

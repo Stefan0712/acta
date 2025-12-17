@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from './NewShoppingList.module.css';
+import styles from './NewList.module.css';
 import type { ShoppingList } from '../../types/models';
 import { ObjectId } from 'bson';
 import SwitchButton from '../SwitchButton/SwitchButton';
