@@ -17,6 +17,7 @@ import Notifications from './pages/Notifications/Notifications.tsx';
 import Manage from './pages/ViewGroup/Manage/Manage.tsx';
 import AcceptInvite from './pages/Groups/AcceptInvite/AcceptInvite.tsx';
 import GroupDashboard from './pages/ViewGroup/GroupDashboard/GroupDashboard.tsx';
+import Activity from './pages/Groups/Activity/Activity.tsx';
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
             <Route path="/group/:groupId" element={<ViewGroup />}>
               <Route index element={<GroupDashboard />} />            
               <Route path='lists' element={<Lists />} />            
+              <Route path='activity' element={<Activity />} />            
               <Route path="lists/:listId" element={<ViewList />} />  
               <Route path='manage' element={<Manage />} />            
             </Route>        

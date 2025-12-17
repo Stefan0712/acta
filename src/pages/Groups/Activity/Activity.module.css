@@ -1,0 +1,56 @@
+.activity {
+    width: 100dvw;
+    height: 100%;
+    padding: 10px;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.filters {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.filters button {
+    color: var(--text-color);
+    padding: 10px;
+    background-color: transparent;
+    border-radius: 10px;
+    border: 1px solid var(--white-10);
+}
+.filters button.selectedFilter {
+    border-color: var(--accent);
+}
+.logsContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+}
+.log {
+    border-left: 1px solid var(--white-10);
+    padding-left: 20px;
+    position: relative;
+    display: flex;
+    padding-bottom: 25px;
+}
+.log .content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+.log .content b {
+    color: var(--white-25);
+}
+.log .logCircle {
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    border: 1px solid var(--white-50);
+    position: absolute;
+    left: -5px;
+    top: 10px;
+}
