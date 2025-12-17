@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './ShoppingLists.module.css';
 import NewShoppingList from '../../components/NewShoppingList/NewShoppingList';
 import { type ShoppingListItem, type ShoppingList } from '../../types/models';
@@ -51,6 +51,24 @@ const ShoppingLists = () => {
         }
     };
 
+    const filteredLists = useMemo(() => {
+        if (!lists) return [];
+
+        return lists.filter(list => {
+            const isListCompleted = list.completedItemsCounter === list.totalItemsCounter && list.totalItemsCounter !== undefined && list.totalItemsCounter > 0;
+            switch (selectedFilter) {
+                case 'active':
+                    return !list.isDeleted && !isListCompleted;
+                case 'completed':
+                    return !list.isDeleted && isListCompleted;
+                
+                case 'deleted':
+                    return list.isDeleted === true;
+                default:
+                    return false;
+            }
+        });
+    }, [lists, selectedFilter]);
     // const restoreList = async (listId: string) =>{
     //     try {
     //         await db.shoppingLists.update(listId, {isDeleted: false});
@@ -79,7 +97,7 @@ const ShoppingLists = () => {
                 {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
                     <IconsLibrary.Plus />
                 </button>}
-                {lists?.length > 0 ? lists.map(list=><List data={list} />) : <p className='no-items-text'>There are no lists.</p>}
+                {filteredLists?.length > 0 ? filteredLists.map(list=><List data={list} />) : <p className='no-items-text'>There are no lists.</p>}
             </div>
         </div>
      );

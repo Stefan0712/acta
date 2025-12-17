@@ -20,14 +20,6 @@ const Menu = ({close}: {close:()=>void}) => {
             <p>Token: {isLoggedIn}</p> */}
             <div className={styles.section}>
                 <Link to={'/'}>
-                    <IconsLibrary.Collection />
-                    <p>Items Collection</p>
-                </Link>
-                <Link to={'/'}>
-                    <IconsLibrary.Store />
-                    <p>My Stores</p>
-                </Link>
-                <Link to={'/'}>
                     <IconsLibrary.Category />
                     <p>My Categories</p>
                 </Link>
