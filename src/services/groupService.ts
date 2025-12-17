@@ -1,4 +1,4 @@
-import type { Group, Invite, InviteLookupData } from '../types/models.ts';
+import type { Group, Invite, InviteLookupData, ActivityLog } from '../types/models.ts';
 import API from './apiService.ts';
 import axios from 'axios';
 
@@ -137,6 +137,23 @@ export async function updateGroup(groupData: Partial<Group>): Promise<Group> {
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             throw new Error(error.response.data.message || 'Server error updating group.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+
+// Get group's activity
+export async function getGroupActivity(groupId: string): Promise<ActivityLog[]> {
+    try {
+        const response = await API.get(`/activity/${groupId}/`);
+        if (response.status === 200) {
+            return response.data.data;
+        }
+        throw new Error(response.data.message || 'Failed to get group activity.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error fetching activity.');
         }
         throw new Error('Network error or unknown issue.');
     }

@@ -35,6 +35,8 @@
     position: relative;
     display: flex;
     padding-bottom: 25px;
+    color: var(--text-color);
+    text-decoration: none;
 }
 .log .content {
     display: flex;
