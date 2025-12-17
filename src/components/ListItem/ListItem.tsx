@@ -92,23 +92,19 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, online}) =>
                     <div onClick={()=>setExpandItem(prev=>!prev)} className={styles.mainInfo}>
                         <p>{data.name}</p>
                     </div>
-                    <b>{data.qty} {data.unit}</b>
+                    <b>{data.qty > 0 ? data.qty : ''} {data.unit ?? ''}</b>
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>
                     <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>
                     {data.description ? <p>{data.description}</p> : null }
-                    <div className={styles.col}>
-                        <IconsLibrary.Category />
-                        <p>{data?.category?.name ?? 'No category'}</p>
-                    </div>
-                     <div className={styles.deadline}>
+                    {data.deadline ? <div className={styles.deadline}>
                         <IconsLibrary.Time />
                         {data.deadline ? <p>Due {formatDeadline(data.deadline)}</p> : <p>No deadline</p>}
-                    </div>
-                    <div className={styles.tags}>
+                    </div> : null}
+                    {data.tags && data.tags.length > 0 ? <div className={styles.tags}>
                         <IconsLibrary.Tag />
                         {data.tags && data.tags.length > 0 ? data.tags?.map(tag=><p key={tag} className={styles.tag}>{tag}</p>) : <p>No tags</p>}
-                    </div>
+                    </div> : null}
                     <div className={styles.threeCol}>
                         <div className={styles.col} onClick={togglePin}>
                             {data.isPinned ? <IconsLibrary.FullStar /> : <IconsLibrary.Star />}

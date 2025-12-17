@@ -40,6 +40,8 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     const [showNewTag, setShowNewTag] = useState(false);
     const [showUserSelector, setShowUserSelector] = useState(false);
 
+    const [error, setError] = useState('');
+
 
 
     const addNewItem = async () =>{
@@ -78,14 +80,18 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             const localDateTime = new Date(`${dueDate}T${timeString}`);
             newItem.deadline = localDateTime.toISOString();
         }
-        if( online ) {
-            const onlineItem = await createItem(newItem);
-            addItemToList(onlineItem);
+        if (name && name.length > 0 && name.length < 21) {
+            if( online ) {
+                const onlineItem = await createItem(newItem);
+                addItemToList(onlineItem);
+            } else {
+                await db.shoppingListItems.add(newItem);
+                addItemToList(newItem);
+            }
+            clearInputs();
         } else {
-            await db.shoppingListItems.add(newItem);
-            addItemToList(newItem);
+            setError('Name is invalid. It should be between one and 20 characters.');
         }
-        clearInputs();
 
     }
     const clearInputs = () => {
@@ -98,7 +104,12 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
         setTags([]);
         setPriority('normal');
         setDueDate("");
+        setError('')
         setDueTime("");
+    }
+    const handleNameInput = (value: string) => {
+        setName(value)
+        setError('');
     }
     const addTag = (tag: string) => {
         if(tag){
@@ -111,7 +122,6 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
         setClaimedBy(prev => prev ? null : userId);
         setAssignedTo(null);
     }
-
     const REMINDER_OPTIONS = [
         { value: 0, label: "No Reminder" },
         { value: 1, label: "1 Hour Before" },
@@ -129,11 +139,12 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                 <button onClick={close}><IconsLibrary.Close /></button>
             </div>
             <div className={styles.basicInputs} style={showMoreInputs ? {gridTemplateColumns: '2fr 1fr 1fr'} : {}}>
-                <input autoComplete="off" type="text" name="name" onChange={(e)=>setName(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
+                <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
                 <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
                 <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
                 <button className={styles.iconButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
             </div>
+            {error ? <p className='error-message'>{error}</p> : null}
             <div className={`${styles.moreInputs} ${showMoreInputs ? styles.show : ''}`} ref={moreInputsRef}>
                 <button className={styles.showMoreButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>{showMoreInputs ? "Show less" : "Show more"}</button>
                 <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />

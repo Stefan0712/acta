@@ -1,8 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css'
 import Navigation from './components/Navigation/Navigation.tsx';
-import ShoppingLists from './pages/ShoppingLists/ShoppingLists.tsx';
-import ShoppingList from './pages/ShoppingList/ShoppingList.tsx';
+import LocalList from './pages/LocalList/LocalList.tsx';
 import Settings from './pages/Settings/Settings.tsx';
 import { NotificationDisplay } from './Notification/NotificationDisplay.tsx';
 import { useEffect, useState } from 'react';
@@ -55,8 +54,8 @@ function App() {
         <NotificationDisplay />
         <main className="content">
           <Routes>
-            <Route path="/" element={<ShoppingLists />} />
-            <Route path="/list/:id" element={<ShoppingList />} />
+            <Route path="/lists" element={<Lists />} />
+            <Route path="/lists/:id" element={<LocalList />} />
             <Route path="/group/:groupId" element={<ViewGroup />}>
               <Route index element={<GroupDashboard />} />            
               <Route path='lists' element={<Lists />} />            

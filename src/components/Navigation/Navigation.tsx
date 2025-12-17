@@ -16,7 +16,7 @@ const Navigation = () => {
                 <IconsLibrary.Dashboard />
                 <p>Home</p>
             </Link>
-            <Link to={'/'}>
+            <Link to={'/lists'}>
                 <IconsLibrary.Lists />
                 <p>Lists</p>
             </Link>

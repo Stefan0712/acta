@@ -2,10 +2,37 @@
 .lists {
     height: 100%;
     width: 100%;
-    padding: 10px;
     display: grid;
-    grid-template-rows: 40px 1fr;
+    grid-template-rows: auto 40px 1fr;
     gap: 10px;
+}
+.header {
+    height: var(--page-header-height);
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-color);
+}
+.header button,
+.header a {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+}
+.header button svg,
+.header a svg {
+    width: 70%;
+    height: 70%;
+    color: var(--text-color);
+}
+.header button svg {
+    width: 50%;
+    height: 50%;
 }
 .filters {
     width: 100%;
@@ -13,6 +40,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 0 10px;
 }
 .filters button {
     height: 100%;
@@ -33,6 +61,7 @@
     overflow-y: auto;
     height: 100%;
     width: 100%;
+    padding: 10px;
 }
 .newListButton {
     width: 50px;

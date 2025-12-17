@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import styles from './ShoppingList.module.css';
-import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList } from '../../types/models';
-import { db } from '../../db';
+import styles from './LocalList.module.css';
+import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList } from '../../types/models.ts';
+import { db } from '../../db.ts';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useNotifications } from '../../Notification/NotificationContext';
+import { useNotifications } from '../../Notification/NotificationContext.tsx';
 import {IconsLibrary} from '../../assets/icons.ts';
 import NewShoppingListItem from '../../components/NewItem/NewItem.js';
 import { getDateAndHour } from '../../helpers/dateFormat.ts';
