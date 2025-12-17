@@ -14,7 +14,6 @@ interface NewShoppingListItemProps {
     members?: GroupMember[];
     online: boolean;
 }
-// TODO: Add a fullscreen blur to block user from pressing other buttons while editing
 
 const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, close, members, online}) => {
 
@@ -66,10 +65,9 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItem, clo
             const onlineItem = await handleUpdateItem(itemData._id, updatedItem);
             updateItem(onlineItem);
         } else {
-            await db.shoppingListItems.add(updatedItem);
+            await db.shoppingListItems.update(itemData._id, updatedItem);
             updateItem(updatedItem);
         }
-        await db.shoppingListItems.update(itemData._id, updatedItem);
         updateItem({...itemData, ...updatedItem});
         close();
 
