@@ -23,8 +23,7 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
     const [color, setColor] = useState('#FFFFFF');
-
-    console.log(groupId)
+    const [error, setError] = useState('');
 
     const handleSaveList = async () => {
         const currentDate = new Date();
@@ -46,42 +45,48 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
             newList._id = localId;
             newList.clientId = localId;
         }
-        
-        if( groupId ) {
-            const apiResponse = await createList(newList);
-            navigate(`/group/${groupId}/lists/${apiResponse._id}`);
-        }else {
-            await db.shoppingLists.add(newList);
-            
-            addListToState(newList)
+        if(!name || (name.length < 3 && name.length > 20)){
+            setError("Invalid group name. It should be between 3 and 20 characters!");
+        } else {
+            if( groupId ) {
+                const apiResponse = await createList(newList);
+                navigate(`/group/${groupId}/lists/${apiResponse._id}`);
+            }else {
+                await db.shoppingLists.add(newList);
+                
+                addListToState(newList)
+            }
+            showNotification("List created successfully", "success");
+            close();
         }
-        showNotification("List created successfully", "success");
-        close();
     };
     return ( 
-        <div className={styles.newShoppingList}>
-            <h3>New Shopping List</h3>
-            <fieldset>
-                <label>Name</label>
-                <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />
-            </fieldset>
-            <fieldset>
-                <label>Description</label>
-                <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='What is this list for?' />
-            </fieldset>
-            <div className={styles.twoCols}>
-                <div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
-                    <label>Pin List</label>
-                    <SwitchButton isActivated={isPinned} onPress={()=>setIsPinned(prev=>!prev)} />
+        <div className={styles.componentContainer}>
+            <div className={styles.newShoppingList}>
+                <h3>New Shopping List</h3>
+                <fieldset>
+                    <label>Name</label>
+                    <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />
+                    {error ? <p className='error-message'>{error}</p> : null}
+                </fieldset>
+                <fieldset>
+                    <label>Description</label>
+                    <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='What is this list for?' />
+                </fieldset>
+                <div className={styles.twoCols}>
+                    <div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
+                        <label>Pin List</label>
+                        <SwitchButton isActivated={isPinned} onPress={()=>setIsPinned(prev=>!prev)} />
+                    </div>
+                    <div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
+                        <label>Color:</label>
+                        <input type='color' name='color' onChange={(e)=>setColor(e.target.value)} value={color} />
+                    </div>
                 </div>
-                <div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
-                    <label>Color:</label>
-                    <input type='color' name='color' onChange={(e)=>setColor(e.target.value)} value={color} />
+                <div className={styles.twoCols}>
+                    <button className={styles.cancelButton} onClick={close}>Cancel</button>
+                    <button className={styles.saveButton} onClick={handleSaveList}>Save</button>
                 </div>
-            </div>
-            <div className={styles.twoCols}>
-                <button className={styles.cancelButton} onClick={close}>Cancel</button>
-                <button className={styles.saveButton} onClick={handleSaveList}>Save</button>
             </div>
         </div>
      );

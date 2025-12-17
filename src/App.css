@@ -34,3 +34,25 @@
   overflow: hidden;
   background-color: var(--bg-primary);
 }
+
+
+
+
+/* Global Classes */
+
+
+
+.error-message {
+  color: red;
+  animation: showError 0.1s;
+}
+@keyframes showError {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}

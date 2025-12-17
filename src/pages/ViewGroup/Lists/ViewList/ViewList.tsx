@@ -17,7 +17,7 @@ import Auth from '../../../Auth/Auth.tsx';
 
 const ViewList = ({ members}: {members?: GroupMember[]}) => {
 
-    const {listId, groupId} = useParams();
+    const {listId} = useParams();
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
     const { showNotification } = useNotifications();
@@ -70,6 +70,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                         setIsPageLoading(false)
                     }
                     setListItems(listItemsResponse);
+                    console.log(listItemsResponse)
                 } else {
                     showNotification('No list data found', "error");
                 }
@@ -153,7 +154,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                     }
                 </div>
                 {showNewItem ? null  : <button onClick={()=>setShowNewItem(true)} className={styles.newItemButton}><IconsLibrary.Plus /></button>}
-                {showNewItem && listId ? <NewShoppingListItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} close={()=>setShowNewItem(false)}/> : null}
+                {showNewItem && listData?._id ? <NewShoppingListItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} close={()=>setShowNewItem(false)}/> : null}
             </div>
         );
     }

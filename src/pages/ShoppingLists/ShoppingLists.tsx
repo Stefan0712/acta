@@ -113,8 +113,8 @@ interface ListProps {
 const List: React.FC<ListProps> = ({data, restoreList}) => {
     return (
          <div className={styles.list}>
-            <div className={styles.listInfo}>
-                <Link to={`/list/${data._id}`}>{data.name}</Link>
+            <Link to={`/list/${data._id}`} className={styles.listInfo}>
+                <h3>{data.name}</h3>
                 {data.description ? <p className={styles.listDescription}>{data.description}</p> : null }    
                 <div className={styles.listProgress}>
                     <div className={styles.progressBarBackground}>
@@ -122,7 +122,7 @@ const List: React.FC<ListProps> = ({data, restoreList}) => {
                     </div>
                     <b>{data.completedItemsCounter}/{data.totalItemsCounter}</b>
                 </div>
-            </div>
+            </Link>
             {data.isDeleted ? <div className={styles.deleteButtons}>
                 <button onClick={()=>console.log("permanently deleted this")}><IconsLibrary.Delete />Permanently Delete</button>
                 <button onClick={restoreList}><IconsLibrary.Undo />Restore</button>
