@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styles from './Notifications.module.css';
-import { IconsLibrary } from '../../assets/icons';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../db';
 import { type Notification } from '../../types/models';
+import { formatRelativeTime } from '../../helpers/dateFormat';
 
 const Notifications = () => {
 
@@ -20,7 +20,7 @@ const Notifications = () => {
 
     }, [userId]);
 
-
+ 
     return (
         <div className={styles.notifications}>
             <div className={styles.header}>
@@ -53,17 +53,12 @@ const Notification = ({data} : {data: Notification}) =>{
 
     return (
         <div className={styles.notification}>
-            <div className={styles.notificationHeader}>
-                <div className={styles.metaItem}>
-                    <IconsLibrary.Time />
-                    <p>12 Nov 18:23</p>
-                </div>
-                <div className={styles.metaItem}>
-                    <IconsLibrary.Group />
-                    <p>Family</p>
-                </div>
+            <div className={styles.color} />
+            <div className={styles.content}>
+                <b>Notification Type</b>
+                <p className={styles.message}>{data.message}</p>
             </div>
-            <p className={styles.message}>{data.message}</p>
+            <p className={styles.timestamp}>{formatRelativeTime(data.createdAt ?? new Date())}</p>
         </div>
     )
 }

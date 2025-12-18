@@ -54,27 +54,39 @@
 .notificationsContainer {
     display: flex;
     flex-direction: column;
-    gap: 10px;
     overflow-y: auto;
+    gap: 10px;
 }
 .notification {
     width: 100%;
     padding: 10px;
-    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 5px 1fr auto;
+    gap: 10px;
+    align-items: center;
     background-color: var(--item-bg);
+    border-radius: 10px;
+    border: 1px solid var(--white-10)
+}
+.notification .timestamp {
+    color: var(--white-25);
+    font-size: 0.7rem;
+}
+.notification .color {
+    background-color: var(--accent);
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+}
+.notification .content {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
-.notificationHeader {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: space-between;
+.notification b {
+    font-size: 0.85rem;
 }
-.notificationHeader .metaItem {
-    display: flex;
-    align-items: center;
-    gap: 5px;  
-    opacity: 0.3;
+.notification .message {
+    font-size: 0.75rem;
+    color: var(--white-50);
 }

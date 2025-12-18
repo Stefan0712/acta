@@ -12,7 +12,7 @@ import {
   type Notification,
   type User,
   type ActivityLog
-} from './types/models';
+} from './types/models.ts';
 
 export class MyDatabase extends Dexie {
   shoppingLists!: Table<ShoppingList>;
@@ -41,6 +41,31 @@ export class MyDatabase extends Dexie {
       polls: '_id, groupId, authorId, isDirty',
       notifications: '_id, recipientId, isRead, groupId, [groupId+category]',
       activityLogs: '_id, recipientId, groupId, [groupId+category], [groupId+createdAt]',
+      profile: '_id',
+    });
+
+    this.version(10).stores({
+      shoppingLists: '_id, authorId, groupId, isDirty',
+      shoppingListItems: '_id, authorId, listId, productId, isChecked, isDirty',
+      categories: '_id, name',
+      stores: '_id, name',
+      groups:'_id, authorId, *members.userId, isDirty',
+      notes: '_id, groupId, authorId, isDirty',
+      polls: '_id, groupId, authorId, isDirty',
+      notifications: '_id, createdAt, recipientId, isRead, groupId, [groupId+category]',
+      activityLogs: '_id, createdAt, recipientId, groupId, [groupId+category], [groupId+createdAt]',
+      profile: '_id',
+    });
+    this.version(11).stores({
+      shoppingLists: '_id, authorId, groupId, isDirty, isPinned',
+      shoppingListItems: '_id, authorId, listId, productId, isChecked, isDirty, isPinned',
+      categories: '_id, name',
+      stores: '_id, name',
+      groups:'_id, authorId, *members.userId, isDirty',
+      notes: '_id, groupId, authorId, isDirty',
+      polls: '_id, groupId, authorId, isDirty',
+      notifications: '_id, createdAt, recipientId, isRead, groupId, [groupId+category]',
+      activityLogs: '_id, createdAt, recipientId, groupId, [groupId+category], [groupId+createdAt]',
       profile: '_id',
     });
   }

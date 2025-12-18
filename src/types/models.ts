@@ -4,7 +4,7 @@ export interface ShoppingList {
     description?: string;
     createdAt: Date;
     updatedAt?: Date;
-    color: string;
+    color?: string;
     isPinned: boolean;
     isDeleted: boolean;
     groupId?: string;
@@ -13,21 +13,6 @@ export interface ShoppingList {
     clientId?: string | null;
     totalItemsCounter?: number;
     completedItemsCounter?: number;
-}
-
-export interface Product {
-    _id: string;
-    name: string;
-    createdAt: Date;
-    description?: string;
-    defaultQty: number; 
-    unit: string;
-    categoryId: string;
-    authorId: string;
-    storeIds?: string[];
-    tags?: string[];
-    isDeleted: boolean;
-    isDirty: boolean;
 }
 
 export interface ShoppingListItem {
@@ -63,32 +48,6 @@ export interface ShoppingListItem {
     isReminderSent: boolean;
     isDirty: boolean;
     clientId: string | null;
-}
-
-export interface PurchasedItem {
-    _id: string;
-    authorId: string;
-    productId?: string; // Link to an existing product but optinoal in case the product gets deleted
-    name: string; 
-    unit: string;
-    qty: number;
-    totalPrice: number;
-    storeId: string;
-    purchasedAt: Date;
-    isDiscounted?: boolean;
-    isDirty: boolean;
-}
-
-export interface Category {
-    _id: string;
-    name: string;
-    color: string;
-}
-
-export interface Store {
-    _id: string;
-    name: string;
-    color?: string;
 }
 
 export interface User {
@@ -130,14 +89,14 @@ export interface NoteComment {
     authorId: string;
     username: string;
     content: string;
-    createdAt: string;
+    createdAt: Date;
     isDirty: boolean;
     clientId: string | null;
 }
 
 export interface Note {
     _id: string;
-    groupdId: string;
+    groupId: string;
     authorId: string;
     title: string;
     content: string;

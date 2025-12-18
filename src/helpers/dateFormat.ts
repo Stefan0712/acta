@@ -22,3 +22,26 @@ export const getDateAndHour = (date: Date): string => {
   // Assemble the final string
   return `${day} ${month} ${year} ${hours}:${minutes}`;
 };
+
+export const formatRelativeTime = (date: Date | string): string => {
+  const now = new Date();
+  const past = new Date(date);
+  const diffInMs = now.getTime() - past.getTime();
+
+  const seconds = Math.floor(diffInMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (seconds < 60) {
+    return 'Just now';
+  } else if (minutes < 60) {
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  } else if (hours < 24) {
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  } else if (days < 7) {
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  } else {
+    return '> 1 week';
+  }
+};

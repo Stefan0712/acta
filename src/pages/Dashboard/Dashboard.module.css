@@ -1,0 +1,104 @@
+.dashboard {
+    height: calc(100%);
+    width: 100%;
+    padding: 10px;
+    color: var(--text-color);
+    overflow-y: auto;
+}
+.dashboard .header {
+    display: grid;
+    grid-template-columns: 1fr 30px;
+    gap: 10px;
+    align-items: center;
+    height: var(--page-header-height);
+}
+.dashboard .header .info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 5px;
+}
+.dashboard svg {
+    color: var(--text-color);
+}
+.dashboard .info p {
+    color: var(--white-25);
+}
+.dashboardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Due Items */
+
+.dueItems {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.dueItem {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--item-bg);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    border-radius: 5px;
+}
+.dueITem
+/* Recent Notifications */
+
+.notification {
+    width: 100%;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid var(--white-10);
+}
+.notification:last-child {
+    border-bottom: none;
+}
+.notification .timestamp {
+    color: var(--white-25);
+    font-size: 0.7rem;
+}
+.notification .color {
+    background-color: var(--accent);
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+}
+.notification .content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.notification b {
+    font-size: 0.85rem;
+}
+.notification .message {
+    font-size: 0.75rem;
+    color: var(--white-50);
+}
+
+
+
+/* Pinned Lists */
+
+.list {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--item-bg);
+    border: 1px solid var(--white-10);
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+}
+
