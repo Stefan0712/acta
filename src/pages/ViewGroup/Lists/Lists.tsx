@@ -31,7 +31,6 @@ const Lists = () => {
         if (groupId){
             try {
                 const apiResponse = await getGroupLists(groupId);
-                console.log(apiResponse)
                 setLists(apiResponse); 
             } catch (apiError) {
                 console.error("API pull failed:", apiError);
@@ -44,8 +43,8 @@ const Lists = () => {
                 const response = await db.shoppingLists.toArray();
                 if(response && response.length > 0){
                     getAllItems(response);
-                    setIsLoading(false);
                 }
+                setIsLoading(false)
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to get lists.", "error");
@@ -55,7 +54,7 @@ const Lists = () => {
     const getAllItems = async (fetchedLists: ShoppingList[]) => {
         try {
             const response: ShoppingListItem[] = await db.shoppingListItems.toArray();
-            if(response && response.length > 0){
+            if(response){
                 const updatedLists: ShoppingList[] = fetchedLists.map((list)=>(
                     {
                         ...list, 
@@ -64,7 +63,10 @@ const Lists = () => {
                     }
                 )
                 )
+                console.log(updatedLists)
                 setLists(updatedLists);
+            } else {
+                setLists([]);
             }
         } catch (error) {
             console.error(error);
@@ -91,18 +93,20 @@ const Lists = () => {
     }, [lists, selectedFilter]);
 
 
-    if (!localStorage.getItem('jwt-token')) {
+    if (!localStorage.getItem('jwt-token') && groupId) {
         return ( <Auth /> )
     } else if(isLoading) {
         return ( <Loading /> )
     } else if (lists) {
         return ( 
-            <div className={styles.lists}>
-                {!groupId ? <div className={styles.header}>
-                <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
-                <h3>My Lists</h3>
-                <button><IconsLibrary.Bell /></button>
-            </div> : null}
+            <div className={styles.lists} style={!groupId ? {gridTemplateRows: 'var(--page-header-height) 40px 1fr'} : {}}>
+                {!groupId ? 
+                    <div className={styles.header}>
+                        <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
+                        <h3>My Lists</h3>
+                        <button><IconsLibrary.Bell /></button>
+                    </div> 
+                : null}
                 <div className={styles.filters}>
                     <button onClick={()=>setSelectedFilter('active')} className={selectedFilter === 'active' ? styles.selectedFilter : ''}>Active</button>
                     <button onClick={()=>setSelectedFilter('completed')} className={selectedFilter === 'completed' ? styles.selectedFilter : ''}>Completed</button>

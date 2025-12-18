@@ -25,7 +25,6 @@ export default Auth;
 
 const Login = ({toRegister} : {toRegister: ()=>void;}) => {
 
-    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -54,8 +53,8 @@ const Login = ({toRegister} : {toRegister: ()=>void;}) => {
             window.location.reload();
             
         } catch (error) {
-            setLoginError('Incorrect email or password. Please try again.');
-            console.error(error)
+            setLoginError('Incorrect email or password. Please try again.'+error.message);
+            console.error(error);
         }
     };
 
