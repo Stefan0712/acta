@@ -5,6 +5,8 @@ import { ObjectId } from 'bson';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { createGroup } from '../../services/groupService';
 import { useNavigate } from 'react-router-dom';
+import { getIcon } from '../../components/IconSelector/iconCollection';
+import IconSelector from '../../components/IconSelector/IconSelector';
 
 const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Group) => void}) => {
 
@@ -13,7 +15,10 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [isCreating, setIsCreating] = useState(false)
+    const [isCreating, setIsCreating] = useState(false);
+    const [icon, setIcon] = useState<string>('default-icon');
+
+    const [showIconSelector, setShowIconSelector] = useState(false);
 
 
     const handleCreateGroup = async () => {
@@ -36,11 +41,14 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                 isDirty: true,
                 createdAt: new Date().toISOString(),
                 members: [user],
-                clientId: newId
+                clientId: newId,
+                icon
             }
             setIsCreating(true);
             try {
+                console.log(newGroup)
                 const groupResponse = await createGroup(newGroup);
+                console.log(groupResponse.icon)
                 if(groupResponse){
                     addGroup(groupResponse)
                     showNotification("Group created successfully", "success");
@@ -54,14 +62,22 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
             }
         }
     }
+    const SelectedIcon = getIcon(icon);
     return ( 
         <div className={styles.newGroup}>
+            {showIconSelector ? <IconSelector close={()=>setShowIconSelector(false)} icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} /> : null}
             <div className={styles.content}>
                 <h3>New Group</h3>
-                <fieldset>
-                    <label>Group Name</label>
-                    <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} required minLength={0} placeholder='My Group' />
-                </fieldset>
+                <div className={styles.firstRow}>
+                    <fieldset>
+                        <label>Group Name</label>
+                        <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} required minLength={0} placeholder='My Group' />
+                    </fieldset>
+                    <fieldset>
+                        <label>Icon</label>
+                        <button className={styles.iconButton} onClick={()=>setShowIconSelector(true)}><SelectedIcon /></button>
+                    </fieldset>
+                </div>
                 <fieldset>
                     <label>Description</label>
                     <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='Write something about your group here...' />

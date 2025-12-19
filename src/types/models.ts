@@ -82,6 +82,7 @@ export interface Group {
     listCount?: number;
     noteCount?: number;
     pollCount?: number;
+    icon: string;
 }
 
 export interface NoteComment {

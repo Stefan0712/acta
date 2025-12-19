@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Auth from '../Auth/Auth';
 import { getMyGroups } from '../../services/groupService';
 import Loading from '../../components/LoadingSpinner/Loading';
+import { getIcon } from '../../components/IconSelector/iconCollection';
 
 
 const Groups = () => {
@@ -51,7 +52,7 @@ const Groups = () => {
         return ( 
             <div className={styles.groups}>
                 {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} addGroup={(newGroup)=>setGroups(prev=>[...prev, newGroup])} /> : null}
-                <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button>
+                {!showNewGroup ? <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button> : null}
                 <div className={styles.header}>
                     <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
                     <h2>My Groups</h2>
@@ -68,12 +69,19 @@ const Groups = () => {
 export default Groups;
 
 const Group = ({data}: {data: Group}) => {
-
+    const Icon = getIcon(data.icon);
     return (
         <Link to={`/group/${data._id}`} className={styles.group}>
             <div className={styles.top}>
-                <h2>{data.name}</h2>
+                <div className={styles.groupIcon}>
+                    <Icon />
+                </div>
+                <div className={styles.metaItem}>
+                    <IconsLibrary.Group />
+                    <b>{data.members.length}</b>
+                </div>
             </div>
+            <h2>{data.name}</h2>
             <div className={styles.bottom}>
                 <div className={styles.metaItem}>
                     <IconsLibrary.List2 />
@@ -86,10 +94,6 @@ const Group = ({data}: {data: Group}) => {
                 <div className={styles.metaItem}>
                     <IconsLibrary.Poll />
                     <p>{data.pollCount ?? 0}</p>
-                </div>
-                <div className={styles.metaItem}>
-                    <IconsLibrary.Group />
-                    <b>{data.members.length}</b>
                 </div>
             </div>
         </Link>
