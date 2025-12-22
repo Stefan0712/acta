@@ -3,11 +3,12 @@
     position: fixed;
     left: 10px;
     bottom: var(--bottom-offset);
-    background-color: var(--item-bg);
+    background-color: var(--modal-bg);
     border-radius: 15px;
     color: var(--text-color);
     padding: 15px;
     animation: showModal 0.2s;
+    border: 1px solid var(--white-10);
 }
 @keyframes showModal {
     from {
@@ -69,10 +70,12 @@ label {
     height: 30px;
     width: 30px;
     border-radius: 5px;
-    border: 1px solid white;
+}
+.colorButton.selectedColor {
+    border: 1px solid white !important;
 }
 .customizationInputs .iconButton {
-    background-color: var(--bg-primary);
+    background-color: var(--input-bg);
     height: 40px;
     width: 40px;
     border-radius: 5px;
@@ -80,5 +83,6 @@ label {
     color: var(--text-color);
 }
 .newGroup input {
-    border-radius: 10px;
+    background-color: var(--input-bg);
+    padding-left: 10px;
 }

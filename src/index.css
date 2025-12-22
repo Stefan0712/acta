@@ -12,6 +12,8 @@
     --white-50: rgba(255, 255, 255, 0.5);
     --white-25: rgba(255, 255, 255, 0.25);
     --white-10: rgba(255, 255, 255, 0.1);
+    --input-bg: #111111;
+    --modal-bg: #0a0a0a;
 }
 .no-items-text {
     width: 100%;

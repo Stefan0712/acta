@@ -91,7 +91,7 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                     <fieldset>
                         <label>Color</label>
                         <div className={styles.colors}>
-                            {DEFAULT_COLORS.map(color=><div onClick={()=>setColor(color)} key={color} className={styles.colorButton} style={{backgroundColor: color}} />)}
+                            {DEFAULT_COLORS.map(c=><div onClick={()=>setColor(c)} key={c} className={`${styles.colorButton} ${color === c ? styles.selectedColor : ''}`} style={{backgroundColor: c}} />)}
                         </div>
                     </fieldset>
                     <fieldset>
