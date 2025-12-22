@@ -4,9 +4,9 @@
     left: 10px;
     bottom: var(--bottom-offset);
     background-color: var(--item-bg);
-    border-radius: 5px;
+    border-radius: 15px;
     color: var(--text-color);
-    padding: 10px;
+    padding: 15px;
     animation: showModal 0.2s;
 }
 @keyframes showModal {
@@ -24,6 +24,9 @@
     flex-direction: column;
     gap: 10px;
 }
+label {
+    color: var(--white-25);
+}
 .content .buttons {
     width: 100%;
     height: 40px;
@@ -34,7 +37,7 @@
 .content .buttons button {
     width: 100%;
     height: 100%;
-    border-radius: 5px;
+    border-radius: 10px;
     border: 1px solid transparent;
     background-color: var(--accent);
     color: var(--text-on-accent);
@@ -42,18 +45,40 @@
 .content .buttons button:nth-child(1) {
     background-color: var(--bg-primary);
     color: var(--text-color);
+    border: 1px solid var(--white-10);
 }
-.firstRow {
+.customizationInputs {
     width: 100%;
+    overflow: hidden;
     display: grid;
     grid-template-columns: 1fr 50px;
     gap: 10px;
 }
-.firstRow .iconButton {
+.customizationInputs fieldset {
+    overflow: hidden;
+    width: 100%;
+}
+.customizationInputs .colors {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+}
+.customizationInputs .colors .colorButton {
+    height: 30px;
+    width: 30px;
+    border-radius: 5px;
+    border: 1px solid white;
+}
+.customizationInputs .iconButton {
     background-color: var(--bg-primary);
     height: 40px;
     width: 40px;
     border-radius: 5px;
     border: 1px solid var(--white-10);
     color: var(--text-color);
+}
+.newGroup input {
+    border-radius: 10px;
 }

@@ -56,6 +56,7 @@
     padding: 10px;
     border-radius: 10px;
     animation: showMenu 0.2s;
+    z-index: 100;
 }
 .viewGroup .menu button,
 .viewGroup .menu a {

@@ -138,7 +138,10 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                 <h3>New Item</h3>
                 <button onClick={close}><IconsLibrary.Close /></button>
             </div>
-            <div className={styles.basicInputs} style={showMoreInputs ? {gridTemplateColumns: '2fr 1fr 1fr'} : {}}>
+            <div className={styles.basicInputs} style={showMoreInputs ? {gridTemplateColumns: '40px 2fr 1fr 1fr'} : {}}>
+                <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
+                    <IconsLibrary.Arrow style={showMoreInputs ? {transform: 'rotateZ(90deg)'} : {}} />
+                </button>
                 <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
                 <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
                 <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
@@ -146,7 +149,6 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             </div>
             {error ? <p className='error-message'>{error}</p> : null}
             <div className={`${styles.moreInputs} ${showMoreInputs ? styles.show : ''}`} ref={moreInputsRef}>
-                <button className={styles.showMoreButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>{showMoreInputs ? "Show less" : "Show more"}</button>
                 <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
 
                 {online ? <div className={styles.claimButtons}>

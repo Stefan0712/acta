@@ -72,28 +72,24 @@ const Group = ({data}: {data: Group}) => {
     const Icon = getIcon(data.icon);
     return (
         <Link to={`/group/${data._id}`} className={styles.group}>
-            <div className={styles.top}>
-                <div className={styles.groupIcon}>
-                    <Icon />
-                </div>
-                <div className={styles.metaItem}>
-                    <IconsLibrary.Group />
-                    <b>{data.members.length}</b>
-                </div>
+            <div className={styles.groupIcon}>
+                <Icon />
             </div>
-            <h3>{data.name}</h3>
-            <div className={styles.bottom}>
-                <div className={styles.metaItem}>
-                    <IconsLibrary.List2 />
-                    <p>{data.listCount ?? 0}</p>
-                </div>
-                <div className={styles.metaItem}>
-                    <IconsLibrary.Note />
-                    <p>{data.noteCount ?? 0}</p>
-                </div>
-                <div className={styles.metaItem}>
-                    <IconsLibrary.Poll />
-                    <p>{data.pollCount ?? 0}</p>
+            <div className={styles.groupContent}>
+                <h3>{data.name}</h3>
+                <div className={styles.metaItems}>
+                    <div className={styles.metaItem}>
+                        <p>LISTS</p>
+                        <b>{data.listCount ?? 0}</b>
+                    </div>
+                    <div className={styles.metaItem}>
+                        <p>NOTES</p>
+                        <b>{data.noteCount ?? 0}</b>
+                    </div>
+                    <div className={styles.metaItem}>
+                        <p>POLLS</p>
+                        <b>{data.pollCount ?? 0}</b>
+                    </div>
                 </div>
             </div>
         </Link>

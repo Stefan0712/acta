@@ -17,6 +17,7 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
     const [description, setDescription] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [icon, setIcon] = useState<string>('default-icon');
+    const [color, setColor] = useState('white');
 
     const [showIconSelector, setShowIconSelector] = useState(false);
 
@@ -42,7 +43,8 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                 createdAt: new Date().toISOString(),
                 members: [user],
                 clientId: newId,
-                icon
+                icon,
+                color
             }
             setIsCreating(true);
             try {
@@ -63,25 +65,40 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
         }
     }
     const SelectedIcon = getIcon(icon);
+
+    const DEFAULT_COLORS = [
+        "#6366f1", // Indigo
+        "#10b981", // Emerald
+        "#f43f5e", // Rose
+        "#f59e0b", // Amber
+        "#0ea5e9", // Sky
+        "#8b5cf6", // Violet
+    ];
     return ( 
         <div className={styles.newGroup}>
             {showIconSelector ? <IconSelector close={()=>setShowIconSelector(false)} icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} /> : null}
             <div className={styles.content}>
                 <h3>New Group</h3>
-                <div className={styles.firstRow}>
-                    <fieldset>
-                        <label>Group Name</label>
-                        <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} required minLength={0} placeholder='My Group' />
-                    </fieldset>
-                    <fieldset>
-                        <label>Icon</label>
-                        <button className={styles.iconButton} onClick={()=>setShowIconSelector(true)}><SelectedIcon /></button>
-                    </fieldset>
-                </div>
+                <fieldset>
+                    <label>Group Name</label>
+                    <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} required minLength={0} placeholder='My Group' />
+                </fieldset>
                 <fieldset>
                     <label>Description</label>
                     <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='Write something about your group here...' />
                 </fieldset>
+                <div className={styles.customizationInputs}>
+                    <fieldset>
+                        <label>Color</label>
+                        <div className={styles.colors}>
+                            {DEFAULT_COLORS.map(color=><div onClick={()=>setColor(color)} key={color} className={styles.colorButton} style={{backgroundColor: color}} />)}
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <label>Icon</label>
+                        <button className={styles.iconButton} onClick={()=>setShowIconSelector(true)}><SelectedIcon stroke={color}/></button>
+                    </fieldset>
+                </div>
                 <div className={styles.buttons}>
                     <button onClick={close}>Close</button>
                     <button onClick={handleCreateGroup} disabled={isCreating}>{isCreating ? 'Saving...' : 'Create'}</button>

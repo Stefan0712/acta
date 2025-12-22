@@ -84,6 +84,7 @@ export interface Group {
     noteCount?: number;
     pollCount?: number;
     icon: string;
+    color: string;
 }
 
 export interface NoteComment {

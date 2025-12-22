@@ -81,11 +81,10 @@
     height: 80%;
 }
 .pageMenu {
-    width: calc(100vw - 20px);
     height: auto;
     position: fixed;
-    bottom: var(--bottom-offset);
-    left: 10px;
+    top: var(--page-header-height);
+    right: 20px;
     border-radius: 10px;
     background-color: var(--item-bg);
     color: var(--text-color);
@@ -93,19 +92,18 @@
     flex-direction: column;
     z-index: 100;
     animation: showPageMenu 0.3s;
+    padding: 0 10px;
+    border: 1px solid var(--white-10);
+    transform-origin: top;
 }
 @keyframes showPageMenu {
     0% {
         opacity: 0;
-        bottom: -120%;
-    }
-    70% {
-        opacity: 1;
-        bottom: calc(var(--bottom-offset) + 20px);
+        transform: scaleY(0);
     }
     100% {
         opacity: 1;
-        bottom: var(--bottom-offset);
+        transform: scaleY(1);
     }
 }
 .pageMenu button {
@@ -113,11 +111,11 @@
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
     background-color: transparent;
     border: 1px solid transparent;
     color: var(--text-color);
-    font-size: 1rem;
+    font-size: 0.9rem;
+    padding: 0 20px 0 10px;
 }
 .pageMenu button:nth-child(2) {
     color: red;

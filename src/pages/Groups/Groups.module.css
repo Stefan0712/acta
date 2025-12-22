@@ -73,8 +73,8 @@
 /* Group Item */
 
 .group {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 40px 1fr;
     gap: 10px;
     background-color: #121212;
     border-radius: 10px;
@@ -83,59 +83,36 @@
     text-decoration: none;
     border: 1px solid #262626;
 }
-.group .top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: var(--text-on-accent);
+.group h3 {
+    font-size: 1rem;
 }
-.group .top .groupIcon {
-    height: 40px;
+.groupIcon {
     width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: var(--bg-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--accent);
-    border-radius: 10px;
 }
-.group .top .metaItem {
-    padding: 5px 10px;
-    background-color: var(--accent);
-    border: 1px solid var(--white-25);
-    font-size: 0.75rem;
-    font-weight: bold;
+.groupContent {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 10px;
-    border-radius: 10px;
 }
-.group .top .metaItem svg {
-    width: 15px;
-    height: 15px;
-}
-.group .bottom {
+.groupContent .metaItems {
     display: flex;
     align-items: center;
     gap: 10px;
 }
-.group .bottom .metaItem {
+.groupContent .metaItem {
     display: flex;
-    color: var(--white-50);
+    align-items: center;
     gap: 5px;
-    font-size: 0.9rem;
-    align-items: center;
-    background-color: var(--white-10);
-    padding: 5px 10px;
-    border-radius: 15px;
 }
-
-.group .bottom .metaItem svg {
-    height: 15px;
-    width: 15px;
+.groupContent .metaItem p {
+    font-size: 0.75rem;
 }
-
-
-
-
-
-
+.groupContent .metaItem b {
+    font-size: 0.8rem;
+}

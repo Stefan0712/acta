@@ -24,7 +24,6 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
     const [isPageLoading, setIsPageLoading] = useState(true);
 
     const [showNewItem, setShowNewItem] = useState(false);
-    const [showPageMenu, setShowPageMenu] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState<"all" | "pinned" | "mine" | "deleted">('all');
@@ -96,7 +95,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
             try {
                 await updateList(listId,{isDeleted: true});
                 showNotification("Shopping list deleted", "success");
-                navigate('/');
+                navigate(-1);
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to delete list.", "error");
@@ -108,7 +107,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
          try {
             await updateList(listId, {isDeleted: false})
             showNotification("List restored", "success");
-            navigate('/');
+            navigate(-1);
         } catch (error) {
             console.error(error);
             showNotification("Failed to restore list.", "error");
@@ -127,14 +126,16 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
     } else if(listData) {
         return ( 
             <div className={styles.viewList}>
-                {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={handleDeleteList} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
                 {showEdit ? <EditList close={()=>setShowEdit(false)} online={true} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
                 <div className={styles.listMeta}>
                     <div className={styles.listName}>
                         <h2>{listData.name}</h2>
-                        <button onClick={()=>setShowPageMenu(true)}><IconsLibrary.Dots /></button>
                     </div>
                     <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
+                    <div className={styles.listButtons}>
+                        <button onClick={()=>setShowEdit(true)}>Edit</button>
+                        {listData.isDeleted ? <button style={{color: 'var(--text-color)'}} onClick={restoreList}>Restore</button> : <button onClick={handleDeleteList} style={{color: 'red'}}>Delete</button>}
+                    </div>
                     <p>{listData.description}</p>
                 </div>
                 <div className={styles.categoryButtons}>
@@ -163,26 +164,3 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
  
 export default ViewList;
 
-
-interface PageMenuProps {
-    close: () => void;
-    edit: () => void;
-    handleDelete: () => void;
-    handleRestore: () => void;
-    isDeleted: boolean;
-}
-
-const PageMenu: React.FC<PageMenuProps> = ({close, edit, handleDelete, isDeleted, handleRestore}) => {
-
-    const showEditModal = () => {
-        edit();
-        close();
-    }
-    return (
-        <div className={styles.pageMenu}>
-            <button onClick={showEditModal}>Edit List</button>
-            {isDeleted ? <button style={{color: 'var(--text-color)'}} onClick={handleRestore}>Restore List</button> : <button onClick={handleDelete}>Delete List</button>}
-            <button onClick={close}>Cancel</button>
-        </div>
-    )
-}
