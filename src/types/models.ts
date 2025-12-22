@@ -85,6 +85,7 @@ export interface Group {
     pollCount?: number;
     icon: string;
     color: string;
+    isPinned: boolean;
 }
 
 export interface NoteComment {

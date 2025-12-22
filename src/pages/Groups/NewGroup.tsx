@@ -7,6 +7,7 @@ import { createGroup } from '../../services/groupService';
 import { useNavigate } from 'react-router-dom';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 import IconSelector from '../../components/IconSelector/IconSelector';
+import SwitchButton from '../../components/SwitchButton/SwitchButton';
 
 const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Group) => void}) => {
 
@@ -18,6 +19,7 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
     const [isCreating, setIsCreating] = useState(false);
     const [icon, setIcon] = useState<string>('default-icon');
     const [color, setColor] = useState('white');
+    const [isPinned, setIsPinned] = useState(false);
 
     const [showIconSelector, setShowIconSelector] = useState(false);
 
@@ -44,7 +46,8 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                 members: [user],
                 clientId: newId,
                 icon,
-                color
+                color,
+                isPinned
             }
             setIsCreating(true);
             try {
@@ -87,6 +90,13 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                     <label>Description</label>
                     <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='Write something about your group here...' />
                 </fieldset>
+                <div className={styles.pinInput}>
+                    <div className={styles.pinLabel}>
+                        <label>Pin Group?</label>
+                        <p>Pin this group to your Dashboard</p>
+                    </div>
+                    <SwitchButton isActivated={isPinned} onPress={()=>setIsPinned(prev=>!prev)} />
+                </div>
                 <div className={styles.customizationInputs}>
                     <fieldset>
                         <label>Color</label>
