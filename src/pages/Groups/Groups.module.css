@@ -76,17 +76,17 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background-color: var(--item-bg);
+    background-color: #121212;
     border-radius: 10px;
     color: var(--text-color);
-    padding: 0 10px;
+    padding: 15px;
     text-decoration: none;
+    border: 1px solid #262626;
 }
 .group .top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 0;
     color: var(--text-on-accent);
 }
 .group .top .groupIcon {
@@ -114,18 +114,21 @@
     height: 15px;
 }
 .group .bottom {
-    border-top: 1px solid var(--white-10);
-    padding: 15px 0;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 .group .bottom .metaItem {
     display: flex;
-    align-items: center;
-    gap: 5px;
     color: var(--white-50);
+    gap: 5px;
+    font-size: 0.9rem;
+    align-items: center;
+    background-color: var(--white-10);
+    padding: 5px 10px;
+    border-radius: 15px;
 }
+
 .group .bottom .metaItem svg {
     height: 15px;
     width: 15px;

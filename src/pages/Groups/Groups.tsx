@@ -81,7 +81,7 @@ const Group = ({data}: {data: Group}) => {
                     <b>{data.members.length}</b>
                 </div>
             </div>
-            <h2>{data.name}</h2>
+            <h3>{data.name}</h3>
             <div className={styles.bottom}>
                 <div className={styles.metaItem}>
                     <IconsLibrary.List2 />

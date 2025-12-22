@@ -167,18 +167,23 @@ const List: React.FC<ListProps> = ({data}) => {
             }
         }
     }
+
+    const percentage = data.completedItemsCounter && data.totalItemsCounter && data.completedItemsCounter > 0 && data.totalItemsCounter > 0 ?  ((data.completedItemsCounter ?? 0)/(data.totalItemsCounter ?? 0))*100 : 0;
     return (
         <div className={styles.list}>
-            <div className={styles.listInfo}>
-                 <Link to={`${data._id}`}>{data.name}</Link>
-                {data.description ? <p className={styles.listDescription}>{data.description}</p> : null }    
-                {data.totalItemsCounter && data.totalItemsCounter > 0 ? <div className={styles.listProgress}>
+            <Link to={`${data._id}`} className={styles.listInfo}>
+              
+                <div className={styles.listTop}>
+                    <h3>{data.name}</h3>
+                    <b>{percentage} %</b>
+                </div>
+                <div className={styles.listProgress}>
                     <div className={styles.progressBarBackground}>
-                        <div className={styles.progressBar} style={{backgroundColor: data.color, width: data?.totalItemsCounter === 0 ? '0px' : `${((data.completedItemsCounter ?? 0)/(data.totalItemsCounter ?? 0))*100}%`}} />
+                        <div className={styles.progressBar} style={{backgroundColor: data.color, width: data?.totalItemsCounter === 0 ? '0px' : `${percentage}%`}} />
                     </div>
-                    <b>{data.completedItemsCounter}/{data.totalItemsCounter}</b>
-                </div> : <p>List is empty</p>}
-            </div>
+                </div>
+                <b className={styles.listItems}>{data.completedItemsCounter} of {data.totalItemsCounter} completed</b>
+            </Link>
             {data.isDeleted ? <div className={styles.deleteButtons}>
                 <button onClick={permanentlyDelete}><IconsLibrary.Delete />Permanently Delete</button>
                 <button onClick={restoreList}><IconsLibrary.Undo />Restore</button>

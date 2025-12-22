@@ -6,6 +6,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../db';
 import { useEffect, useState } from 'react';
 import { type ShoppingList, type Notification} from '../../types/models';
+import { getIcon } from '../../components/IconSelector/iconCollection';
 
 // TODO: Add listId to notes so that the user can link them to a certain list
 // TODO: Add a section with latest notes
@@ -26,12 +27,12 @@ const Dashboard = () => {
                 </Link>
             </div>
             <div className={styles.dashboardContent}>
+                <h4>Pinned Lists</h4>
+                    <PinnedLists />
                 <h4>Due Items</h4>
                     <DueItems />
                 <h4>Recent Notifications</h4>
                     <RecentNotifications />
-                <h4>Pinned Lists</h4>
-                    <PinnedLists />
                 {/* <h4>Latest Notes</h4>
                     <LatestNotes /> */}
             </div>
@@ -45,24 +46,25 @@ const DueItems = () => {
     return (
         <div className={styles.dueItems}>
             <div className={styles.dueItem}>
-                <p><b>Milk</b> in <b>Groceries</b></p>
-                <p className={styles.dueMessage}>Today</p>
+                <div className={styles.dueItemInfo}>
+                    <b>Milk</b>
+                    <p>Groceries</p>
+                </div>
+                <p className={styles.dueDate}>Today</p>
             </div>
             <div className={styles.dueItem}>
-                <p><b>Milk</b> in <b>Groceries</b></p>
-                <p className={styles.dueMessage}>Today</p>
+                <div className={styles.dueItemInfo}>
+                    <b>Milk</b>
+                    <p>Groceries</p>
+                </div>
+                <p className={styles.dueDate}>Today</p>
             </div>
             <div className={styles.dueItem}>
-                <p><b>Milk</b> in <b>Groceries</b></p>
-                <p className={styles.dueMessage}>Today</p>
-            </div>
-            <div className={styles.dueItem}>
-                <p><b>Milk</b> in <b>Groceries</b></p>
-                <p className={styles.dueMessage}>Today</p>
-            </div>
-            <div className={styles.dueItem}>
-                <p><b>Milk</b> in <b>Groceries</b></p>
-                <p className={styles.dueMessage}>Today</p>
+                <div className={styles.dueItemInfo}>
+                    <b>Milk</b>
+                    <p>Groceries</p>
+                </div>
+                <p className={styles.dueDate}>Today</p>
             </div>
         </div>
     )
@@ -90,7 +92,7 @@ const Notification = ({data} : {data: Notification}) =>{
 
     return (
         <div className={styles.notification}>
-            <p className={styles.message}>{data.message}</p>
+            <p className={styles.message}>{data.message ?? 'Failed to get notification content!'}</p>
             <p className={styles.timestamp}>{formatRelativeTime(data.createdAt ?? new Date())}</p>
         </div>
     )
@@ -139,10 +141,18 @@ const PinnedLists = () => {
 
     return (
         <div className={styles.pinnedLists}>
-            {lists && lists.length > 0 ? lists.map(list=><div className={styles.list}>
-                <p>{list.name}</p>
-                <b>{list.completedItemsCounter}/{list.totalItemsCounter}</b>
-            </div>) : <p>No pinned lists</p>}
+            {lists && lists.length > 0 ? lists.map(list=>{
+                const Icon = getIcon(lists.icon);
+                return (
+                    <div className={styles.list}>
+                        <div className={styles.iconContainer}><Icon /></div>
+                        <div className={styles.listInfo}>
+                            <p>{list.name}</p>
+                            <b>{list.completedItemsCounter}/{list.totalItemsCounter}</b>
+                        </div>
+                    </div>
+                )
+        }) : <p>No pinned lists</p>}
         </div>
     )
 }

@@ -39,6 +39,20 @@
     bottom: var(--bottom-offset);
   }
 }
+.firstRow {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 50px;
+  gap: 10px;
+}
+.firstRow .iconButton {
+  background-color: var(--bg-primary);
+  height: 40px;
+  width: 40px;
+  border-radius: 5px;
+  border: 1px solid var(--white-10);
+  color: var(--text-color);
+}
 fieldset {
   border: none;
   display: flex;

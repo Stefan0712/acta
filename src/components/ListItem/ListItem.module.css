@@ -3,7 +3,7 @@
     height: auto;
     background-color: var(--item-bg);
     padding: 0 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     overflow: hidden;
     display: grid;
     grid-template-rows: 50px 0;
@@ -25,7 +25,7 @@
 .item .checkbox {
     height: 25px;
     width: 25px;
-    border: 2px solid rgb(165, 165, 165);
+    border: 2px solid var(--white-25);
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -69,10 +69,12 @@ svg {
     width: 20px;
 }
 .threeCol {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    gap: 10px;
     height: 40px;
     align-items: center;
+    width: fit-content;
+    margin-left: auto;
 }
 .threeCol .col {
     display: flex;
@@ -100,4 +102,5 @@ svg {
 }
 .createdAt {
     color: var(--white-25);
+    font-size: 0.75rem;
 }

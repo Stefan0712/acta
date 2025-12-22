@@ -5,12 +5,13 @@
     padding: 10px;
     position: fixed;
     z-index: 200;
-    bottom: calc(var(--navigation-height) + 10px);
+    top: 10px;
     left: 10px;
     background-color: var(--item-bg);
     display: grid;
     grid-template-rows: 40px 1fr;
     gap: 10px;
+    color: var(--text-color);
 }
 .iconsContainer {
     width: 100%;
@@ -36,6 +37,7 @@
 .iconSelector .icon svg {
     width: 60%;
     height: 60%;
+    color: var(--text-color);
 }
 .iconSelector .header{
     width: 100%;

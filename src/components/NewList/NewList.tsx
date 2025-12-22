@@ -7,6 +7,8 @@ import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { createList } from '../../services/listService';
 import { useNavigate } from 'react-router-dom';
+import IconSelector from '../IconSelector/IconSelector';
+import { getIcon } from '../IconSelector/iconCollection';
 
 interface IProps {
     close: ()=>void;
@@ -24,6 +26,9 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
     const [isPinned, setIsPinned] = useState(false);
     const [color, setColor] = useState('#FFFFFF');
     const [error, setError] = useState('');
+    const [icon, setIcon] = useState('default-icon');
+
+    const [showIconSelector, setShowIconSelector] = useState(false);
 
     const handleSaveList = async () => {
         const currentDate = new Date();
@@ -35,7 +40,8 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
             authorId: localStorage.getItem('userId') ?? 'local-user-id',
             createdAt: currentDate,
             isDeleted: false,
-            isDirty: true
+            isDirty: true,
+            icon
         };
         if (groupId) {
             newList.groupId = groupId;
@@ -60,15 +66,23 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
             close();
         }
     };
+    const SelectedIcon = getIcon(icon);
     return ( 
         <div className={styles.componentContainer}>
+            {showIconSelector ? <IconSelector icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} close={()=>setShowIconSelector(false)}/> : null}
             <div className={styles.newShoppingList}>
                 <h3>New Shopping List</h3>
-                <fieldset>
-                    <label>Name</label>
-                    <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />
-                    {error ? <p className='error-message'>{error}</p> : null}
-                </fieldset>
+                <div className={styles.firstRow}>
+                    <fieldset>
+                        <label>Name</label>
+                        <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />
+                        {error ? <p className='error-message'>{error}</p> : null}
+                    </fieldset>
+                    <fieldset>
+                        <label>Icon</label>
+                        <button className={styles.iconButton} onClick={()=>setShowIconSelector(true)}><SelectedIcon /></button>
+                    </fieldset>
+                </div>
                 <fieldset>
                     <label>Description</label>
                     <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='What is this list for?' />

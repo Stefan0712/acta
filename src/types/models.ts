@@ -13,6 +13,7 @@ export interface ShoppingList {
     clientId?: string | null;
     totalItemsCounter?: number;
     completedItemsCounter?: number;
+    icon: string;
 }
 
 export interface ShoppingListItem {
