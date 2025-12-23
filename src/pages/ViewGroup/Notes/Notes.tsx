@@ -11,6 +11,9 @@ import NewNote from './NewNote';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
 import EditNote from './EditNote';
 
+// TODO: Add a delete confirmation modal
+// TODO: Write a function to remove the local copy of a freshly deleted note from the API
+// TODO: Add a background blur to the New Note modal
 
 const Notes = () => {
     const { groupId } = useParams();
