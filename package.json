@@ -6,7 +6,7 @@
   "homepage": "https://stefan0712.github.io/docket",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc -b && vite build",
+    "build": "tsc --noEmit && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
