@@ -8,6 +8,7 @@ export interface INoteCreateData {
     title: string;
     content: string;
     isPinned: boolean;
+    isDeleted: boolean;
 }
 
 

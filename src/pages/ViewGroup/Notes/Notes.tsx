@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../Notification/NotificationContext';
 import Auth from '../../Auth/Auth';
 import Loading from '../../../components/LoadingSpinner/Loading';
-import { createComment, getNoteComments, getNotesByGroup } from '../../../services/notesServices';
+import { createComment, getNoteComments, getNotesByGroup, updateNote } from '../../../services/notesServices';
 import NewNote from './NewNote';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
 import EditNote from './EditNote';
@@ -101,11 +101,11 @@ export default Notes;
 
 interface NoteProps {
     data: Note;
-    handleEditNote: (noteId: string, note: Note) => void;
+    handleEditNote: (noteId: string, note: Partial<Note>) => void;
 }
 
 const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
-    //const {showNotification} = useNotifications();
+    const {showNotification} = useNotifications();
 
     const [showComments, setShowComments] = useState(false);
     const [comments, setComments] = useState<NoteComment[]>([]);
@@ -154,6 +154,18 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
         getComments();
         setShowComments(true);
     }
+    const handleDeleteNote = async () => {
+        if(data._id) {
+            try {
+                await updateNote(data._id, {isDeleted: true});
+                handleEditNote(data._id, {isDeleted: true})
+                showNotification("Note deleted", "success");
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to delete Note.", "error");
+            }
+        }
+    }
     return (
         <div className={styles.note}>
             {showEdit ? <EditNote noteId={data._id} close={()=>setShowEdit(false)} editNote={handleEditNote}  /> : null}
@@ -166,7 +178,7 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
                 <p className={styles.author}>{data.authorUsername ?? ""}</p>
                 {localStorage.getItem('userId') === data.authorId ? <div className={styles.noteButtons}>
                     <button onClick={()=>setShowEdit(true)}>Edit</button>
-                    <button style={{color: 'red'}}>Delete</button>
+                    <button style={{color: 'red'}} onClick={handleDeleteNote}>Delete</button>
                 </div> : null}
                 <div className={styles.commentsCount} onClick={handleShowComments}>
                     <IconsLibrary.Comment />

@@ -20,6 +20,7 @@ const EditNote: React.FC<EditNoteProps> = ({close, editNote, noteId}) => {
     const handleGetNote = async () =>{
         try {
             const response = await getNote(noteId);
+            console.log(response)
             if(response){
                 setTitle(response.title ?? '');
                 setContent(response.content ?? '');
