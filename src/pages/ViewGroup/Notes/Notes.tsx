@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../Notification/NotificationContext';
 import Auth from '../../Auth/Auth';
 import Loading from '../../../components/LoadingSpinner/Loading';
-import { createComment, deleteNote, getNoteComments, getNotesByGroup, updateNote } from '../../../services/notesServices';
+import { createComment, deleteComment, deleteNote, getNoteComments, getNotesByGroup, updateNote } from '../../../services/notesServices';
 import NewNote from './NewNote';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
 import EditNote from './EditNote';
@@ -168,6 +168,9 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
             }
         }
     }
+    const removeComment = (id: string) => {
+        setComments(prev=>[...prev.filter(item=>item._id !== id)]);
+    }
     return (
         <div className={styles.note}>
             {showEdit ? <EditNote noteId={data._id} close={()=>setShowEdit(false)} editNote={handleEditNote}  /> : null}
@@ -189,22 +192,39 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
                     <p>{data.commentCount ?? 0}</p>
                 </div>
             </div>
+            {showComments ? <NewComment noteId={data._id} addComment={(newComment)=>setComments(prev=>[...prev, newComment])} /> : null }
             {showComments ? <div className={styles.comments}>
-                <NewComment noteId={data._id} addComment={(newComment)=>setComments(prev=>[...prev, newComment])} />
-                {isLoading ? <p>Loading comments...</p> : comments?.length > 0 ? comments.map(item=><Comment data={item} />) : <p>No comments to show</p>}
+                {isLoading ? <p>Loading comments...</p> : comments?.length > 0 ? comments.map(item=><Comment removeComment={removeComment} data={item} />) : <p>No comments to show</p>}
             </div> : null}
         </div>
     )
 }
-const Comment = ({data}: {data: NoteComment}) => {
+const Comment = ({data, removeComment}: {data: NoteComment, removeComment: (_id: string) => void}) => {
+
+    const {showNotification} = useNotifications();
+
+    const handleDeleteComment = async () => {
+        try {
+            await deleteComment(data.noteId, data._id);
+            removeComment(data._id)
+            showNotification('Comment deleted successfully', "success");
+        } catch ( error ) {
+            console.error(error);
+        }
+    }
 
     return (
         <div className={styles.comment}>
             <div className={styles.commentContent}>
-                <b>{data.username}</b>
-                <p>{data.content}</p>
+                <div className={styles.topRow}>
+                    <b>{data.username}</b>
+                    <p className={styles.timestamp}>{formatRelativeTime(data.createdAt)}</p>
+                </div>
+                <div className={styles.bottomRow}>
+                    <p>{data.content}</p>
+                    {data.authorId === localStorage.getItem('userId') ? <button onClick={handleDeleteComment}>Delete</button> : null}
+                </div>
             </div>
-            <p className={styles.timestamp}>{formatRelativeTime(data.createdAt)}</p>
         </div>
     )
 }
@@ -226,7 +246,6 @@ const NewComment = ({noteId, addComment}: {noteId: string, addComment: (newComme
                 setComment('');
                 setIsLoading(false);
             }
-
         } catch (error) {
             console.error(error);
             setIsLoading(false);

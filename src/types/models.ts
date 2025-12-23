@@ -96,6 +96,7 @@ export interface NoteComment {
     createdAt: Date;
     isDirty: boolean;
     clientId: string | null;
+    noteId: string;
 }
 
 export interface Note {

@@ -168,7 +168,7 @@
 
 .note {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     background-color: var(--item-bg);
@@ -181,6 +181,7 @@
     grid-template-columns: 1fr auto;
     gap: 10px;
     color: var(--text-color);
+    padding: 10px;
 }
 .note .noteHeader h1 {
     font-size: 1.1rem;
@@ -189,15 +190,16 @@
     width: 100%;
     color: var(--white-50);
     font-size: 0.9rem;
+    padding: 0 10px;
 }
 .meta {
     width: 100%;
     border-top: 1px solid var(--white-10);
-    padding-top: 10px;
     display: flex;
     align-items: center;
     color: var(--text-color);
     gap: 10px;
+    padding: 10px 10px 0 10px;
 }
 .meta .author {
     font-size: 0.8rem;
@@ -226,8 +228,10 @@
 .comments {
     display: flex;
     flex-direction: column;
-    gap: 10px;
     color: var(--text-color);
+    background-color: var(--modal-bg);
+    border-radius: 10px;
+    padding: 10px;
 }
 .newComment {
     width: 100%;
@@ -267,8 +271,27 @@
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 10px;
-    background-color: var(--modal-bg);
-    border-radius: 10px;
+    border-bottom: 1px solid var(--white-10);
+}
+.comment:last-child {
+    border-bottom: none;
+}
+.comment .bottomRow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    width: 100%;
+}
+.comment .topRow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    width: 100%;
+}
+.comment .bottomRow button {
+    background-color: transparent;
+    border: none;
+    color: red;
 }
 .commentContent {
     display: flex;
