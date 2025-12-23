@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../Notification/NotificationContext';
 import Auth from '../../Auth/Auth';
 import Loading from '../../../components/LoadingSpinner/Loading';
-import { createComment, getNoteComments, getNotesByGroup, updateNote } from '../../../services/notesServices';
+import { createComment, deleteNote, getNoteComments, getNotesByGroup, updateNote } from '../../../services/notesServices';
 import NewNote from './NewNote';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
 import EditNote from './EditNote';
@@ -113,29 +113,31 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
 
     const [showEdit, setShowEdit] = useState(false);
 
-    // const restoreNote = async () =>{
-    //     if(data._id) {
-    //         try {
-    //             await updateNote(data._id, {isDeleted: false});
-    //             showNotification("Note restored", "success");
-    //         } catch (error) {
-    //             console.error(error);
-    //             showNotification("Failed to restore note.", "error");
-    //         }
-    //     }
-    // }
+    const restoreNote = async () =>{
+        if(data._id) {
+            try {
+                await updateNote(data._id, {isDeleted: false});
+                handleEditNote(data._id, {isDeleted: false});
+                showNotification("Note restored", "success");
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to restore note.", "error");
+            }
+        }
+    }
 
-    // const permanentlyDelete = async () =>{
-    //     if(data._id) {
-    //         try {
-    //             await deleteNote(data._id);
-    //             showNotification("Note deleted permanently", "success");
-    //         } catch (error) {
-    //             console.error(error);
-    //             showNotification("Failed to delete Note.", "error");
-    //         }
-    //     }
-    // }
+    const permanentlyDelete = async () =>{
+        if(data._id) {
+            try {
+                await deleteNote(data._id);
+                handleEditNote(data._id, {isDeleted: true});
+                showNotification("Note deleted permanently", "success");
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to delete Note.", "error");
+            }
+        }
+    }
 
     const getComments = async () => {
         try {
@@ -158,7 +160,7 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
         if(data._id) {
             try {
                 await updateNote(data._id, {isDeleted: true});
-                handleEditNote(data._id, {isDeleted: true})
+                handleEditNote(data._id, {isDeleted: true});
                 showNotification("Note deleted", "success");
             } catch (error) {
                 console.error(error);
@@ -178,7 +180,9 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
                 <p className={styles.author}>{data.authorUsername ?? ""}</p>
                 {localStorage.getItem('userId') === data.authorId ? <div className={styles.noteButtons}>
                     <button onClick={()=>setShowEdit(true)}>Edit</button>
-                    <button style={{color: 'red'}} onClick={handleDeleteNote}>Delete</button>
+                    {data.isDeleted ? <button style={{color: 'red'}} onClick={permanentlyDelete}>Permamently Delete</button> : null}
+                    {data.isDeleted ? <button onClick={restoreNote}>Restore</button> : null}
+                    {!data.isDeleted ? <button style={{color: 'red'}} onClick={handleDeleteNote}>Delete</button> : null }
                 </div> : null}
                 <div className={styles.commentsCount} onClick={handleShowComments}>
                     <IconsLibrary.Comment />
