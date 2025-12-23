@@ -25,7 +25,8 @@ const NewNote: React.FC<NoteProps> = ({close, addNote, groupId}) => {
                 title: title ?? 'Untitled Note',
                 content,
                 isPinned,
-                groupId
+                groupId,
+                isDeleted: false
             }
             try {
                 const apiResponse = await createNote(newNote);

@@ -189,10 +189,10 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
                     {!data.isDeleted ? <button onClick={handleDeleteNote}><IconsLibrary.Delete /> Delete</button> : null }
                 </div> : null}
                 </div>
-                <div className={styles.commentsCount} onClick={handleShowComments}>
+                {!data.isDeleted ? <div className={styles.commentsCount} onClick={handleShowComments}>
                     <IconsLibrary.Comment />
                     <p>{data.commentCount ?? 0}</p>
-                </div>
+                </div> : null}
             </div>
             {showComments ? <NewComment noteId={data._id} addComment={(newComment)=>setComments(prev=>[...prev, newComment])} /> : null }
             {showComments ? <div className={styles.comments}>
