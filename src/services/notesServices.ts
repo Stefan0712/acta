@@ -56,6 +56,25 @@ export async function getNotesByGroup(groupId: string): Promise<Note[]> {
         throw new Error('Network error or unknown issue.');
     }
 }
+// Get a specific note
+export async function getNote(noteId: string): Promise<Note> {    
+    try {
+        const response = await API.get(`/notes/${noteId}`);
+
+        // Check for 200 OK status
+        if (response.status === 200) {
+            return response.data; 
+        }
+        
+        throw new Error(response.data.message || 'Failed to fetch notes.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error fetching notes.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
 
 // Updates an existing note
 // PUT /api/notes/:id
@@ -121,7 +140,6 @@ export async function getNoteComments(noteId: string): Promise<NoteComment[]> {
 interface NewComment {
     content: string;
     username: string;
-    authorId: string;
 }
 // Create a comment
 export async function createComment(noteId: string, comment: NewComment): Promise<NoteComment> {    

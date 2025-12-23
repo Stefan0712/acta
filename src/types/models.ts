@@ -110,6 +110,7 @@ export interface Note {
     isDeleted: boolean;
     isPinned: boolean;
     commentCount?: number;
+    authorUsername: string;
 }
 
 export interface Vote {

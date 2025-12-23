@@ -196,18 +196,29 @@
     padding-top: 10px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     color: var(--text-color);
+    gap: 10px;
 }
 .meta .author {
     font-size: 0.8rem;
     color: var(--white-25);
+    margin-right: auto;
 }
 .commentsCount {
     display: flex;
     align-items: center;
     gap: 5px;
     font-size: 0.75rem;
+}
+.noteButtons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.noteButtons button {
+    background-color: transparent;
+    border: none;
+    color: var(--text-color);
 }
 .note .noteHeader p {
     font-size: 0.75rem;
@@ -245,4 +256,33 @@
     align-items: center;
     justify-content: center;
     border: none;
+}
+
+
+/* Comment */
+
+.comment {
+    width: 100%;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    background-color: var(--modal-bg);
+    border-radius: 10px;
+}
+.commentContent {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.commentContent b {
+    font-size: 0.75rem;
+}
+.commentContent p {
+    font-size: 0.85rem;
+    color: var(--white-50);
+}
+.comment .timestamp {
+    font-size: 0.75rem;
+    color: var(--white-25);
 }

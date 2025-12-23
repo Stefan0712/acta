@@ -9,6 +9,7 @@ import Loading from '../../../components/LoadingSpinner/Loading';
 import { createComment, getNoteComments, getNotesByGroup } from '../../../services/notesServices';
 import NewNote from './NewNote';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
+import EditNote from './EditNote';
 
 
 const Notes = () => {
@@ -58,7 +59,11 @@ const Notes = () => {
         });
     }, [notes, selectedFilter]);
 
-
+    const handleEditNote = (noteId: string, updates: Partial<Note>) => {
+        setNotes((prev)=>
+            prev.map(note => note._id === noteId ? { ...note, ...updates } : note)
+        )
+    }
     if (!localStorage.getItem('jwt-token') && groupId) {
         return ( <Auth /> )
     } else if(isLoading) {
@@ -83,7 +88,7 @@ const Notes = () => {
                     {showNewNote ? null : <button onClick={()=>setShowNewNote(true)} className={styles.newNoteButton}>
                         <IconsLibrary.Plus />
                     </button>}
-                    {filteredNotes?.length > 0 ? filteredNotes.map((note, index)=><Note data={note} key={index} />) : <p className='no-items-text'>There are no notes.</p>}
+                    {filteredNotes?.length > 0 ? filteredNotes.map((note, index)=><Note handleEditNote={handleEditNote} data={note} key={index} />) : <p className='no-items-text'>There are no notes.</p>}
                 </div>
             </div>
         );
@@ -96,14 +101,17 @@ export default Notes;
 
 interface NoteProps {
     data: Note;
+    handleEditNote: (noteId: string, note: Note) => void;
 }
 
-const Note: React.FC<NoteProps> = ({data}) => {
+const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
     //const {showNotification} = useNotifications();
 
     const [showComments, setShowComments] = useState(false);
     const [comments, setComments] = useState<NoteComment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [showEdit, setShowEdit] = useState(false);
 
     // const restoreNote = async () =>{
     //     if(data._id) {
@@ -116,16 +124,7 @@ const Note: React.FC<NoteProps> = ({data}) => {
     //         }
     //     }
     // }
-    // const restoreList = async (listId: string) =>{
-    //     try {
-    //         await db.shoppingLists.update(listId, {isDeleted: false});
-    //         showNotification("Shopping list restored", "success");
-    //         navigate('/');
-    //     } catch (error) {
-    //         console.error(error);
-    //         showNotification("Failed to restore list.", "error");
-    //     }
-    // }
+
     // const permanentlyDelete = async () =>{
     //     if(data._id) {
     //         try {
@@ -143,7 +142,8 @@ const Note: React.FC<NoteProps> = ({data}) => {
             const apiResponse = await getNoteComments(data._id);
             if(apiResponse){
                 setComments(apiResponse);
-                setIsLoading(false)
+                setIsLoading(false);
+                console.log(apiResponse);
             }
         } catch (error) {
             console.error(error);
@@ -154,16 +154,20 @@ const Note: React.FC<NoteProps> = ({data}) => {
         getComments();
         setShowComments(true);
     }
-    console.log(data)
     return (
         <div className={styles.note}>
+            {showEdit ? <EditNote noteId={data._id} close={()=>setShowEdit(false)} editNote={handleEditNote}  /> : null}
             <div className={styles.noteHeader}>
                 <h1>{!data.title || data.title.length < 1 ? "Untitled Note" : data.title}</h1>
                 <p>{formatRelativeTime(data.createdAt)}</p>
             </div>    
             <p className={styles.content}>{data.content}</p>
             <div className={styles.meta}>
-                <p className={styles.author}>Author</p>
+                <p className={styles.author}>{data.authorUsername ?? ""}</p>
+                {localStorage.getItem('userId') === data.authorId ? <div className={styles.noteButtons}>
+                    <button onClick={()=>setShowEdit(true)}>Edit</button>
+                    <button style={{color: 'red'}}>Delete</button>
+                </div> : null}
                 <div className={styles.commentsCount} onClick={handleShowComments}>
                     <IconsLibrary.Comment />
                     <p>{data.commentCount ?? 0}</p>
@@ -171,13 +175,23 @@ const Note: React.FC<NoteProps> = ({data}) => {
             </div>
             {showComments ? <div className={styles.comments}>
                 <NewComment noteId={data._id} addComment={(newComment)=>setComments(prev=>[...prev, newComment])} />
-                {isLoading ? <p>Loading comments...</p> : comments?.length > 0 ? comments.map(item=><p key={item._id}>{item.content}</p>) : <p>No comments to show</p>}
+                {isLoading ? <p>Loading comments...</p> : comments?.length > 0 ? comments.map(item=><Comment data={item} />) : <p>No comments to show</p>}
             </div> : null}
         </div>
     )
 }
+const Comment = ({data}: {data: NoteComment}) => {
 
-
+    return (
+        <div className={styles.comment}>
+            <div className={styles.commentContent}>
+                <b>{data.username}</b>
+                <p>{data.content}</p>
+            </div>
+            <p className={styles.timestamp}>{formatRelativeTime(data.createdAt)}</p>
+        </div>
+    )
+}
 const NewComment = ({noteId, addComment}: {noteId: string, addComment: (newComment: NoteComment) => void}) => {
 
     const [comment, setComment] = useState('');
@@ -189,7 +203,6 @@ const NewComment = ({noteId, addComment}: {noteId: string, addComment: (newComme
             const newComment = {
                 username: localStorage.getItem('username') ?? "No username",
                 content: comment,
-                authorId: localStorage.getItem('userId')
             }
             const apiResponse = await createComment(noteId, newComment);
             if (apiResponse){
