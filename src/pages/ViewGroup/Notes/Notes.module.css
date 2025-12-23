@@ -1,38 +1,11 @@
 
 .notes {
-    height: 100%;
+    height: calc(100dvh - var(--navigation-height) - var(--page-header-height));
     width: 100%;
     display: grid;
     grid-template-rows: 40px 1fr;
+    overflow: hidden;
     gap: 10px;
-}
-.header {
-    height: var(--page-header-height);
-    width: 100vw;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: var(--text-color);
-}
-.header button,
-.header a {
-    height: 50px;
-    width: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    border: none;
-}
-.header button svg,
-.header a svg {
-    width: 70%;
-    height: 70%;
-    color: var(--text-color);
-}
-.header button svg {
-    width: 50%;
-    height: 50%;
 }
 .filters {
     width: 100%;
@@ -62,6 +35,7 @@
     height: 100%;
     width: 100%;
     padding: 10px;
+    padding-bottom: 50px;
 }
 .newNoteButton {
     width: 50px;
@@ -174,6 +148,7 @@
     background-color: var(--item-bg);
     border-radius: 15px;
     gap: 10px;
+    flex-shrink: 0;
 }
 .note .noteHeader {
     width: 100%;
@@ -221,6 +196,14 @@
     background-color: transparent;
     border: none;
     color: var(--text-color);
+    display: flex;
+    align-items: center;
+}
+.manageButtons button{
+    color: var(--white-50);
+}
+.manageButtons svg {
+    height: 0.75rem;
 }
 .note .noteHeader p {
     font-size: 0.75rem;
@@ -272,26 +255,24 @@
     grid-template-columns: 1fr auto;
     gap: 10px;
     border-bottom: 1px solid var(--white-10);
+    padding-right: 0;
 }
 .comment:last-child {
     border-bottom: none;
 }
-.comment .bottomRow {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 10px;
-    width: 100%;
-}
+
 .comment .topRow {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 10px;
     width: 100%;
 }
-.comment .bottomRow button {
+.comment button {
     background-color: transparent;
     border: none;
-    color: red;
+    color: var(--text-color);
+    width: 40px;
+    height: 100%;
 }
 .commentContent {
     display: flex;

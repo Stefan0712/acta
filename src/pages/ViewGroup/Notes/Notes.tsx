@@ -80,7 +80,7 @@ const Notes = () => {
                 : null}
                 <div className={styles.filters}>
                     <button onClick={()=>setSelectedFilter('active')} className={selectedFilter === 'active' ? styles.selectedFilter : ''}>Active</button>
-                    <button onClick={()=>setSelectedFilter('completed')} className={selectedFilter === 'completed' ? styles.selectedFilter : ''}>Completed</button>
+                    <button onClick={()=>setSelectedFilter('pinned')} className={selectedFilter === 'pinned' ? styles.selectedFilter : ''}>Pinned</button>
                     <button onClick={()=>setSelectedFilter('deleted')} className={selectedFilter === 'deleted' ? styles.selectedFilter : ''}>Deleted</button>
                 </div>
                 <div className={styles.notesContainer}>
@@ -181,12 +181,14 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
             <p className={styles.content}>{data.content}</p>
             <div className={styles.meta}>
                 <p className={styles.author}>{data.authorUsername ?? ""}</p>
-                {localStorage.getItem('userId') === data.authorId ? <div className={styles.noteButtons}>
-                    <button onClick={()=>setShowEdit(true)}>Edit</button>
-                    {data.isDeleted ? <button style={{color: 'red'}} onClick={permanentlyDelete}>Permamently Delete</button> : null}
-                    {data.isDeleted ? <button onClick={restoreNote}>Restore</button> : null}
-                    {!data.isDeleted ? <button style={{color: 'red'}} onClick={handleDeleteNote}>Delete</button> : null }
+                <div className={styles.manageButtons}>
+                    {localStorage.getItem('userId') === data.authorId ? <div className={styles.noteButtons}>
+                    <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit />  Edit</button>
+                    {data.isDeleted ? <button style={{color: 'red'}} onClick={permanentlyDelete}><IconsLibrary.Close />  Permamently Delete</button> : null}
+                    {data.isDeleted ? <button onClick={restoreNote}><IconsLibrary.Sync />  Restore</button> : null}
+                    {!data.isDeleted ? <button onClick={handleDeleteNote}><IconsLibrary.Delete /> Delete</button> : null }
                 </div> : null}
+                </div>
                 <div className={styles.commentsCount} onClick={handleShowComments}>
                     <IconsLibrary.Comment />
                     <p>{data.commentCount ?? 0}</p>
@@ -220,11 +222,9 @@ const Comment = ({data, removeComment}: {data: NoteComment, removeComment: (_id:
                     <b>{data.username}</b>
                     <p className={styles.timestamp}>{formatRelativeTime(data.createdAt)}</p>
                 </div>
-                <div className={styles.bottomRow}>
-                    <p>{data.content}</p>
-                    {data.authorId === localStorage.getItem('userId') ? <button onClick={handleDeleteComment}>Delete</button> : null}
-                </div>
+                <p>{data.content}</p>
             </div>
+            {data.authorId === localStorage.getItem('userId') ? <button onClick={handleDeleteComment}><IconsLibrary.Delete /></button> : null}
         </div>
     )
 }
