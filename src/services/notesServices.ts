@@ -1,4 +1,4 @@
-import type { Note } from '../types/models';
+import type { Note, NoteComment } from '../types/models';
 import API from './apiService';
 import axios from 'axios';
 
@@ -7,6 +7,7 @@ export interface INoteCreateData {
     groupId: string;
     title: string;
     content: string;
+    isPinned: boolean;
 }
 
 
@@ -93,6 +94,67 @@ export async function deleteNote(noteId: string): Promise<{ message: string }> {
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             throw new Error(error.response.data.message || 'Server error deleting note.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+
+// Get all comments for a note
+export async function getNoteComments(noteId: string): Promise<NoteComment[]> {    
+    try {
+        const response = await API.get(`/notes/${noteId}/comments`);
+
+        if (response.status === 200) {
+            return response.data; // Return comments
+        }
+        
+        throw new Error(response.data.message || 'Failed to fetch comments.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error fetching comments.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+
+interface NewComment {
+    content: string;
+    username: string;
+    authorId: string;
+}
+// Create a comment
+export async function createComment(noteId: string, comment: NewComment): Promise<NoteComment> {    
+    try {
+        const response = await API.post(`/notes/${noteId}/comment`, comment);
+
+        if (response.status === 200) {
+            return response.data; // Return new comment
+        }
+        
+        throw new Error(response.data.message || 'Failed to fetch comments.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error fetching comments.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+// Delete a comment
+export async function deleteComment(noteId: string, commentId: string): Promise<boolean> {    
+    try {
+        const response = await API.delete(`/notes/${noteId}/comment/${commentId}`);
+
+        if (response.status === 200) {
+            return true;
+        }
+        
+        throw new Error(response.data.message || 'Failed to fetch comments.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error fetching comments.');
         }
         throw new Error('Network error or unknown issue.');
     }

@@ -1,0 +1,248 @@
+
+.notes {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-rows: 40px 1fr;
+    gap: 10px;
+}
+.header {
+    height: var(--page-header-height);
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-color);
+}
+.header button,
+.header a {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+}
+.header button svg,
+.header a svg {
+    width: 70%;
+    height: 70%;
+    color: var(--text-color);
+}
+.header button svg {
+    width: 50%;
+    height: 50%;
+}
+.filters {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+}
+.filters button {
+    height: 100%;
+    padding: 0 10px;
+    border: 1px solid rgba(211, 211, 211, 0.2);
+    border-radius: 10px;
+    background-color: transparent;
+    color: var(--text-color);
+}
+.filters button.selectedFilter {
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+}
+.notesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+}
+.newNoteButton {
+    width: 50px;
+    border-radius: 100%;
+    height: 50px;
+    border: 1px solid transparent;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: calc(var(--navigation-height) + 20px);
+    right: 10px;
+}
+.newNoteButton svg {
+    height: 30px;
+    width: 30px;
+    color: var(--text-on-accent);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* New Note */
+
+.newNote {
+    background-color: var(--modal-bg);
+    color: var(--text-color);
+    border: 1px solid var(--white-10);
+    padding: 20px;
+    border-radius: 15px;
+    position: fixed;
+    bottom: var(--bottom-offset);
+    width: calc(100dvw - 20px);
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.newNote input {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    padding-left: 10px;
+}
+
+.newNote .pin {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+}
+.newNote .buttons {
+    width: 100%;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: center;
+}
+.newNote .buttons button {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    border: 1px solid var(--white-10);
+    background-color: transparent;
+}
+.newNote .buttons button:nth-child(2){
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    border: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Note */
+
+.note {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--item-bg);
+    border-radius: 15px;
+    gap: 10px;
+}
+.note .noteHeader {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    color: var(--text-color);
+}
+.note .noteHeader h1 {
+    font-size: 1.1rem;
+}
+.note .content {
+    width: 100%;
+    color: var(--white-50);
+    font-size: 0.9rem;
+}
+.meta {
+    width: 100%;
+    border-top: 1px solid var(--white-10);
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-color);
+}
+.meta .author {
+    font-size: 0.8rem;
+    color: var(--white-25);
+}
+.commentsCount {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+}
+.note .noteHeader p {
+    font-size: 0.75rem;
+}
+.comments {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: var(--text-color);
+}
+.newComment {
+    width: 100%;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 1fr 40px;
+    gap: 10px;
+    align-items: center;
+}
+.newComment input {
+    height: 100%;
+    width: 100%;
+    background-color: var(--bg-primary);
+    border-radius: 10px;
+    padding-left: 10px;
+    border: none;
+    color: var(--text-color);
+}
+.newComment button {
+    width: 90%;
+    height: 90%;
+    border-radius: 10px;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}

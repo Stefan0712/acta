@@ -1,11 +1,213 @@
+import { useEffect, useMemo, useState } from 'react';
 import styles from './Notes.module.css';
+import type { Note, NoteComment } from '../../../types/models';
+import { IconsLibrary } from '../../../assets/icons';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useNotifications } from '../../../Notification/NotificationContext';
+import Auth from '../../Auth/Auth';
+import Loading from '../../../components/LoadingSpinner/Loading';
+import { createComment, getNoteComments, getNotesByGroup } from '../../../services/notesServices';
+import NewNote from './NewNote';
+import { formatRelativeTime } from '../../../helpers/dateFormat';
+
 
 const Notes = () => {
-    return ( 
-        <div className={styles.notes}>
-            <h2>Notes</h2>
-        </div>
-    );
+    const { groupId } = useParams();
+
+    const {showNotification} = useNotifications();
+    const navigate = useNavigate();
+
+
+    const [showNewNote, setShowNewNote] = useState(false);
+    const [notes, setNotes] = useState<Note[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedFilter, setSelectedFilter] = useState('active');
+    
+    useEffect(()=>{
+        getNotes();
+    },[]);
+
+    const getNotes = async () => {
+        if (groupId){
+            try {
+                const apiResponse = await getNotesByGroup(groupId);
+                setNotes(apiResponse); 
+            } catch (apiError) {
+                console.error("API pull failed:", apiError);
+                showNotification("Offline or server issue.", "error");
+            } finally {
+                setIsLoading(false); 
+            }
+        }
+    };
+
+    const filteredNotes = useMemo(() => {
+        if (!notes) return [];
+
+        return notes.filter(note => {
+            switch (selectedFilter) {
+                case 'active':
+                    return !note.isDeleted;
+                case 'pinned':
+                    return !note.isDeleted && note.isPinned;
+                case 'deleted':
+                    return note.isDeleted === true;
+                default:
+                    return false;
+            }
+        });
+    }, [notes, selectedFilter]);
+
+
+    if (!localStorage.getItem('jwt-token') && groupId) {
+        return ( <Auth /> )
+    } else if(isLoading) {
+        return ( <Loading /> )
+    } else if (notes) {
+        return ( 
+            <div className={styles.notes} style={!groupId ? {gridTemplateRows: 'var(--page-header-height) 40px 1fr'} : {}}>
+                {!groupId ? 
+                    <div className={styles.header}>
+                        <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
+                        <h3>My Notes</h3>
+                        <button><IconsLibrary.Bell /></button>
+                    </div> 
+                : null}
+                <div className={styles.filters}>
+                    <button onClick={()=>setSelectedFilter('active')} className={selectedFilter === 'active' ? styles.selectedFilter : ''}>Active</button>
+                    <button onClick={()=>setSelectedFilter('completed')} className={selectedFilter === 'completed' ? styles.selectedFilter : ''}>Completed</button>
+                    <button onClick={()=>setSelectedFilter('deleted')} className={selectedFilter === 'deleted' ? styles.selectedFilter : ''}>Deleted</button>
+                </div>
+                <div className={styles.notesContainer}>
+                    {showNewNote && groupId ? <NewNote close={()=>setShowNewNote(false)} addNote={(newNote)=>setNotes(prev=>[...prev, newNote])} groupId={groupId} /> : null}
+                    {showNewNote ? null : <button onClick={()=>setShowNewNote(true)} className={styles.newNoteButton}>
+                        <IconsLibrary.Plus />
+                    </button>}
+                    {filteredNotes?.length > 0 ? filteredNotes.map((note, index)=><Note data={note} key={index} />) : <p className='no-items-text'>There are no notes.</p>}
+                </div>
+            </div>
+        );
+    }
 }
+    
+
  
 export default Notes;
+
+interface NoteProps {
+    data: Note;
+}
+
+const Note: React.FC<NoteProps> = ({data}) => {
+    //const {showNotification} = useNotifications();
+
+    const [showComments, setShowComments] = useState(false);
+    const [comments, setComments] = useState<NoteComment[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // const restoreNote = async () =>{
+    //     if(data._id) {
+    //         try {
+    //             await updateNote(data._id, {isDeleted: false});
+    //             showNotification("Note restored", "success");
+    //         } catch (error) {
+    //             console.error(error);
+    //             showNotification("Failed to restore note.", "error");
+    //         }
+    //     }
+    // }
+    // const restoreList = async (listId: string) =>{
+    //     try {
+    //         await db.shoppingLists.update(listId, {isDeleted: false});
+    //         showNotification("Shopping list restored", "success");
+    //         navigate('/');
+    //     } catch (error) {
+    //         console.error(error);
+    //         showNotification("Failed to restore list.", "error");
+    //     }
+    // }
+    // const permanentlyDelete = async () =>{
+    //     if(data._id) {
+    //         try {
+    //             await deleteNote(data._id);
+    //             showNotification("Note deleted permanently", "success");
+    //         } catch (error) {
+    //             console.error(error);
+    //             showNotification("Failed to delete Note.", "error");
+    //         }
+    //     }
+    // }
+
+    const getComments = async () => {
+        try {
+            const apiResponse = await getNoteComments(data._id);
+            if(apiResponse){
+                setComments(apiResponse);
+                setIsLoading(false)
+            }
+        } catch (error) {
+            console.error(error);
+            setIsLoading(false);
+        }
+    }
+    const handleShowComments = () => {
+        getComments();
+        setShowComments(true);
+    }
+    console.log(data)
+    return (
+        <div className={styles.note}>
+            <div className={styles.noteHeader}>
+                <h1>{!data.title || data.title.length < 1 ? "Untitled Note" : data.title}</h1>
+                <p>{formatRelativeTime(data.createdAt)}</p>
+            </div>    
+            <p className={styles.content}>{data.content}</p>
+            <div className={styles.meta}>
+                <p className={styles.author}>Author</p>
+                <div className={styles.commentsCount} onClick={handleShowComments}>
+                    <IconsLibrary.Comment />
+                    <p>{data.commentCount ?? 0}</p>
+                </div>
+            </div>
+            {showComments ? <div className={styles.comments}>
+                <NewComment noteId={data._id} addComment={(newComment)=>setComments(prev=>[...prev, newComment])} />
+                {isLoading ? <p>Loading comments...</p> : comments?.length > 0 ? comments.map(item=><p key={item._id}>{item.content}</p>) : <p>No comments to show</p>}
+            </div> : null}
+        </div>
+    )
+}
+
+
+const NewComment = ({noteId, addComment}: {noteId: string, addComment: (newComment: NoteComment) => void}) => {
+
+    const [comment, setComment] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleNewComment = async () => {
+        try {
+            setIsLoading(true)
+            const newComment = {
+                username: localStorage.getItem('username') ?? "No username",
+                content: comment,
+                authorId: localStorage.getItem('userId')
+            }
+            const apiResponse = await createComment(noteId, newComment);
+            if (apiResponse){
+                addComment(apiResponse);
+                setComment('');
+                setIsLoading(false);
+            }
+
+        } catch (error) {
+            console.error(error);
+            setIsLoading(false);
+        }
+    }
+
+    return (
+        <div className={styles.newComment}>
+            <input type='text' value={comment} onChange={(e)=>setComment(e.target.value)} placeholder='Comment something about this...' />
+            <button onClick={handleNewComment} disabled={isLoading}><IconsLibrary.BackArrow style={{transform: 'rotateZ(180deg)'}} /></button>
+        </div>
+    )
+}

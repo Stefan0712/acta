@@ -105,9 +105,11 @@ export interface Note {
     title: string;
     content: string;
     createdAt: Date;
-    comments: NoteComment[];
     isDirty: boolean;
     clientId: string | null;
+    isDeleted: boolean;
+    isPinned: boolean;
+    commentCount?: number;
 }
 
 export interface Vote {

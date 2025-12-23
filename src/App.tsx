@@ -18,6 +18,8 @@ import AcceptInvite from './pages/Groups/AcceptInvite/AcceptInvite.tsx';
 import GroupDashboard from './pages/ViewGroup/GroupDashboard/GroupDashboard.tsx';
 import Activity from './pages/Groups/Activity/Activity.tsx';
 import Dashboard from './pages/Dashboard/Dashboard.tsx';
+import Notes from './pages/ViewGroup/Notes/Notes.tsx';
+import Polls from './pages/ViewGroup/Polls/Polls.tsx';
 
 
 function App() {
@@ -61,6 +63,8 @@ function App() {
             <Route path="/group/:groupId" element={<ViewGroup />}>
               <Route index element={<GroupDashboard />} />            
               <Route path='lists' element={<Lists />} />            
+              <Route path='notes' element={<Notes />} />            
+              <Route path='polls' element={<Polls />} />            
               <Route path='activity' element={<Activity />} />            
               <Route path="lists/:listId" element={<ViewList />} />  
               <Route path='manage' element={<Manage />} />            

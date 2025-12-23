@@ -20,10 +20,6 @@ const Menu = ({close}: {close:()=>void}) => {
             <p>Token: {isLoggedIn}</p> */}
             <div className={styles.section}>
                 <Link to={'/'}>
-                    <IconsLibrary.Category />
-                    <p>My Categories</p>
-                </Link>
-                <Link to={'/'}>
                     <IconsLibrary.Export />
                     <p>Export</p>
                 </Link>
@@ -40,10 +36,6 @@ const Menu = ({close}: {close:()=>void}) => {
                 <Link to={'/'}>
                     <IconsLibrary.Sync />
                     <p>Sync</p>
-                </Link>
-                <Link to={'/'}>
-                    <IconsLibrary.User />
-                    <p>Profile</p>
                 </Link>
             </div>
             <div className={styles.authButton} onClick={()=> !isLoggedIn ? navigate('/auth') : goToProfile()}>
