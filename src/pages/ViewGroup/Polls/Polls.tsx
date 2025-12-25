@@ -61,7 +61,7 @@ const Polls = () => {
                 <button onClick={()=>setSelectedFilter('finished')} className={selectedFilter === 'finished' ? styles.selectedFilter : ''}>Finished</button>
             </div>
             <div className={styles.container}>
-                {filteredPolls?.length > 0 ? filteredPolls.map(poll => <Poll data={poll} key={poll._id} />) : <p className='no-items-text'>No polls</p>}
+                {filteredPolls?.length > 0 ? filteredPolls.map(poll => <Poll remove={(pollId)=>setPolls(prev=>[...prev.filter(item=>item._id!==pollId)])} data={poll} key={poll._id} />) : <p className='no-items-text'>No polls</p>}
             </div>
         </div>
     )

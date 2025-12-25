@@ -3,14 +3,17 @@ import { IconsLibrary } from '../../../../assets/icons';
 import { formatRelativeTime } from '../../../../helpers/dateFormat';
 import type { Poll, PollOption } from '../../../../types/models';
 import styles from './Poll.module.css';
-import { addPollOption, submitVote } from '../../../../services/pollService';
+import { addPollOption, deletePoll, submitVote } from '../../../../services/pollService';
+import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
 
 interface PollProps {
     data: Poll;
+    remove: (id: string) => void;
 }
-const Poll: React.FC<PollProps> = ({data}) => {
-
-    const [options, setOptions] = useState([...data.options])
+const Poll: React.FC<PollProps> = ({data, remove}) => {
+    const userId = localStorage.getItem('userId');
+    const [options, setOptions] = useState([...data.options]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const handleVote = async (optionId: string) => {
         try {
@@ -22,10 +25,18 @@ const Poll: React.FC<PollProps> = ({data}) => {
             console.error(error)
         }
     }
-
+    const handleDelete = async () => {
+        try {
+            await deletePoll(data._id);
+            remove(data._id)
+        } catch (error) {
+            console.error(error);
+        }
+    }
     const totalAnswers = data.options.reduce((sum, opt) => sum + (opt?.votes?.length ?? 0), 0);
     return (
         <div className={styles.poll}>
+            {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)} confirm={()=>handleDelete()}/> : null}
             <div className={styles.header}>
                 <h1>{data.title}</h1>
                 <div className={styles.meta}>
@@ -38,6 +49,13 @@ const Poll: React.FC<PollProps> = ({data}) => {
                 {options?.map(option=><Option handleVote={handleVote} key={option._id} isEnded={data.isClosed || (data.expiresAt && data.expiresAt < new Date())} totalAnswers={totalAnswers} option={option} />)}
                 {data.allowCustomOptions ? <NewOption handleVote={handleVote} pollId={data._id} addOption={(newOption)=>setOptions(prev=>[...prev, newOption])} totalOptions={options.length} /> : null}
             </div>
+            {data.authorId === userId ? 
+                <div className={styles.managePoll}>
+                    <button>End Poll</button>
+                    <button>Edit</button>
+                    <button onClick={()=>setShowDeleteModal(true)}>Delete</button>
+                </div> : null
+            }
         </div>
     )
 }

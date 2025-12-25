@@ -17,7 +17,8 @@ const NewPoll = ({handleAddPoll, close}: {handleAddPoll: (newPoll: Poll)=>void, 
     const [endHour, setEndHour] = useState('');
     const [options, setOptions] = useState<string[]>([]);
     const [titleError, setTitleError] = useState<string | null>(null);
-    const [allowCustomOptions, setAllowCustomOptions] = useState(false)
+    const [allowCustomOptions, setAllowCustomOptions] = useState(false);
+    const [optionsError, setOptionsError] = useState<string | null>(null)
 
     const handleTitleInput = (value: string) => {
         setTitle(value)
@@ -33,6 +34,8 @@ const NewPoll = ({handleAddPoll, close}: {handleAddPoll: (newPoll: Poll)=>void, 
     const handleAdd = async () =>{
         if(!title || title.length < 1 || title.length > 30){
             setTitleError("Title invalid. Must be between 1 and 30 characters");
+        }else if(options.length < 2){
+            setOptionsError("A poll MUST have at least two options.")
         } else if (groupId) {
             const newPoll = {
                 title,
@@ -62,7 +65,7 @@ const NewPoll = ({handleAddPoll, close}: {handleAddPoll: (newPoll: Poll)=>void, 
                     <fieldset>
                         <label>Title</label>
                         <input type='text' name='title' value={title} onChange={(e)=>handleTitleInput(e.target.value)} placeholder='What is this poll about?'></input>
-                        {titleError ? <p className='error-text'>{titleError}</p> : null}
+                        {titleError ? <p className='error-message'>{titleError}</p> : null}
                     </fieldset>
                     <fieldset>
                         <label>Description</label>
@@ -84,6 +87,7 @@ const NewPoll = ({handleAddPoll, close}: {handleAddPoll: (newPoll: Poll)=>void, 
                         </fieldset>
                     </div>
                     <b>OPTIONS</b>
+                    {optionsError ? <p className='error-message'>{optionsError}</p> : null}
                     <div className={styles.options}>
                         {options?.map((option,index)=><Option key={option} data={option} handleRemove={handleRemoveOption} index={index} />)}
                         <NewOption addOption={(newOption)=>setOptions(prev=>[...prev, newOption])} totalOptions={options.length}/>
