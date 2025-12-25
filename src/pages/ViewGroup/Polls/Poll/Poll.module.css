@@ -65,9 +65,34 @@
     border-radius: 100%;
     border: 1px solid white;
 }
-/* .option:nth-child(2){
+.option.selectedOption{
     background-color: var(--white-10);
 }
-.option:nth-child(2) .optionCircle{
+.option.selectedOption .optionCircle{
     border-width: 5px;
-} */
+}
+
+
+
+
+.newOption {
+    display: grid;
+    grid-template-columns: 1fr 25px;
+    gap: 10px;
+    align-items: center;
+    height: 40px;
+}
+.newOption input {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--white-10);
+    padding-left: 10px;
+    background-color: transparent !important;
+    color: white;
+}
+.newOption button {
+    background-color: transparent;
+    border: none;
+    color: white;
+}

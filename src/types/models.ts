@@ -114,9 +114,9 @@ export interface Note {
     authorUsername: string;
 }
 export interface PollOption {
-  _id: string;
+  _id?: string;
   text: string;
-  votes: string[]; 
+  votes?: string[]; 
 }
 
 export interface Poll {
@@ -134,7 +134,6 @@ export interface Poll {
   isDirty?: boolean;
   clientId?: string | null;
   isClosed?: boolean;
-
 }
 export type NotificationCategory = 
   | 'ASSIGNMENT'

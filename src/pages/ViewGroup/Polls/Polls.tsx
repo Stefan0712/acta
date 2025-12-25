@@ -1,15 +1,21 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './Polls.module.css';
-import { mockPolls } from './mockPolls';
 import Poll from './Poll/Poll';
+import { IconsLibrary } from '../../../assets/icons';
+import NewPoll from './NewPoll/NewPoll';
+import { type Poll as IPoll } from '../../../types/models';
+import { useParams } from 'react-router-dom';
+import { getPollsByGroup } from '../../../services/pollService';
 
 
 
 const Polls = () => {
-    
-    const [selectedFilter, setSelectedFilter] = useState('active');
-    const polls = mockPolls
 
+    const {groupId} = useParams();
+    
+    const [selectedFilter, setSelectedFilter] = useState('all');
+    const [showNewPoll, setShowNewPoll] = useState(false);
+    const [polls, setPolls] = useState<IPoll[]>([])
     const filteredPolls = useMemo(() => {
         if (!polls) return [];
 
@@ -27,8 +33,28 @@ const Polls = () => {
         });
     }, [polls, selectedFilter]);
 
+
+    const fetchPolls = async () => {
+        if(groupId){
+            try {
+                const apiResposne = await getPollsByGroup(groupId)
+                setPolls(apiResposne);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
+
+    useEffect(()=>{
+        fetchPolls();
+    }, [groupId])
+
     return (
         <div className={styles.polls}>
+            {showNewPoll ? <NewPoll handleAddPoll={(newPoll)=>setPolls(prev=>[...prev, newPoll])} close={()=>setShowNewPoll(false)} /> : null}
+            {showNewPoll ? null : <button onClick={()=>setShowNewPoll(true)} className={styles.newPollButton}>
+                <IconsLibrary.Plus />
+            </button>}
             <div className={styles.filters}>
                 <button onClick={()=>setSelectedFilter('all')} className={selectedFilter === 'all' ? styles.selectedFilter : ''}>All</button>
                 <button onClick={()=>setSelectedFilter('active')} className={selectedFilter === 'active' ? styles.selectedFilter : ''}>Active</button>

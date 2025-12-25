@@ -1,0 +1,122 @@
+.newPollBackground {
+    width: 100dvw;
+    height: calc(100dvh - var(--navigation-height));
+    backdrop-filter: blur(25px);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 15;
+}
+.newPoll {
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    padding: 10px;
+    display: grid;
+    grid-template-rows: 40px 1fr 40px;
+    background-color: var(--modal-bg);
+    color: var(--text-color);
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    border-radius: 10px;;
+    border: 1px solid var(--white-10);
+    gap: 10px;
+}
+.newPoll .header button {
+    background-color: transparent;
+    border: none;
+    color: white;
+}
+.newPoll .header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.newPoll .header h1 {
+    font-size: 1.25rem;
+}
+.newPoll .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+}
+.newPoll .inputs input {
+    background-color: var(--input-bg);
+    border-radius: 10px;
+    height: 50px;
+    padding-left: 10px;
+    color: var(--white-50);
+    border: 1px solid var(--white-10);
+}
+.inputs b {
+    font-size: 0.85rem;
+    color: var(--white-50);
+}
+.inputs .due {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+}
+.newPoll label {
+    font-size: 0.9rem;
+}
+.options {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 10px;
+    padding: 10px 0;
+}
+.option,
+.newOption {
+    display: grid;
+    grid-template-columns: auto 1fr 25px;
+    gap: 10px;
+    align-items: center;
+    height: 40px;
+}
+.option button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-weight: normal;
+}
+.option p,
+.newOption p {
+    font-size: 0.8rem;
+    color: var(--white-25);
+}
+.option h2 {
+    font-size: 0.8rem;
+    background-color: var(--item-bg);
+    padding: 10px;
+    border: 1px solid var(--white-10);
+    border-radius: 10px;
+    font-weight: lighter;
+}
+
+.newOption input {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--white-10);
+    padding-left: 10px;
+    background-color: transparent !important;
+}
+.newOption button {
+    background-color: transparent;
+    border: none;
+    color: white;
+}
+
+.startPollButton {
+    width: 100%;
+    height: 40px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 5px;
+}

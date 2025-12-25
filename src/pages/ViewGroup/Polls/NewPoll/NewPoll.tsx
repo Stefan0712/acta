@@ -1,0 +1,145 @@
+import { useState } from 'react';
+import { IconsLibrary } from '../../../../assets/icons';
+import styles from './NewPoll.module.css';
+import type { Poll } from '../../../../types/models';
+import SwitchButton from '../../../../components/SwitchButton/SwitchButton';
+import { createPoll } from '../../../../services/pollService';
+import { useParams } from 'react-router-dom';
+
+
+const NewPoll = ({handleAddPoll, close}: {handleAddPoll: (newPoll: Poll)=>void, close: ()=>void}) => {
+
+    const {groupId} = useParams();
+
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [endHour, setEndHour] = useState('');
+    const [options, setOptions] = useState<string[]>([]);
+    const [titleError, setTitleError] = useState<string | null>(null);
+    const [allowCustomOptions, setAllowCustomOptions] = useState(false)
+
+    const handleTitleInput = (value: string) => {
+        setTitle(value)
+        setTitleError(null)
+    };
+
+
+
+    const handleRemoveOption = (text: string) =>{
+        setOptions(prev=>[...prev.filter(item=>item!==text)]);
+    }
+
+    const handleAdd = async () =>{
+        if(!title || title.length < 1 || title.length > 30){
+            setTitleError("Title invalid. Must be between 1 and 30 characters");
+        } else if (groupId) {
+            const newPoll = {
+                title,
+                description,
+                options,
+                groupId,
+                allowCustomOptions,
+                expiresAt: new Date(`${endDate}T${endHour}`),
+            }
+            try {
+                const apiResponse: Poll = await createPoll(newPoll);
+                handleAddPoll(apiResponse);
+                close();
+            } catch (error) {
+                console.error(error)
+            }
+        }
+    }
+    return (
+        <div className={styles.newPollBackground}>
+            <div className={styles.newPoll}>
+                <div className={styles.header}>
+                    <h1>New Poll</h1>
+                    <button onClick={close}><IconsLibrary.Close /></button>
+                </div>
+                <div className={styles.inputs}>
+                    <fieldset>
+                        <label>Title</label>
+                        <input type='text' name='title' value={title} onChange={(e)=>handleTitleInput(e.target.value)} placeholder='What is this poll about?'></input>
+                        {titleError ? <p className='error-text'>{titleError}</p> : null}
+                    </fieldset>
+                    <fieldset>
+                        <label>Description</label>
+                        <input type='text' name='description' value={description} onChange={(e)=>setDescription(e.target.value)} placeholder='Add some context (optional)'></input>
+                    </fieldset>
+                    <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
+                        <label>Allow custom optinos?</label>
+                        <SwitchButton isActivated={allowCustomOptions} onPress={()=>setAllowCustomOptions(prev=>!prev)} />
+                    </div>
+                    <b>ENDS AT</b>
+                    <div className={styles.due}>
+                        <fieldset>
+                            <label>Date</label>
+                            <input type='date' name='date' value={endDate} onChange={(e)=>setEndDate(e.target.value)}></input>
+                        </fieldset>
+                        <fieldset>
+                            <label>Time</label>
+                            <input type='time' name='hour' value={endHour} onChange={(e)=>setEndHour(e.target.value)}></input>
+                        </fieldset>
+                    </div>
+                    <b>OPTIONS</b>
+                    <div className={styles.options}>
+                        {options?.map((option,index)=><Option key={option} data={option} handleRemove={handleRemoveOption} index={index} />)}
+                        <NewOption addOption={(newOption)=>setOptions(prev=>[...prev, newOption])} totalOptions={options.length}/>
+                    </div>
+                </div>
+            <button className={styles.startPollButton} onClick={handleAdd}>Start Poll</button>
+            </div>
+        </div>
+    )
+}
+
+export default NewPoll;
+
+
+interface OptionProps {
+    data: string;
+    handleRemove: (text: string) => void;
+    index: number;
+}
+const Option: React.FC<OptionProps> = ({data, handleRemove, index}) => {
+
+
+    return (
+        <div className={styles.option}>
+            <p>{index+1}</p>
+            <h2>{data}</h2>
+            <button onClick={()=>handleRemove(data)}><IconsLibrary.Close /></button>
+        </div>
+    )
+}
+
+interface NewOptionProps {
+    addOption: (option: string) => void;
+    totalOptions: number;
+}
+
+const NewOption: React.FC<NewOptionProps> = ({addOption, totalOptions}) => {
+
+    const [text, setText] = useState('');
+    const [error, setError] = useState<string | null>(null);
+
+
+
+    const handleAdd = () => {
+        if(!text || text.length < 1 || text.length > 50) {
+            setError("Option invalid. It should be between 1 and 50 characters.")
+        }
+        addOption(text);
+        setText('');
+    }
+
+    return (
+        <div className={styles.newOption}>
+            <p>{totalOptions +1}</p>
+            <input type='text' value={text} onChange={(e)=>setText(e.target.value)} style={error ? {color: 'red', borderColor: 'red'} : {}} placeholder={error ? error : 'Add option...'} />
+            <button onClick={handleAdd}><IconsLibrary.Plus /></button>
+        </div>
+    )
+}
