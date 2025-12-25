@@ -33,44 +33,35 @@
 
 ## 🚧 Current Status & Roadmap
 
-This project is currently in **Phase 2** of development. I am currently implementing the Group/Notification logic, after which I will develop the backend API.
+### What works
 
-### Version 0.1: Core MVP (✅ Completed)
-- [x] Local Data Storage (Offline capability)
-- [x] Minimal local profile
-- [x] Shopping Lists & Items
-- [x] Custom Categories and Stores
+1. Local lists and items: The user can crete an unlimited amount of lists, each with its own list of items, without any API connection
+2. Auth: You can login or create an account with an email address, username, and password. JWT is used for a simple auth system
+3. Groups: Logged in users can create or join groups.
+   1. Users can create, edit, view, and delete groups
+   2. Invite links can be created to invite other users
+   3. Each member has its own role and permissions are granted based on that role
+   4. Each group has its own lists, notes, and polls.
+   5. All group activity is recorded as Activity Logs
 
-### Version 0.2: Groups and Notifications (🚧 In Progress)
-- [x] Data modeling for Groups
-- [x] Group list page
-- [ ] Group details page
-- [ ] Activity logs and filters
-- [ ] Group notes & polls
-- [ ] Logic for assigning and claiming list items
 
-### Version 0.3: API and Auth (📝 Planned)
-- [ ] Login / Register page
-- [ ] Authentication routes
-- [ ] CRUD Endpoints (Lists, items, groups, notes)
-- [ ] Sync logic (Local ↔ API)
+### What is next
 
-### Version 0.4: Polishing (📝 Planned)
-- [ ] Adaptive Layouts (Mobile/Desktop)
-- [ ] Accessibility Improvements (A11y)
-- [ ] Light Theme
-- [ ] JSON Import/Export
-
-### Version 0.5: Quality of Life (📝 Planned)
-- [ ] User Dashboard (Assignments/Activity)
-- [ ] Calendar View
-- [ ] PDF Export for printable lists
+1. Notifications: Alerts received by the user locally
+2. Dashboard: User's dashboard is not 100% functional yet. The user will also be able to edit it
+3. Import/Export: Allow the user to export to .json or import a .json file
+4. Print list: Format the list as a printable PDF list
+5. Sync: Allow syncing certain items with the API to create back-ups
+6. Share list: Share one list with another user
+7. Add list to group: Add a local list to a group
+8. Publish it!
 
 ---
 
 ## 🚀 How to Run Locally
 
 Since the backend is undergoing changes, the frontend can be run in **Standalone Mode**:
+The API is online most of the time, but I cannot guarantee 100% uptime while it is still in development.
 
 1. Clone the repository
    ```bash
