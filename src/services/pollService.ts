@@ -6,7 +6,14 @@ export interface IPollCreateData {
     groupId: string;
     title: string;
     description?: string;
-    options: string[];
+    options: string[] | Poll[];
+    allowCustomOptions: boolean;
+    expiresAt: Date | string;
+}
+export interface IPollUpdateData {
+    title: string;
+    description?: string;
+    options: PollOption[];
     allowCustomOptions: boolean;
     expiresAt: Date | string;
 }
@@ -21,6 +28,18 @@ export async function createPoll(data: IPollCreateData): Promise<Poll> {
         throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to create poll');
     }
 }
+
+// Fetches a single poll by its ID
+// GET /api/polls/:id
+export async function getPollById(pollId: string): Promise<Poll> {
+    try {
+        const response = await API.get(`/polls/${pollId}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to fetch poll details');
+    }
+}
+
 
 // Fetches all polls for a group
 // GET /api/polls/group/:groupId
@@ -43,7 +62,16 @@ export async function submitVote(pollId: string, optionId: string): Promise<Poll
         throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to submit vote');
     }
 }
-
+// Updates poll details (title, description, deadline, etc.)
+// PATCH /api/polls/:id
+export async function updatePoll(pollId: string, data: Partial<IPollUpdateData> & { isClosed?: boolean }): Promise<Poll> {
+    try {
+        const response = await API.patch(`/polls/${pollId}`, data);
+        return response.data;
+    } catch (error) {
+        throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to update poll');
+    }
+}
 // Adds a custom option to an existing poll
 // POST /api/polls/option
 export async function addPollOption(pollId: string, text: string): Promise<PollOption> {
