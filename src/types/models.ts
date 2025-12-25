@@ -131,8 +131,10 @@ export interface Poll {
   expiresAt: Date;
   createdAt: Date;
   updatedAt: Date;
-  isDirsty: boolean;
-  clientId: string | null;
+  isDirty?: boolean;
+  clientId?: string | null;
+  isClosed?: boolean;
+
 }
 export type NotificationCategory = 
   | 'ASSIGNMENT'

@@ -1,0 +1,73 @@
+.poll {
+    width: 100%;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: var(--item-bg);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+}
+.header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--white-10);
+}
+.header h1 {
+    font-size: 1rem;
+}
+.header .meta .dueTime {
+    display: flex;
+    align-items: center;
+}
+.header .meta .dueTime svg {
+    height: 0.85rem;
+}
+.header .meta {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.header .meta p:last-child {
+    margin-left: auto;
+}
+.header p {
+    font-size: 0.75rem;
+    color: var(--white-50);
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 15px;
+}
+
+.option {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 10px;
+    color: var(--white-50);
+    text-align: start;
+    align-items: center;
+    border-radius: 5px;
+}
+.optionCircle {
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    border: 1px solid white;
+}
+/* .option:nth-child(2){
+    background-color: var(--white-10);
+}
+.option:nth-child(2) .optionCircle{
+    border-width: 5px;
+} */
