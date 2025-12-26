@@ -75,14 +75,14 @@
 
 .group {
     display: grid;
-    grid-template-columns: 40px 1fr;
+    grid-template-columns: 40px 1fr auto;
     gap: 10px;
     background-color: #121212;
     border-radius: 10px;
     color: var(--text-color);
     padding: 15px;
     text-decoration: none;
-    border: 1px solid #262626;
+    border: 1px solid var(--white-10);
 }
 .group h3 {
     font-size: 1rem;
@@ -91,7 +91,7 @@
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    background-color: var(--bg-primary);
+    background-color: #18181b;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -99,17 +99,27 @@
 .groupContent {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 .groupContent .metaItems {
     display: flex;
     align-items: center;
     gap: 10px;
+    color: var(--white-25);
 }
 .groupContent .metaItem {
     display: flex;
     align-items: center;
     gap: 5px;
+}
+.membersCount {
+    font-size: 0.9rem;
+    color: var(--white-50);
+    display: flex;
+    align-items: center;
+}
+.membersCount svg {
+    height: 0.9rem;
 }
 .groupContent .metaItem p {
     font-size: 0.75rem;

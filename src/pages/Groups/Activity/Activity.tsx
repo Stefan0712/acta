@@ -24,7 +24,6 @@ const Activity = () => {
             }
         }
     };
-    console.log(logs)
     useEffect(()=>{
         if(groupId){
             getLogs();

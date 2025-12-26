@@ -9,6 +9,7 @@ import { deleteList, getGroupLists, updateList } from '../../../services/listSer
 import Auth from '../../Auth/Auth';
 import Loading from '../../../components/LoadingSpinner/Loading';
 import { db } from '../../../db';
+import { getIcon } from '../../../components/IconSelector/iconCollection';
 
 
 const Lists = () => {
@@ -169,20 +170,27 @@ const List: React.FC<ListProps> = ({data}) => {
     }
 
     const percentage = data.completedItemsCounter && data.totalItemsCounter && data.completedItemsCounter > 0 && data.totalItemsCounter > 0 ?  ((data.completedItemsCounter ?? 0)/(data.totalItemsCounter ?? 0))*100 : 0;
+    const Icon = getIcon(data.icon) ?? <IconsLibrary.List2 />
     return (
         <div className={styles.list}>
             <Link to={`${data._id}`} className={styles.listInfo}>
               
                 <div className={styles.listTop}>
-                    <h3>{data.name}</h3>
-                    <b>{percentage} %</b>
+                    <div className={styles.iconContainer}>
+                        <Icon />
+                    </div>
+                    <div className={styles.listInfo}>
+                        <h3>{data.name}</h3>
+                        <p>{data.totalItemsCounter} items</p>
+                    </div>
+                    <IconsLibrary.Arrow style={{color: 'var(--white-25)', transform: 'rotateZ(180deg)'}} />
                 </div>
                 <div className={styles.listProgress}>
                     <div className={styles.progressBarBackground}>
                         <div className={styles.progressBar} style={{backgroundColor: data.color, width: data?.totalItemsCounter === 0 ? '0px' : `${percentage}%`}} />
                     </div>
+                    <p>{percentage}%</p>
                 </div>
-                <b className={styles.listItems}>{data.completedItemsCounter} of {data.totalItemsCounter} completed</b>
             </Link>
             {data.isDeleted ? <div className={styles.deleteButtons}>
                 <button onClick={permanentlyDelete}><IconsLibrary.Delete />Permanently Delete</button>

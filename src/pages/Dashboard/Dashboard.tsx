@@ -5,7 +5,7 @@ import styles from './Dashboard.module.css';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../db';
 import { useEffect, useState } from 'react';
-import { type ShoppingList, type Notification} from '../../types/models';
+import { type ShoppingList, type Notification, type ShoppingListItem} from '../../types/models';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 
 // TODO: Add listId to notes so that the user can link them to a certain list
@@ -29,7 +29,7 @@ const Dashboard = () => {
             <div className={styles.dashboardContent}>
                 <h4>Pinned Lists</h4>
                     <PinnedLists />
-                <h4>Due Items</h4>
+                <h4>Latest Items</h4>
                     <DueItems />
                 <h4>Recent Notifications</h4>
                     <RecentNotifications />
@@ -43,29 +43,42 @@ const Dashboard = () => {
 export default Dashboard;
 
 const DueItems = () => {
+
+    const [items, setItems] = useState<ShoppingListItem[]>([]);
+
+    const getItems = async () => {
+        try {
+            const response = await db.shoppingListItems.reverse().limit(5).toArray();
+            
+            const listIds = [...new Set(response.map(item => item.listId).filter(Boolean))];
+
+            const lists = await db.shoppingLists.where('_id').anyOf(listIds).toArray();
+            const listMap = new Map(lists.map(list => [list._id, list]));
+
+            const populatedItems = response.map(item => ({
+                ...item,
+                list: listMap.get(item.listId)
+            }));
+            console.log(populatedItems)
+            if (populatedItems.length > 0) {
+                setItems(populatedItems);
+            }
+        } catch (error) {
+            console.error("Dexie Populate Error:", error);
+        }
+    }
+    useEffect(()=>{
+        getItems();
+    }, [])
     return (
         <div className={styles.dueItems}>
-            <div className={styles.dueItem}>
+            {items?.length > 0 ? items.map(item=><div className={styles.dueItem}>
                 <div className={styles.dueItemInfo}>
-                    <b>Milk</b>
-                    <p>Groceries</p>
+                    <b>{item.name || "Unnamed item"}</b>
+                    <p>{item.list.name || 'Unknown list'}</p>
                 </div>
-                <p className={styles.dueDate}>Today</p>
-            </div>
-            <div className={styles.dueItem}>
-                <div className={styles.dueItemInfo}>
-                    <b>Milk</b>
-                    <p>Groceries</p>
-                </div>
-                <p className={styles.dueDate}>Today</p>
-            </div>
-            <div className={styles.dueItem}>
-                <div className={styles.dueItemInfo}>
-                    <b>Milk</b>
-                    <p>Groceries</p>
-                </div>
-                <p className={styles.dueDate}>Today</p>
-            </div>
+                <p className={styles.dueDate}><IconsLibrary.Arrow style={{transform: 'rotateZ(180deg)'}} /></p>
+            </div>) : <p className='no-items-text'>No items found</p>}
         </div>
     )
 }
@@ -147,8 +160,8 @@ const PinnedLists = () => {
                     <div className={styles.list}>
                         <div className={styles.iconContainer}><Icon /></div>
                         <div className={styles.listInfo}>
-                            <p>{list.name}</p>
-                            <b>{list.completedItemsCounter}/{list.totalItemsCounter}</b>
+                            <p>{list.name ?? "Untitled list"}</p>
+                            <b>{list.completedItemsCounter}/{list.totalItemsCounter} items</b>
                         </div>
                     </div>
                 )

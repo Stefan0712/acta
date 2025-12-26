@@ -49,6 +49,7 @@ export interface ShoppingListItem {
     isReminderSent: boolean;
     isDirty: boolean;
     clientId: string | null;
+    icon?: string;
 }
 
 export interface User {

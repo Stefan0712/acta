@@ -2,15 +2,17 @@ import { Link, useParams } from 'react-router-dom';
 import styles from './GroupDashboard.module.css';
 import { IconsLibrary } from '../../../assets/icons';
 import { useEffect, useState } from 'react';
-import { type Group } from '../../../types/models';
-import { getGroup } from '../../../services/groupService';
+import { type ActivityLog, type Group } from '../../../types/models';
+import { getGroup, getGroupActivity } from '../../../services/groupService';
 import Loading from '../../../components/LoadingSpinner/Loading';
+import { getDateAndHour } from '../../../helpers/dateFormat';
 
 const GroupDashboard = () => {
 
     const {groupId} = useParams();
 
     const [groupData, setGroupData] = useState<Group | null>(null);
+    const [logs, setLogs] = useState<ActivityLog[]>([]);
 
     const getGroupData = async () => {
         if(groupId) {
@@ -23,9 +25,26 @@ const GroupDashboard = () => {
             }
         }
     }
+    
+    const getLogs = async () =>{
+        console.log(groupId)
+        if(groupId){
+            try {
+                const activity = await getGroupActivity(groupId);
+                if(activity && activity.length > 0){
+                    setLogs(activity)
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
 
     useEffect(()=>{
-        getGroupData();
+        if(groupId){
+            getLogs();
+            getGroupData();
+        }
     },[groupId])
 
 
@@ -74,20 +93,20 @@ const GroupDashboard = () => {
                         <p>5 New</p>
                     </Link>
                 </div>
-                <div className={styles.dueSoon}>
+                <div className={styles.activity}>
                     <div className={styles.sectionTitle}>
-                        <IconsLibrary.Time />
-                        <b>DUE SOON</b>
+                        <IconsLibrary.Activity />
+                        <b>Latest Activity</b>
                     </div>
-                    <div className={styles.dueItem}>
-                        <div className={styles.color}></div>
-                        <div className={styles.itemInfo}>
-                            <b>Buy Charcoal</b>
-                            <p>Camping Supplies</p>
-                        </div>
-                        <div className={styles.due}>Today</div>
-                    </div>
-                    <p className={styles.noDueItems}>No due items</p>
+                   <div className={styles.activityContainer}>
+                        {logs && logs.length > 0 ? logs.map((log, index)=><Link to={log.metadata?.listId ? `/group/${groupId}/lists/${log.metadata?.listId}` : `/group/${groupId}`} key={index} className={styles.log}>
+                            <div className={styles.logCircle} />
+                            <div className={styles.content}>
+                                <p className={styles.message}>{log.message}</p>
+                                <b>{getDateAndHour(log.createdAt)}</b>
+                            </div>
+                        </Link>) : <p className='no-items-text'>No activity</p>}
+                   </div>
                 </div>
             </div>
         )

@@ -90,10 +90,11 @@ import {
     Soup,
     Tag,
     MessageSquare,
+    Star
 } from "lucide-react";
 
 export const GROUP_ICONS = [
-    { id: 'default-icon', title: "Message", icon: MessageSquare},
+    { id: 'default-icon', title: "Star", icon: Star},
     { id: 'icon-apple-id', title: 'Apple', icon: Apple },
     { id: 'icon-archive-id', title: 'Archive', icon: Archive },
     { id: 'icon-angry-id', title: 'Angry', icon: Angry },

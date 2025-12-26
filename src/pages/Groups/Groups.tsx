@@ -79,18 +79,22 @@ const Group = ({data}: {data: Group}) => {
                 <h3>{data.name}</h3>
                 <div className={styles.metaItems}>
                     <div className={styles.metaItem}>
-                        <p>LISTS</p>
+                        <IconsLibrary.List2 />
                         <b>{data.listCount ?? 0}</b>
                     </div>
                     <div className={styles.metaItem}>
-                        <p>NOTES</p>
+                        <IconsLibrary.Note />
                         <b>{data.noteCount ?? 0}</b>
                     </div>
                     <div className={styles.metaItem}>
-                        <p>POLLS</p>
+                        <IconsLibrary.Poll />
                         <b>{data.pollCount ?? 0}</b>
                     </div>
                 </div>
+            </div>
+            <div className={styles.membersCount}>
+                <IconsLibrary.Group />
+                <b>{data.members.length ?? 0}</b>
             </div>
         </Link>
     )
