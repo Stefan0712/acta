@@ -9,6 +9,7 @@ import { createList } from '../../services/listService';
 import { useNavigate } from 'react-router-dom';
 import IconSelector from '../IconSelector/IconSelector';
 import { getIcon } from '../IconSelector/iconCollection';
+import ColorSelector from '../ColorSelector/ColorSelector';
 
 interface IProps {
     close: ()=>void;
@@ -29,6 +30,7 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
     const [icon, setIcon] = useState('default-icon');
 
     const [showIconSelector, setShowIconSelector] = useState(false);
+    const [showColorSelector, setShowColorSelector] = useState(false);
 
     const handleSaveList = async () => {
         const currentDate = new Date();
@@ -70,34 +72,33 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
     return ( 
         <div className={styles.componentContainer}>
             {showIconSelector ? <IconSelector icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} close={()=>setShowIconSelector(false)}/> : null}
+            {showColorSelector ? <ColorSelector currentColor={color} setColor={(newColor)=>setColor(newColor)} close={()=>setShowColorSelector(false)}/> : null}
             <div className={styles.newShoppingList}>
                 <h3>New Shopping List</h3>
-                <div className={styles.firstRow}>
-                    <fieldset>
-                        <label>Name</label>
-                        <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />
-                        {error ? <p className='error-message'>{error}</p> : null}
-                    </fieldset>
-                    <fieldset>
-                        <label>Icon</label>
-                        <button className={styles.iconButton} onClick={()=>setShowIconSelector(true)}><SelectedIcon /></button>
-                    </fieldset>
-                </div>
+                <fieldset>
+                    <label>Name</label>
+                    <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />
+                    {error ? <p className='error-message'>{error}</p> : null}
+                </fieldset>
                 <fieldset>
                     <label>Description</label>
                     <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='What is this list for?' />
                 </fieldset>
-                <div className={styles.twoCols}>
-                    <div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
-                        <label>Pin List</label>
+                <div className={styles.threeCols}>
+                    <fieldset>
+                        <label>Pin</label>
                         <SwitchButton isActivated={isPinned} onPress={()=>setIsPinned(prev=>!prev)} />
-                    </div>
-                    <div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
-                        <label>Color:</label>
-                        <input type='color' name='color' onChange={(e)=>setColor(e.target.value)} value={color} />
-                    </div>
+                    </fieldset>
+                    <fieldset>
+                        <label>Color</label>
+                        <button onClick={()=>setShowColorSelector(true)} className={styles.colorButton}><div className={styles.color} style={{backgroundColor: color}} /></button>
+                    </fieldset>
+                    <fieldset>
+                        <label>Icon</label>
+                        <button className={styles.iconButton} onClick={()=>setShowIconSelector(true)}><SelectedIcon color={color} /></button>
+                    </fieldset>
                 </div>
-                <div className={styles.twoCols}>
+                <div className={styles.bottomButtons}>
                     <button className={styles.cancelButton} onClick={close}>Cancel</button>
                     <button className={styles.saveButton} onClick={handleSaveList}>Save</button>
                 </div>

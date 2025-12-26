@@ -72,13 +72,13 @@ const DueItems = () => {
     }, [])
     return (
         <div className={styles.dueItems}>
-            {items?.length > 0 ? items.map(item=><div className={styles.dueItem}>
+            {items?.length > 0 ? items.map(item=><Link to={`/lists/${item.list._id}`} className={styles.dueItem}>
                 <div className={styles.dueItemInfo}>
                     <b>{item.name || "Unnamed item"}</b>
                     <p>{item.list.name || 'Unknown list'}</p>
                 </div>
                 <p className={styles.dueDate}><IconsLibrary.Arrow style={{transform: 'rotateZ(180deg)'}} /></p>
-            </div>) : <p className='no-items-text'>No items found</p>}
+            </Link>) : <p className='no-items-text'>No items found</p>}
         </div>
     )
 }
@@ -155,7 +155,7 @@ const PinnedLists = () => {
     return (
         <div className={styles.pinnedLists}>
             {lists && lists.length > 0 ? lists.map(list=>{
-                const Icon = getIcon(lists.icon);
+                const Icon = getIcon(list.icon || 'default-icon');
                 return (
                     <div className={styles.list}>
                         <div className={styles.iconContainer}><Icon /></div>

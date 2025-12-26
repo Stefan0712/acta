@@ -1,0 +1,79 @@
+.colorSelector {
+    width: calc(100dvw - 20px);
+    height: calc(100dvh - var(--navigation-height) - 20px);
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: var(--modal-bg);
+    display: grid;
+    grid-template-rows: 40px 1fr 50px;
+    border-radius: 10px;
+    border: 1px solid var(--white-10);
+    gap: 10px;
+    z-index: 50;
+    color: var(--text-color);
+    padding: 15px;
+    animation: popModal 0.1s;
+}
+
+@keyframes popModal {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+.colorSelector .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.colorSelector .header h1 {
+    font-size: 1.1rem;
+    color: var(--white-50);
+}
+.header button {
+    height: 40px;
+    width: 40px;
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color)
+}
+.colorSelector .container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.colorSelector .container button {
+    aspect-ratio: 1 / 1;
+    border: 2px solid transparent;
+    width: 100%;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.colorSelector .container button svg {
+    color: white;
+    filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 1));
+    height: 70%;
+    width: 70%;
+}
+.selectedColor {
+    border-color: white !important;
+}
+.doneButton {
+    width: 100%;
+    height: 100%;
+    background-color: var(--accent);
+    border-radius: 10px;
+    color: var(--text-on-accent)
+}

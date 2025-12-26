@@ -183,7 +183,6 @@ const List: React.FC<ListProps> = ({data}) => {
                         <h3>{data.name}</h3>
                         <p>{data.totalItemsCounter} items</p>
                     </div>
-                    <IconsLibrary.Arrow style={{color: 'var(--white-25)', transform: 'rotateZ(180deg)'}} />
                 </div>
                 <div className={styles.listProgress}>
                     <div className={styles.progressBarBackground}>

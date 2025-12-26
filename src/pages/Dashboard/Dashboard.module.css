@@ -55,11 +55,14 @@
 .dueItem .dueItemInfo {
     display: flex;
     flex-direction: column;
+    color: var(--text-color);
+    text-decoration: none;
     gap: 5px;
 }
 .dueItem .dueItemInfo p {
     color: var(--white-50);
     font-size: 0.75rem;
+    text-decoration: none;
 }
 .dueItem .dueDate {
     font-size: 0.80rem;

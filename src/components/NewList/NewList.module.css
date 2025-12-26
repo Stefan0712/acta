@@ -7,11 +7,19 @@
   flex-direction: column;
   gap: 10px;
   background-color: var(--item-bg);
-  border-radius: 5px;
+  border-radius: 10px;
   box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.3);
-  animation: slideFromBottom 0.5s;
+  animation: slideFromBottom 0.2s;
   color: var(--text-color);
   margin-top: auto;
+  border: 1px solid var(--white-10);
+}
+.newShoppingList h3{
+  font-size: 1rem;
+  color: var(--white-50);
+  height: 40px;
+  align-items: center;
+  display: flex;
 }
 .componentContainer {
   width: 100dvw;
@@ -28,30 +36,29 @@
 @keyframes slideFromBottom {
   0% {
     opacity: 0;
-    bottom: -120%;
-  }
-  70% {
-    opacity: 1;
-    bottom: calc(var(--bottom-offset) + 20px);
+    transform: translateY(200%);
   }
   100% {
     opacity: 1;
-    bottom: var(--bottom-offset);
+    transform: translateY(0);
   }
 }
-.firstRow {
-  width: 100%;
+.pin {
   display: grid;
-  grid-template-columns: 1fr 50px;
+  grid-template-columns: 1fr auto;
   gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 0;
 }
-.firstRow .iconButton {
-  background-color: var(--bg-primary);
-  height: 40px;
-  width: 40px;
-  border-radius: 5px;
-  border: 1px solid var(--white-10);
-  color: var(--text-color);
+.pinText {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pinText p:last-child{
+  color: var(--white-25);
+  font-size: 0.75rem;
 }
 fieldset {
   border: none;
@@ -65,20 +72,56 @@ fieldset input {
   border: none;
   padding-left: 5px;
 }
-.twoCols {
+.threeCols fieldset {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+ fieldset .iconButton,
+ fieldset .colorButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background-color: rgb(37, 37, 37);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.colorButton .color {
+  width: 100%;
+  height: 100%;
+}
+.threeCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.bottomButtons {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  align-items: center;
+  height: 40px;
 }
-.twoCols button {
+.bottomButtons button {
   width: 100%;
   height: 40px;
   border-radius: 5px;
-  border: 1px solid lightgray;
+  border: none;
 }
 .saveButton {
   color: var(--text-on-accent);
   background-color: var(--accent);
-  border: 1px solid transparent;
+  border: 1px solid var(--white-10);
+}
+.newShoppingList input {
+  background-color: var(--modal-bg);
+  height: 50px;
+  border-radius: 10px;
+  padding-left: 10px;
 }
