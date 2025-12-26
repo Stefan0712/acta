@@ -23,7 +23,6 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
     const { showNotification } = useNotifications();
     const [isPageLoading, setIsPageLoading] = useState(true);
 
-    const [showNewItem, setShowNewItem] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState<"all" | "pinned" | "mine" | "deleted">('all');
@@ -154,8 +153,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                             <p className={styles.noItemsText}>No items yet</p>
                     }
                 </div>
-                {showNewItem ? null  : <button onClick={()=>setShowNewItem(true)} className={styles.newItemButton}><IconsLibrary.Plus /></button>}
-                {showNewItem && listData?._id ? <NewItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} close={()=>setShowNewItem(false)}/> : null}
+                <NewItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} />
             </div>
         );
     }

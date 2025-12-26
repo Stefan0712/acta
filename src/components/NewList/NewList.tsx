@@ -74,7 +74,7 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
             {showIconSelector ? <IconSelector icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} close={()=>setShowIconSelector(false)}/> : null}
             {showColorSelector ? <ColorSelector currentColor={color} setColor={(newColor)=>setColor(newColor)} close={()=>setShowColorSelector(false)}/> : null}
             <div className={styles.newShoppingList}>
-                <h3>New Shopping List</h3>
+                <h3>New List</h3>
                 <fieldset>
                     <label>Name</label>
                     <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />

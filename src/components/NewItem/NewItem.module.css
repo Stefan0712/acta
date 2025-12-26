@@ -1,49 +1,17 @@
 .newItem {
     padding: 10px;
-    width: calc(100vw - 20px);
-    left: 10px;
-    background-color: var(--bg-primary);
-    border-radius: 15px;
-    gap: 10px;
+    width: 100dvw;
+    left: 0;
+    background-color: var(--modal-bg);
+    position: fixed;
+    bottom: var(--navigation-height);
     display: flex;
     flex-direction: column;
-    animation: slideUp 0.1s;
     transform-origin: bottom;
     flex-shrink: 0;
-    position: fixed;
-    bottom: var(--bottom-offset);
     z-index: 10;
-    border: 1px solid rgba(102, 102, 102, 0.5);
-}
-@keyframes slideUp {
-    0% {
-        opacity: 0;
-        transform: scaleY(0);
-    }
-    100% {
-        opacity: 1;
-        transform: scaleY(1);
-    }
-}
-.header {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 30px;
-    align-items: center;
-}
-.header h3{
-    font-size: 0.9rem;
-}
-.header button {
-    height: 100%;
-    width: 30px;
-    background-color: transparent;
-    border: none;
-}
-.header button svg {
-    height: 20px;
-    width: 20px;
-    color: var(--text-color);
+    border-top: 1px solid rgba(102, 102, 102, 0.5);
+    transition: all 0.1s;
 }
 .expandButton {
     width: 100%;
@@ -57,6 +25,7 @@
 .expandButton svg {
     transform: rotateZ(-90deg);
     transition: all 0.1s;
+    color: var(--text-color);
 }
 .iconButton {
     width: 40px;
@@ -70,7 +39,7 @@
 .iconButton svg {
     height: 80%;
     width: 80%;
-    color: white;
+    color: var(--text-color);
 }
 .claimButtons {
     width: 100%;
@@ -84,26 +53,32 @@
 }
 .basicInputs {
     display: grid;
-    grid-template-columns: 40px 2fr 1fr 1fr 40px;
+    grid-template-columns: 40px 1fr 40px;
+    gap: 20px;
+    background-color: var(--input-bg);
     align-items: center;
     width: 100%;
-    height: 40px;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border-radius: 5px;
+    height: 60px;
+    border-radius: 10px;
     overflow: hidden;
+    padding: 0 10px;
 }
 .basicInputs input {
     height: 40px;
     width: 100%;
-    background-color: white;
+    background-color: transparent;
     border: 1px solid transparent;
     padding-left: 10px;
-    flex-shrink: 0;
+    flex-shrink: 
+    0;
 }
-
-.basicInputs button svg {
+.basicInputs .addButton {
+    width: 40px;
+    height: 40px;
+    background-color: var(--accent);
     color: var(--text-on-accent);
+    border-radius: 10px;
+    border: transparent;
 }
 .descriptionInput {
     height: 40px;
@@ -119,22 +94,28 @@
     gap: 10px;
     overflow: hidden;
     height: 0;
-    animation: expandMoreInputs 0.2s;
-    transform-origin: top;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.moreInputs input{
+    background-color: var(--input-bg);
+    border: 1px solid var(--white-10);
+    color: var(--text-color);
+    padding-left: 10px;
+    height: 50px;
+    border-radius: 10px;
+    transition: all 0.1s;
 }
 .moreInputs.show {
     height: auto;
     animation: expandMoreInputs 0.2s;
 }
-@keyframes expandMoreInputs {
-    from {
-        transform: scaleY(0);
-        opacity: 0;
-    }
-    to {
-        transform: scaleY(1);
-        opacity: 1;
-    }
+
+.halfRow {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 .showMoreButton {
     height: 30px;
@@ -187,10 +168,11 @@
 .priority {
     display: flex;
     align-items: center;
+    padding: 5px 0;
 }
 .priority select {
     margin-right: 10px;
-    height: 30px;
+    height: 50px;
     border-radius: 5px;
     background-color: white;
     border: none;
@@ -289,5 +271,6 @@
     background-color: white;
     border: 1px solid transparent;
     border-radius: 5px;
-    padding-left: 10px
+    padding-left: 10px;
+    color: black;
 }

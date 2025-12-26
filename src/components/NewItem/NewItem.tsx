@@ -11,12 +11,11 @@ import { createItem } from '../../services/itemService.ts';
 interface NewShoppingListItemProps {
     listId: string;
     addItemToList: (item: ShoppingListItem) => void;
-    close: () => void;
     members?: GroupMember[];
     online?: boolean;
 }
 
-const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addItemToList, close, members, online}) => {
+const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addItemToList, members, online}) => {
     const userId = localStorage.getItem('userId');
 
     const [name, setName] = useState('');
@@ -134,23 +133,27 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     return ( 
         <div className={styles.newItem}>
             {showUserSelector ? <UserSelector users={members ?? []} close={()=>setShowUserSelector(false)} selectUser={(user)=>setAssignedTo(user)} selectedUser={assignedTo} /> : null}
-            <div className={styles.header}>
-                <h3>New Item</h3>
-                <button onClick={close}><IconsLibrary.Close /></button>
-            </div>
-            <div className={styles.basicInputs} style={showMoreInputs ? {gridTemplateColumns: '40px 2fr 1fr 1fr'} : {}}>
+            <div className={styles.basicInputs}>
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
                     <IconsLibrary.Arrow style={showMoreInputs ? {transform: 'rotateZ(90deg)'} : {}} />
                 </button>
                 <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
-                <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
-                <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
-                <button className={styles.iconButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
+                <button className={styles.addButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
             </div>
+            
             {error ? <p className='error-message'>{error}</p> : null}
-            <div className={`${styles.moreInputs} ${showMoreInputs ? styles.show : ''}`} ref={moreInputsRef}>
+            {showMoreInputs ? <div className={`${styles.moreInputs} ${showMoreInputs ? styles.show : ''}`} ref={moreInputsRef}>
+                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+                    <fieldset className={styles.halfRow}>
+                        <label>Qty</label>
+                    <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
+                    </fieldset>
+                    <fieldset className={styles.halfRow}>
+                        <label>Unit</label>
+                        <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
+                    </fieldset>
+                </div>
                 <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
-
                 {online ? <div className={styles.claimButtons}>
                     <button onClick={handleClaimItem} className={styles.userSelectorButton}>{claimedBy ? 'Claimed' : 'Claim item'}</button>
                     {claimedBy ? null : <button onClick={()=>setShowUserSelector(true)} className={styles.userSelectorButton}>{assignedTo ? 'Assigned to an user' : 'Assign item to user'}</button>}
@@ -185,8 +188,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                     <button className={styles.iconButton} onClick={()=>setShowNewTag(prev=>!prev)}><IconsLibrary.Plus /></button>
                 </div>
                 {showNewTag ? <NewTag addTag={addTag}/> : null}
-                {showMoreInputs ? <button className={styles.largeAddButton} onClick={addNewItem}><IconsLibrary.Plus /> Add Item</button> : null}
-            </div>
+            </div> : null}
         </div>
      );
 }
