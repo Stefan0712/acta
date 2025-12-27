@@ -18,6 +18,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-direction: row-reverse;
 }
 .viewList .listButtons button {
     height: 100%;
@@ -28,6 +29,11 @@
     border: none;
     color: var(--text-color);
     padding: 0 10px;
+    gap: 5px;
+}
+.listButtons button svg {
+    height: 16px;
+    width: 16px;
 }
 .listName {
     width: 100%;

@@ -12,6 +12,7 @@ import { getListItems } from '../../../../services/itemService.ts';
 import Loading from '../../../../components/LoadingSpinner/Loading.tsx';
 import Auth from '../../../Auth/Auth.tsx';
 import Categories from '../../../../components/Categories/Categories.tsx';
+import { IconsLibrary } from '../../../../assets/icons.ts';
 
 
 
@@ -132,8 +133,8 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                     </div>
                     <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
                     <div className={styles.listButtons}>
-                        <button onClick={()=>setShowEdit(true)}>Edit</button>
-                        {listData.isDeleted ? <button style={{color: 'var(--text-color)'}} onClick={restoreList}>Restore</button> : <button onClick={handleDeleteList} style={{color: 'red'}}>Delete</button>}
+                        <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit</button>
+                        {listData.isDeleted ? <button style={{color: 'var(--text-color)'}} onClick={restoreList}><IconsLibrary.Sync /> Restore</button> : <button onClick={handleDeleteList} style={{color: 'red'}}><IconsLibrary.Delete />Delete</button>}
                     </div>
                     <p>{listData.description}</p>
                 </div>

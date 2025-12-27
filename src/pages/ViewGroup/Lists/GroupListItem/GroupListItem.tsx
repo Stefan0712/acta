@@ -1,4 +1,4 @@
-import styles from './GroupListItem.module.css';
+import styles from '../../../../components/ListItem/ListItem.module.css'
 import { type GroupMember, type ShoppingListItem as ItemInterface } from '../../../../types/models';
 import { IconsLibrary } from '../../../../assets/icons';
 import { db } from '../../../../db';
@@ -90,37 +90,24 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, on
                     <div className={styles.checkbox} onClick={toggleCheck}>
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
                     </div>
-                    <p onClick={()=>setExpandItem(prev=>!prev)}>2p{data.name}</p>
+                    <p onClick={()=>setExpandItem(prev=>!prev)}>{data.name}</p>
                     <b>{data.qty} {data.unit}</b>
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>
                     <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>
-                    {data.description ? null : <p>No description</p> }
-                    <div className={styles.twoCols}>
-                        <div className={styles.col}>
-                            <IconsLibrary.Category />
-                            <p>{data?.category?.name ?? 'No category'}</p>
-                        </div>
-                        <div className={styles.col}>
-                            <IconsLibrary.Store />
-                            <p>{data?.store?.name ?? 'No store'}</p>
-                        </div>
-                    </div>
-                    <div className={styles.assignedUser}>
+                    {data.description ? <p>{data.description}</p> : null}
+                    {data.assignedTo || data.claimedBy ? <div className={styles.assignedUser}>
                         <IconsLibrary.Assigned />
-                        {data.assignedTo || data.claimedBy ? 
-                           <p>Assigned to {data.assignedTo ? members?.find(item=>item.userId === data.assignedTo)?.username : data.claimedBy ? members?.find(item=>item.userId === data.claimedBy)?.username : 'nobody'}</p> 
-                         : <p>Not claimed</p>
-                        }
-                    </div>
-                    <div className={styles.deadline}>
+                        <p>Assigned to {data.assignedTo ? members?.find(item=>item.userId === data.assignedTo)?.username : data.claimedBy ? members?.find(item=>item.userId === data.claimedBy)?.username : 'nobody'}</p> 
+                    </div> : null}
+                    {data.deadline ? <div className={styles.deadline}>
                         <IconsLibrary.Time />
-                        {data.deadline ? <p>Due {formatDeadline(data.deadline)}</p> : <p>No deadline</p>}
-                    </div>
-                    <div className={styles.tags}>
+                        <p>Due {formatDeadline(data.deadline)}</p>
+                    </div> : null}
+                    {data.tags && data.tags.length > 0 ? <div className={styles.tags}>
                         <IconsLibrary.Tag />
-                        {data.tags && data.tags.length > 0 ? data.tags?.map(tag=><p key={tag} className={styles.tag}>{tag}</p>) : <p>No tags</p>}
-                    </div>
+                        {data.tags?.map(tag=><p key={tag} className={styles.tag}>{tag}</p>)}
+                    </div> : null}
                     <div className={styles.threeCol}>
                         <div className={styles.col} onClick={togglePin}>
                             {data.isPinned ? <IconsLibrary.FullStar /> : <IconsLibrary.Star />}
