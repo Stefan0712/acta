@@ -3,7 +3,6 @@ import styles from './ViewList.module.css';
 import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList, type GroupMember } from '../../../../types/models';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../../Notification/NotificationContext';
-import {IconsLibrary} from '../../../../assets/icons.ts';
 import NewItem from '../../../../components/NewItem/NewItem';
 import { getDateAndHour } from '../../../../helpers/dateFormat.ts';
 import EditList from '../../../../components/EditList/EditList';
@@ -12,6 +11,7 @@ import {  getList, updateList } from '../../../../services/listService.ts';
 import { getListItems } from '../../../../services/itemService.ts';
 import Loading from '../../../../components/LoadingSpinner/Loading.tsx';
 import Auth from '../../../Auth/Auth.tsx';
+import Categories from '../../../../components/Categories/Categories.tsx';
 
 
 
@@ -25,7 +25,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
 
     const [showEdit, setShowEdit] = useState(false);
 
-    const [selectedCategory, setSelectedCategory] = useState<"all" | "pinned" | "mine" | "deleted">('all');
+    const [selectedCategory, setSelectedCategory] = useState<string>('all');
     const [listData, setListData] = useState<IShoppingList | null>(null);
     const [listItems, setListItems] = useState<ItemType[]>([]);
 
@@ -137,12 +137,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                     </div>
                     <p>{listData.description}</p>
                 </div>
-                <div className={styles.categoryButtons}>
-                    <button className={selectedCategory === 'all' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('all')}>All</button>
-                    <button className={selectedCategory === 'pinned' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('pinned')}>Pinned</button>
-                    <button className={selectedCategory === 'mine' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('mine')}>Mine</button>
-                    <button className={selectedCategory === 'deleted' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('deleted')}>Deleted</button>
-                </div>
+                <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','mine', 'deleted']} />
                 <div className={styles.listItemsContainer}>
                     { filteredItems && filteredItems.length > 0 ? 
                         <>

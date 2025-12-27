@@ -1,0 +1,36 @@
+.header {
+    width: 100dvw;
+    height: var(--header-height);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 30px 1fr 40px;
+    align-items: center;
+    gap: 10px;
+}
+.header button,
+.header a {
+    height: 30px;
+    width: 30px;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+}
+.header button svg,
+.header a svg {
+    height: 20px;
+    width: 20px;
+    color: var(--white-text);
+}
+.header h1 {
+    font-size: 1.2rem;
+}
+.header .buttonContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

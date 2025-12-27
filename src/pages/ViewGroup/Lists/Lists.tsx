@@ -10,6 +10,7 @@ import Auth from '../../Auth/Auth';
 import Loading from '../../../components/LoadingSpinner/Loading';
 import { db } from '../../../db';
 import { getIcon } from '../../../components/IconSelector/iconCollection';
+import Categories from '../../../components/Categories/Categories';
 
 
 const Lists = () => {
@@ -108,11 +109,7 @@ const Lists = () => {
                         <button><IconsLibrary.Bell /></button>
                     </div> 
                 : null}
-                <div className={styles.filters}>
-                    <button onClick={()=>setSelectedFilter('active')} className={selectedFilter === 'active' ? styles.selectedFilter : ''}>Active</button>
-                    <button onClick={()=>setSelectedFilter('completed')} className={selectedFilter === 'completed' ? styles.selectedFilter : ''}>Completed</button>
-                    <button onClick={()=>setSelectedFilter('deleted')} className={selectedFilter === 'deleted' ? styles.selectedFilter : ''}>Deleted</button>
-                </div>
+                <Categories category={selectedFilter} setCategory={(newCat)=>setSelectedFilter(newCat)} categories={['active','completed','deleted']} />
                 <div className={styles.listsContainer}>
                     {showNewList ? <NewList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} groupId={groupId} /> : null}
                     {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
@@ -176,7 +173,7 @@ const List: React.FC<ListProps> = ({data}) => {
             <Link to={`${data._id}`} className={styles.listInfo}>
               
                 <div className={styles.listTop}>
-                    <div className={styles.iconContainer}>
+                    <div className={styles.iconContainer} style={{backgroundColor: data.color}}>
                         <Icon />
                     </div>
                     <div className={styles.listInfo}>

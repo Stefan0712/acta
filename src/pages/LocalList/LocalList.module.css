@@ -3,7 +3,7 @@
     height: 100%;
     max-height: calc(100vh - var(--bottom-offset));
     display: grid;
-    grid-template-rows: 50px auto 50px 1fr;
+    grid-template-rows: var(--page-header-height) auto 40px 1fr;
     color: var(--text-color);
     padding: 10px;
     position: relative;
@@ -28,8 +28,7 @@
 }
 .shoppingList .header a svg,
 .header button svg {
-    height: 80%;
-    width: 80%;
+    height: 70%;
     color: white;
 }
 .optionsButton svg {

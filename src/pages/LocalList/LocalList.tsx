@@ -10,6 +10,8 @@ import { getDateAndHour } from '../../helpers/dateFormat.ts';
 import EditShoppingList from '../../components/EditList/EditList.tsx';
 import ListItem from '../../components/ListItem/ListItem.tsx';
 import Loading from '../../components/LoadingSpinner/Loading.tsx';
+import Categories from '../../components/Categories/Categories.tsx';
+import Header from '../../components/Header/Header.tsx';
 
 
 
@@ -111,20 +113,17 @@ const ShoppingList = () => {
             <div className={styles.shoppingList}>
                 {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={deleteList} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
                 {showEdit ? <EditShoppingList close={()=>setShowEdit(false)} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
-                <div className={styles.header}>
-                    <Link to={'/'}><IconsLibrary.BackArrow fill='white'/></Link>
-                    <button className={styles.optionsButton} onClick={()=>setShowPageMenu(prev=>!prev)}><IconsLibrary.Dots stroke='white'/></button>
-                </div>
+                <Header 
+                    prevUrl={'/lists'} 
+                    title={listData.name} 
+                    Button={<button onClick={()=>setShowPageMenu(prev=>!prev)}><IconsLibrary.Dots /></button>}
+                />
                 <div className={styles.listMeta}>
                     <h2>{listData.name}</h2>
                     <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
                     <p>{listData.description}</p>
                 </div>
-                <div className={styles.categoryButtons}>
-                    <button className={selectedCategory === 'all' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('all')}>All</button>
-                    <button className={selectedCategory === 'pinned' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('pinned')}>Pinned</button>
-                    <button className={selectedCategory === 'deleted' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('deleted')}>Deleted</button>
-                </div>
+                <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','deleted']} />
                 <div className={styles.listItemsContainer}>
                     {filteredItems && filteredItems.length > 0 ? 
                         <>
