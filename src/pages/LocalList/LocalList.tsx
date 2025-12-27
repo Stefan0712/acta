@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import styles from './LocalList.module.css';
 import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList } from '../../types/models.ts';
 import { db } from '../../db.ts';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../Notification/NotificationContext.tsx';
 import {IconsLibrary} from '../../assets/icons.ts';
 import NewShoppingListItem from '../../components/NewItem/NewItem.js';
@@ -21,7 +21,6 @@ const ShoppingList = () => {
     const navigate = useNavigate();
     const { showNotification } = useNotifications();
 
-    const [showNewItem, setShowNewItem] = useState(false);
     const [showPageMenu, setShowPageMenu] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
 
@@ -108,7 +107,7 @@ const ShoppingList = () => {
         return (
            <Loading />
         )
-    } else {
+    } else if(listData && listData._id) {
         return ( 
             <div className={styles.shoppingList}>
                 {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={deleteList} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
@@ -134,8 +133,7 @@ const ShoppingList = () => {
                             <p className={styles.noItemsText}>No items yet</p>
                     }
                 </div>
-                {showNewItem ? null  : <button onClick={()=>setShowNewItem(true)} className={styles.newItemButton}><IconsLibrary.Plus /></button>}
-                {showNewItem ? <NewShoppingListItem local={true} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} close={()=>setShowNewItem(false)}/> : null}
+                <NewShoppingListItem listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} />
             </div>
         );
     }

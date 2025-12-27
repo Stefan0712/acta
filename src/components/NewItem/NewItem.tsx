@@ -15,6 +15,8 @@ interface NewShoppingListItemProps {
     online?: boolean;
 }
 
+type Priority = "low" | "normal" | "high";
+
 const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addItemToList, members, online}) => {
     const userId = localStorage.getItem('userId');
 
@@ -24,7 +26,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     const [tags, setTags] = useState<string[]>([]);
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
-    const [priority, setPriority] = useState<"low" | "normal" | "high">('normal');
+    const [priority, setPriority] = useState<Priority>('normal');
     const [assignedTo, setAssignedTo] = useState<string | null>(null);
     const [claimedBy, setClaimedBy] = useState<string | null>(null);
     const [dueDate, setDueDate] = useState("");
@@ -135,7 +137,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             {showUserSelector ? <UserSelector users={members ?? []} close={()=>setShowUserSelector(false)} selectUser={(user)=>setAssignedTo(user)} selectedUser={assignedTo} /> : null}
             <div className={styles.basicInputs}>
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
-                    <IconsLibrary.Arrow style={showMoreInputs ? {transform: 'rotateZ(90deg)'} : {}} />
+                    <IconsLibrary.Arrow style={showMoreInputs ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'}} />
                 </button>
                 <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
                 <button className={styles.addButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
@@ -143,43 +145,48 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             
             {error ? <p className='error-message'>{error}</p> : null}
             {showMoreInputs ? <div className={`${styles.moreInputs} ${showMoreInputs ? styles.show : ''}`} ref={moreInputsRef}>
-                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
-                    <fieldset className={styles.halfRow}>
+                <div className={styles.secondRow}>
+                    <div className={styles.rowSection}>
                         <label>Qty</label>
-                    <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
-                    </fieldset>
-                    <fieldset className={styles.halfRow}>
+                        <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
+                    </div>
+                    <div className={styles.rowSection}>
                         <label>Unit</label>
                         <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
-                    </fieldset>
+                    </div>
+                    <div className={styles.rowSection}>
+                        <label>Priority</label>
+                        <select onChange={(e)=>setPriority(e.target.value as Priority)} value={priority}>
+                            <option value={'low'}>Low</option>
+                            <option value={'normal'}>Normal</option>
+                            <option value={'high'}>High</option>
+                        </select>
+                    </div>
                 </div>
                 <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
                 {online ? <div className={styles.claimButtons}>
                     <button onClick={handleClaimItem} className={styles.userSelectorButton}>{claimedBy ? 'Claimed' : 'Claim item'}</button>
                     {claimedBy ? null : <button onClick={()=>setShowUserSelector(true)} className={styles.userSelectorButton}>{assignedTo ? 'Assigned to an user' : 'Assign item to user'}</button>}
                 </div> : null}
-                <div className={styles.priority}>
-                    <p>Priority</p>
-                    <div className={styles.priorityButtons}>
-                        <button onClick={()=>setPriority('low')} className={`${styles.lowPriority} ${priority === 'low' ? styles.selectedPriority : ''}`}>Low</button>
-                        <button onClick={()=>setPriority('normal')} className={`${styles.normalPriority} ${priority === 'normal' ? styles.selectedPriority : ''}`}>Normal</button>
-                        <button onClick={()=>setPriority('high')} className={`${styles.highPriority} ${priority === 'high' ? styles.selectedPriority : ''}`}>High</button>
-                    </div>
-                </div>
                 <div className={styles.deadline}>
-                    <p>Deadline</p>
-                    <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={styles.dateInput} min={new Date().toISOString().split("T")[0]}  />
-                    <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
+                    <fieldset>
+                        <label>Due date</label>
+                        <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={styles.dateInput} min={new Date().toISOString().split("T")[0]}  />
+                    </fieldset>
+                    <fieldset>
+                        <label>Due hour</label>
+                        <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
+                    </fieldset>
+                    <fieldset>
+                        <label>Reminder</label>
+                        <select value={reminder} onChange={(e) => setReminder(parseInt(e.target.value))}>
+                            {REMINDER_OPTIONS.map((opt) => ( <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                            ))}
+                        </select>
+                    </fieldset>
                 </div>
-                {dueDate && dueTime ? <div className={styles.priority}>
-                    <p>Reminder</p>
-                    <select value={reminder} onChange={(e) => setReminder(parseInt(e.target.value))}>
-                        {REMINDER_OPTIONS.map((opt) => ( <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                        </option>
-                        ))}
-                    </select>
-                </div> : null}
                 <div className={styles.tagsContainer}>
                     <div className={styles.tagIcon}>
                         <IconsLibrary.Tag />

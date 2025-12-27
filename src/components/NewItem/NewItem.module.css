@@ -58,11 +58,12 @@
     background-color: var(--input-bg);
     align-items: center;
     width: 100%;
-    height: 60px;
+    height: 50px;
     border-radius: 10px;
     overflow: hidden;
     padding: 0 10px;
 }
+
 .basicInputs input {
     height: 40px;
     width: 100%;
@@ -97,7 +98,9 @@
     padding-top: 20px;
     padding-bottom: 20px;
 }
-.moreInputs input{
+.moreInputs input,
+.moreInputs select,
+.moreInputs option{
     background-color: var(--input-bg);
     border: 1px solid var(--white-10);
     color: var(--text-color);
@@ -110,13 +113,33 @@
     height: auto;
     animation: expandMoreInputs 0.2s;
 }
-
-.halfRow {
+.secondRow label {
     width: 100%;
+}
+.secondRow {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    overflow: hidden;
+    gap: 10px;
+    box-sizing: border-box;    
+}
+.secondRow .rowSection label
+.secondRow .rowSection input {
+    width: 100%;
+    min-width: 0 !important;
+}
+.secondRow .rowSection {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    min-width: 0 !important;
 }
+
 .showMoreButton {
     height: 30px;
     width: 100%;
@@ -165,39 +188,6 @@
     height: 30px;
     width: 30px;
 }
-.priority {
-    display: flex;
-    align-items: center;
-    padding: 5px 0;
-}
-.priority select {
-    margin-right: 10px;
-    height: 50px;
-    border-radius: 5px;
-    background-color: white;
-    border: none;
-}
-.priority p {
-    margin-right: auto;
-}
-.priorityButtons {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-.priority button {
-    height: 40px;
-    padding: 0 10px;
-    border-radius: 5px;
-    background-color: transparent;
-    border: 1px solid transparent;
-    color: var(--text-color);
-    transition: all 0.1s;
-}
-.priority button.selectedPriority {
-    background-color: var(--accent);
-    transition: all 0.1s;
-    color: var(--text-on-accent);
-}
 .tagInput {
     width: 100%;
     height: 40px;
@@ -226,21 +216,6 @@
     height: 80%;
     width: 80%
 }
-.twoCols {
-    width: 100%;
-    height: 40px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-.twoCols button {
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-    border: 1px solid var(--accent);
-    background-color: transparent;
-    color: var(--text-color);
-}
 .largeAddButton {
     height: 40px;
     width: 100%;
@@ -259,18 +234,31 @@
 }
 .deadline {
     width: 100%;
-    height: 40px;
     display: grid;
-    grid-template-columns: auto 2fr 1fr;
+    grid-template-columns: 2fr 1fr 2fr;
+    gap: 10px;
+    align-items: center;
+}
+.deadline label {
+    width: 100%;
+    text-align: start;
+}
+.deadline fieldset {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 10px;
+    min-width: 0;
 }
 .deadline input {
-    height: 100%;
     width: 100%;
-    background-color: white;
-    border: 1px solid transparent;
-    border-radius: 5px;
+    height: 50px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--white-10);
+    color: var(--text-color);
     padding-left: 10px;
-    color: black;
+    border-radius: 10px;
+    transition: all 0.1s;
 }

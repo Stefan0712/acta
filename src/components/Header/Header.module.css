@@ -1,5 +1,5 @@
 .header {
-    width: 100dvw;
+    width: 100%;
     height: var(--header-height);
     overflow: hidden;
     display: grid;
