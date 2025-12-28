@@ -12,7 +12,7 @@ const Navigation = () => {
     return ( 
         <div className={styles.navigation}>
             {showMenu ? <Menu close={()=>setShowMenu(false)} /> : null}
-            <Link to={'/'}>
+            <Link to={'/lists'}>
                 <IconsLibrary.Dashboard />
                 <p>Home</p>
             </Link>

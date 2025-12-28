@@ -8,6 +8,7 @@ import { deleteGroup, getGroup } from '../../services/groupService';
 import Auth from '../Auth/Auth';
 import Loading from '../../components/LoadingSpinner/Loading';
 import EditGroup from '../Groups/EditGroup';
+import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal';
 
 const ViewGroup = () => {
 
@@ -73,6 +74,10 @@ export default ViewGroup;
 const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void, groupId: string}) => {
     
     const [showDelete, setShowDelete] = useState(false);
+    const navigate = useNavigate();
+    const {showNotification} = useNotifications();
+
+
     const handleLeaveGroup = () =>{
         console.log("Group left")
     }
@@ -80,28 +85,6 @@ const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void,
         showEdit();
         close();
     }
-    const handleDelete = () => {
-        setShowDelete(true);
-    }
-
-    return (
-        <div className={styles.menu}>
-            {showDelete ? <div className={styles.deleteMenu}><DeleteConfirmation close={()=>setShowDelete(false)} groupId={groupId} /> </div>  : null}
-            <Link to={'manage'} onClick={()=>close()}><IconsLibrary.Group /><p>Manage Group</p></Link>
-            <button onClick={handleEdit}><IconsLibrary.Edit /><p>Edit Group</p></button>
-            <button onClick={handleDelete}><IconsLibrary.Delete /><p>Delete Group</p></button>
-            <button onClick={handleLeaveGroup}><IconsLibrary.Logout /><p>Leave Group</p></button>
-            <button onClick={close}>Close</button>            
-        </div>
-    )
-}
-
-
-const DeleteConfirmation = ({close, groupId}: {close: ()=> void, groupId: string}) => {
-
-    const navigate = useNavigate();
-    const {showNotification} = useNotifications();
-    
     const handleDelete = async () => {
         try {
             const response = await deleteGroup(groupId);
@@ -114,15 +97,14 @@ const DeleteConfirmation = ({close, groupId}: {close: ()=> void, groupId: string
             showNotification("Failed to delete group", "error");
         }
     }
-
     return (
-        <div className={styles.deleteConfirmation}>
-            <h3>Are you sure?</h3>
-            <p>This will permanently delete this group and everything associated with it. This CANNOT be undone!</p>
-            <div className={styles.buttons}>
-                <button onClick={close}>Cancel</button>
-                <button onClick={handleDelete}>Confirm</button>
-            </div>
+        <div className={styles.menu}>
+            {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} />  : null}
+            <Link to={'manage'} onClick={()=>close()}><IconsLibrary.Group /><p>Manage Group</p></Link>
+            <button onClick={handleEdit}><IconsLibrary.Edit /><p>Edit Group</p></button>
+            <button onClick={()=>setShowDelete(true)}><IconsLibrary.Delete /><p>Delete Group</p></button>
+            <button onClick={handleLeaveGroup}><IconsLibrary.Logout /><p>Leave Group</p></button>
+            <button onClick={close}>Close</button>            
         </div>
     )
 }

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { type ActivityLog, type Group } from '../../../types/models';
 import { getGroup, getGroupActivity } from '../../../services/groupService';
 import Loading from '../../../components/LoadingSpinner/Loading';
-import { getDateAndHour } from '../../../helpers/dateFormat';
+import { formatRelativeTime, getDateAndHour } from '../../../helpers/dateFormat';
 
 const GroupDashboard = () => {
 
@@ -32,7 +32,8 @@ const GroupDashboard = () => {
             try {
                 const activity = await getGroupActivity(groupId);
                 if(activity && activity.length > 0){
-                    setLogs(activity)
+                    setLogs(activity.filter(item=>item.category === "CONTENT"))
+                    console.log(activity.filter(item=>item.category === "CONTENT"))
                 }
             } catch (error) {
                 console.error(error);
@@ -100,10 +101,9 @@ const GroupDashboard = () => {
                     </div>
                    <div className={styles.activityContainer}>
                         {logs && logs.length > 0 ? logs.map((log, index)=><Link to={log.metadata?.listId ? `/group/${groupId}/lists/${log.metadata?.listId}` : `/group/${groupId}`} key={index} className={styles.log}>
-                            <div className={styles.logCircle} />
                             <div className={styles.content}>
                                 <p className={styles.message}>{log.message}</p>
-                                <b>{getDateAndHour(log.createdAt)}</b>
+                                <b><IconsLibrary.Time /> {formatRelativeTime(log.createdAt)}</b>
                             </div>
                         </Link>) : <p className='no-items-text'>No activity</p>}
                    </div>

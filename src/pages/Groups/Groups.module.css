@@ -1,5 +1,5 @@
 .groups {
-    height: calc(100dvh - var(--bottom-offset));
+    height: calc(100dvh - var(--navigation-height));
     width: 100dvw;
     display: grid;
     grid-template-rows: 50px 1fr;
@@ -82,7 +82,6 @@
     color: var(--text-color);
     padding: 15px;
     text-decoration: none;
-    border: 1px solid var(--white-10);
 }
 .group h3 {
     font-size: 1rem;

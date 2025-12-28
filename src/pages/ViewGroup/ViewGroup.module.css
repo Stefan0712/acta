@@ -35,17 +35,6 @@
     height: 50%;
 }
 
-.viewGroup .deleteMenu {
-    width: 100dvw;
-    height: calc(100dvh - var(--bottom-offset));
-    z-index: 10;
-    position: fixed;
-    left: 0;
-    top: 0;
-    backdrop-filter: blur(25px);
-    display: flex;
-    align-items: center;
-}
 .viewGroup .menu {
     position: fixed;
     top: var(--page-header-height);
@@ -86,42 +75,3 @@
     }
 }
 
-.viewGroup .menu .deleteConfirmation {
-    background-color: var(--item-bg);
-    border: 1px solid var(--item-border);
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    border-radius: 10px;
-    margin-top: auto;   
-    color: var(--text-color);
-    align-items: center;
-    animation: showMenu 0.2s;
-}
-
-
-.deleteConfirmation {
-    padding: 10px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-.deleteConfirmation .buttons {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    height: 40px;
-}
-.deleteConfirmation .buttons button {
-    height: 100%;
-    width: 100%;
-    border-radius: 5px;
-    border: 1px solid rgba(211, 211, 211, 0.3);
-    background-color: transparent;
-    color: var(--text-color);
-}
-.deleteConfirmation .buttons button:last-child {
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-}
