@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Tag } from '../../types/models';
 import styles from './TagSelector.module.css';
 import { IconsLibrary } from '../../assets/icons';
@@ -35,6 +35,9 @@ const TagSelector: React.FC<TagSelectorProps> = ({close, tags, addTag, removeTag
         getExistingTags();
     },[]);
 
+    const results = useMemo(()=>{
+        return existingTags.filter(tag=>tag.name.toLowerCase().includes(name.toLowerCase()));
+    }, [existingTags, name])
 
     const handleSaveTag = async () => {
         if(name && name.length < 20 && name.length > 0){
@@ -69,7 +72,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({close, tags, addTag, removeTag
                 </button>
             </div>
             <div className={styles.tagsContainer}>
-                {existingTags?.length > 0 ? existingTags.map(tag=><Tag removeTag={removeTag} isSelected={tags.some(item=>item._id===tag._id)} key={tag._id} tag={tag} />) : <p className='no-items-text'>No tags found</p>}
+                {results?.length > 0 ? results.map(tag=><Tag removeTag={removeTag} isSelected={tags.some(item=>item._id===tag._id)} key={tag._id} tag={tag} />) : <p className='no-items-text'>No tags found</p>}
             </div>
             <div className={styles.newTag}>
                 <div className={styles.toggle}>
