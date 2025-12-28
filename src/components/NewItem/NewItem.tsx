@@ -193,16 +193,14 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                         </select>
                     </fieldset>
                 </div>
-                <div className={styles.tagsContainer}>
-                    <div className={styles.tagIcon}>
-                        <IconsLibrary.Tag />
-                    </div>
-                    <button className={styles.addIconButton} onClick={()=>setShowTagSelector(true)}>Add Tag <IconsLibrary.Plus /></button>
-                    {tags?.length > 0 ? tags.map(tag=><div className={styles.selectedTag} key={tag._id}>
-                        <p>{tag.name}</p>
-                        <button onClick={()=>setTags(prev=>[...prev.filter(item=>item._id !== tag._id)])}><IconsLibrary.Close /></button>
-                    </div>) : <p>No tags</p>}
-                </div>
+                <button 
+                    className={styles.manageTagsButton} 
+                    onClick={()=>setShowTagSelector(true)}
+                >   
+                    <IconsLibrary.Tag />
+                    <p>Manage tags ({tags.length})</p>
+                    
+                </button>
             </div> : null}
         </div>
      );

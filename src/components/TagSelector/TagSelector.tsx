@@ -72,7 +72,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({close, tags, addTag, removeTag
                 </button>
             </div>
             <div className={styles.tagsContainer}>
-                {results?.length > 0 ? results.map(tag=><Tag removeTag={removeTag} isSelected={tags.some(item=>item._id===tag._id)} key={tag._id} tag={tag} />) : <p className='no-items-text'>No tags found</p>}
+                {results?.length > 0 ? results.map(tag=><Tag addTag={addTag} removeTag={removeTag} isSelected={tags.some(item=>item._id===tag._id)} key={tag._id} tag={tag} />) : <p className='no-items-text'>No tags found</p>}
             </div>
             <div className={styles.newTag}>
                 <div className={styles.toggle}>
@@ -96,13 +96,14 @@ interface TagProps {
     tag: Tag;
     isSelected: boolean;
     removeTag: (id: string) => void;
+    addTag: (tag: Tag) => void;
 }
-const Tag: React.FC<TagProps> = ({tag, isSelected, removeTag}) => {
+const Tag: React.FC<TagProps> = ({tag, isSelected, removeTag, addTag}) => {
 
     return (
         <div className={styles.tag}>
             <h2>{tag.name}</h2>
-            {isSelected ? <button onClick={()=>removeTag(tag._id)}><IconsLibrary.Checkmark /></button> : <button><IconsLibrary.Plus /></button>}
+            {isSelected ? <button onClick={()=>removeTag(tag._id)}><IconsLibrary.Checkmark /></button> : <button onClick={()=>addTag(tag)}><IconsLibrary.Plus /></button>}
         </div>
     )
 }

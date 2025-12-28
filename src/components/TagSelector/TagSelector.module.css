@@ -13,7 +13,7 @@
     z-index: 50;
     color: var(--text-color);
     padding: 15px;
-    animation: popModal 0.1s;
+    animation: popModal 0.2s;
 }
 
 @keyframes popModal {
