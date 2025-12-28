@@ -10,6 +10,7 @@ import { createComment, deleteComment, deleteNote, getNoteComments, getNotesByGr
 import NewNote from './NewNote';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
 import EditNote from './EditNote';
+import Categories from '../../../components/Categories/Categories';
 
 // TODO: Add a delete confirmation modal
 // TODO: Write a function to remove the local copy of a freshly deleted note from the API
@@ -81,11 +82,7 @@ const Notes = () => {
                         <button><IconsLibrary.Bell /></button>
                     </div> 
                 : null}
-                <div className={styles.filters}>
-                    <button onClick={()=>setSelectedFilter('active')} className={selectedFilter === 'active' ? styles.selectedFilter : ''}>Active</button>
-                    <button onClick={()=>setSelectedFilter('pinned')} className={selectedFilter === 'pinned' ? styles.selectedFilter : ''}>Pinned</button>
-                    <button onClick={()=>setSelectedFilter('deleted')} className={selectedFilter === 'deleted' ? styles.selectedFilter : ''}>Deleted</button>
-                </div>
+                <Categories setCategory={setSelectedFilter} category={selectedFilter} categories={['active', 'pinned', 'deleted']} />
                 <div className={styles.notesContainer}>
                     {showNewNote && groupId ? <NewNote close={()=>setShowNewNote(false)} addNote={(newNote)=>setNotes(prev=>[...prev, newNote])} groupId={groupId} /> : null}
                     {showNewNote ? null : <button onClick={()=>setShowNewNote(true)} className={styles.newNoteButton}>
@@ -108,40 +105,13 @@ interface NoteProps {
 }
 
 const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
-    const {showNotification} = useNotifications();
 
     const [showComments, setShowComments] = useState(false);
     const [comments, setComments] = useState<NoteComment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [showPostMenu, setShowPostMenu] = useState(false);
 
-    const [showEdit, setShowEdit] = useState(false);
-
-    const restoreNote = async () =>{
-        if(data._id) {
-            try {
-                await updateNote(data._id, {isDeleted: false});
-                handleEditNote(data._id, {isDeleted: false});
-                showNotification("Note restored", "success");
-            } catch (error) {
-                console.error(error);
-                showNotification("Failed to restore note.", "error");
-            }
-        }
-    }
-
-    const permanentlyDelete = async () =>{
-        if(data._id) {
-            try {
-                await deleteNote(data._id);
-                handleEditNote(data._id, {isDeleted: true});
-                showNotification("Note deleted permanently", "success");
-            } catch (error) {
-                console.error(error);
-                showNotification("Failed to delete Note.", "error");
-            }
-        }
-    }
-
+    
     const getComments = async () => {
         try {
             const apiResponse = await getNoteComments(data._id);
@@ -159,39 +129,35 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
         getComments();
         setShowComments(true);
     }
-    const handleDeleteNote = async () => {
-        if(data._id) {
-            try {
-                await updateNote(data._id, {isDeleted: true});
-                handleEditNote(data._id, {isDeleted: true});
-                showNotification("Note deleted", "success");
-            } catch (error) {
-                console.error(error);
-                showNotification("Failed to delete Note.", "error");
-            }
-        }
-    }
     const removeComment = (id: string) => {
         setComments(prev=>[...prev.filter(item=>item._id !== id)]);
     }
+    const userId = localStorage.getItem('userId');
+    const isAuthor = userId && userId === data.authorId;
     return (
         <div className={styles.note}>
-            {showEdit ? <EditNote noteId={data._id} close={()=>setShowEdit(false)} editNote={handleEditNote}  /> : null}
+            {showPostMenu && isAuthor ? <PostMenu 
+                close={()=>setShowPostMenu(false)}
+                handleEditNote={handleEditNote}
+                noteId={data._id}
+                isDeleted={data.isDeleted}
+            /> : null}
             <div className={styles.noteHeader}>
-                <h1>{!data.title || data.title.length < 1 ? "Untitled Note" : data.title}</h1>
-                <p>{formatRelativeTime(data.createdAt)}</p>
+                <div className={styles.userPfp}>
+                    <p>{data.authorUsername[0].toUpperCase()}</p>
+                </div>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
+                    <p className={styles.author}>{data.authorUsername ?? ""}</p>
+                    <p className={styles.createdAt}>{formatRelativeTime(data.createdAt)}</p>
+                </div>
+                {isAuthor ? <button onClick={()=>setShowPostMenu(true)}>
+                    <IconsLibrary.Dots />
+                </button> : null}
+                
             </div>    
+            <h1>{!data.title || data.title.length < 1 ? "Untitled Note" : data.title}</h1>
             <p className={styles.content}>{data.content}</p>
             <div className={styles.meta}>
-                <p className={styles.author}>{data.authorUsername ?? ""}</p>
-                <div className={styles.manageButtons}>
-                    {localStorage.getItem('userId') === data.authorId ? <div className={styles.noteButtons}>
-                    <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit />  Edit</button>
-                    {data.isDeleted ? <button style={{color: 'red'}} onClick={permanentlyDelete}><IconsLibrary.Close />  Permamently Delete</button> : null}
-                    {data.isDeleted ? <button onClick={restoreNote}><IconsLibrary.Sync />  Restore</button> : null}
-                    {!data.isDeleted ? <button onClick={handleDeleteNote}><IconsLibrary.Delete /> Delete</button> : null }
-                </div> : null}
-                </div>
                 {!data.isDeleted ? <div className={styles.commentsCount} onClick={handleShowComments}>
                     <IconsLibrary.Comment />
                     <p>{data.commentCount ?? 0}</p>
@@ -201,6 +167,73 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
             {showComments ? <div className={styles.comments}>
                 {isLoading ? <p>Loading comments...</p> : comments?.length > 0 ? comments.map(item=><Comment removeComment={removeComment} data={item} />) : <p>No comments to show</p>}
             </div> : null}
+        </div>
+    )
+}
+
+interface PostMenuProps {
+    handleEditNote: (noteId: string, note: Partial<Note>) => void;
+    noteId: string;
+    isDeleted: boolean;
+    close: ()=> void;
+}
+
+const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, close}) => {
+
+
+    const {showNotification} = useNotifications();
+    const [showEdit, setShowEdit] = useState(false);
+
+    const restoreNote = async () =>{
+        if(noteId) {
+            try {
+                await updateNote(noteId, {isDeleted: false});
+                handleEditNote(noteId, {isDeleted: false});
+                showNotification("Note restored", "success");
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to restore note.", "error");
+            }
+        }
+    }
+
+    const permanentlyDelete = async () =>{
+        if(noteId) {
+            try {
+                await deleteNote(noteId);
+                handleEditNote(noteId, {isDeleted: true});
+                showNotification("Note deleted permanently", "success");
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to delete Note.", "error");
+            }
+        }
+    }
+
+
+    const handleDeleteNote = async () => {
+        if(noteId) {
+            try {
+                await updateNote(noteId, {isDeleted: true});
+                handleEditNote(noteId, {isDeleted: true});
+                showNotification("Note deleted", "success");
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to delete Note.", "error");
+            }
+        }
+    }
+
+    return (
+        <div className={styles.postMenu}>
+
+            {showEdit ? <EditNote noteId={noteId} close={()=>setShowEdit(false)} editNote={handleEditNote}  /> : null}
+
+            <button onClick={()=>setShowEdit(true)}>Edit</button>
+            {isDeleted ? <button style={{color: 'red'}} onClick={permanentlyDelete}>Permamently Delete</button> : null}
+            {isDeleted ? <button onClick={restoreNote}>Restore</button> : null}
+            {!isDeleted ? <button onClick={handleDeleteNote}>Delete</button> : null }
+            <button onClick={close}>Close</button>
         </div>
     )
 }

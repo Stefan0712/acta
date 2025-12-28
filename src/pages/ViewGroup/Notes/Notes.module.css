@@ -50,25 +50,13 @@
     position: fixed;
     bottom: calc(var(--navigation-height) + 20px);
     right: 10px;
+    z-index: 10;
 }
 .newNoteButton svg {
     height: 30px;
     width: 30px;
     color: var(--text-on-accent);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -88,6 +76,7 @@
     flex-direction: column;
     gap: 10px;
     animation: popUp 0.1s;
+    z-index: 10;
 }
 @keyframes popUp {
     from {
@@ -161,23 +150,51 @@
     border-radius: 15px;
     flex-shrink: 0;
     gap: 10px;
+    position: relative;
 }
 .note .noteHeader {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 40px 1fr 40px;
+    align-items: center;
     gap: 10px;
     color: var(--text-color);
-    padding: 0 10px;
 }
-.note .noteHeader h1 {
+.note .noteHeader .userPfp {
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    background-color: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+.note .noteHeader button {
+    background-color: transparent;
+    border: none;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+}
+.note .noteHeader .author {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+.note .noteHeader .createdAt {
+    color: var(--white-25);
+}
+.note h1 {
     font-size: 1.1rem;
+    color: var(--white-50);
 }
 .note .content {
     width: 100%;
-    color: var(--white-50);
+    color: white;
     font-size: 0.9rem;
-    padding: 0 10px;
 }
 .meta {
     width: 100%;
@@ -188,34 +205,12 @@
     gap: 10px;
     padding: 10px 10px 0 10px;
 }
-.meta .author {
-    font-size: 0.8rem;
-    color: var(--white-25);
-    margin-right: auto;
-}
+
 .commentsCount {
     display: flex;
     align-items: center;
     gap: 5px;
     font-size: 0.75rem;
-}
-.noteButtons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.noteButtons button {
-    background-color: transparent;
-    border: none;
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-}
-.manageButtons button{
-    color: var(--white-50);
-}
-.manageButtons svg {
-    height: 0.75rem;
 }
 .note .noteHeader p {
     font-size: 0.75rem;
@@ -255,6 +250,34 @@
     align-items: center;
     justify-content: center;
     border: none;
+}
+
+
+
+
+/* Note Menu */
+
+.postMenu {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background-color: var(--modal-bg);
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+    border: 1px solid var(--white-10);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.postMenu button {
+    width: 100%;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    color: var(--text-color);
+}
+.postMenu button svg {
+    height: 1rem;
 }
 
 
