@@ -21,13 +21,13 @@ export async function finalizeAuthentication(authResponse: AuthResponse): Promis
     try {
         const tempId = 'local-user-id';
         // If any step fails, the entire transaction is rolled back.
-        await db.transaction('rw', db.shoppingLists, db.shoppingListItems, db.notes, db.groups, async () => {            
+        await db.transaction('rw', db.lists, db.listItems, db.notes, db.groups, async () => {            
             // Swap ownerId and mark records as dirty (PUSH required)            
-            await db.shoppingLists
+            await db.lists
                 .where('authorId').equals(tempId)
                 .modify({ authorId: mongoId, isDirty: true });
 
-            await db.shoppingListItems
+            await db.listItems
                 .where('authorId').equals(tempId)
                 .modify({ authorId: mongoId, isDirty: true });
             

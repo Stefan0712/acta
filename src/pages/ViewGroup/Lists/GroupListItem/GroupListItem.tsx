@@ -1,5 +1,5 @@
 import styles from '../../../../components/ListItem/ListItem.module.css'
-import { type GroupMember, type ShoppingListItem as ItemInterface } from '../../../../types/models';
+import { type GroupMember, type ListItem as ItemInterface } from '../../../../types/models';
 import { IconsLibrary } from '../../../../assets/icons';
 import { db } from '../../../../db';
 import { useNotifications } from '../../../../Notification/NotificationContext';
@@ -41,7 +41,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, on
                 console.log(online)
                 updateItemLocally(onlineItem)
             } else {
-                await db.shoppingListItems.update(data._id, {isChecked: newValue});
+                await db.listItems.update(data._id, {isChecked: newValue});
                 updateItemLocally({...data, isChecked: newValue});
             }
         } catch (error) {
@@ -56,7 +56,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, on
                 const onlineItem = await handleUpdateItem(data._id, {isPinned: newValue});
                 updateItemLocally(onlineItem)
             } else {
-                await db.shoppingListItems.update(data._id, {isPinned: newValue});
+                await db.listItems.update(data._id, {isPinned: newValue});
                 updateItemLocally({...data, isPinned: newValue});
             }
             showNotification(newValue ? "Item pinned!" : "Item unpinned", "success");
@@ -72,7 +72,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, on
                 const onlineItem = await handleUpdateItem(data._id, {isDeleted: newValue});
                 updateItemLocally(onlineItem)
             } else {
-                await db.shoppingListItems.update(data._id, {isDeleted: newValue});
+                await db.listItems.update(data._id, {isDeleted: newValue});
                 updateItemLocally({...data, isDeleted: newValue});
             }
             showNotification(newValue ? "Item deleted succesfully." : "Item restored succesfully.", "success");

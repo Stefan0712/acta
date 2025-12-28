@@ -1,11 +1,11 @@
-import type { ShoppingListItem } from '../types/models';
+import type { ListItem } from '../types/models';
 import API from './apiService';
 import axios from 'axios';
 
 
 // Creates a new item within a list.
 // POST /api/items
-export async function createItem(data: ShoppingListItem): Promise<ShoppingListItem> {
+export async function createItem(data: ListItem): Promise<ListItem> {
     try {
         const response = await API.post('/items', data);
         
@@ -25,7 +25,7 @@ export async function createItem(data: ShoppingListItem): Promise<ShoppingListIt
 
 // Fetches items for synchronization, filtered by a specific list.
 // GET /api/items?listId=ID&since=DATE
-export async function fetchItemsForSync(listId: string, lastSyncDate?: string): Promise<ShoppingListItem[]> {
+export async function fetchItemsForSync(listId: string, lastSyncDate?: string): Promise<ListItem[]> {
     const params: any = { listId }; 
     if (lastSyncDate) {
         params.since = lastSyncDate;
@@ -50,7 +50,7 @@ export async function fetchItemsForSync(listId: string, lastSyncDate?: string): 
 
 // Updates an item (e.g., check/uncheck, rename, change quantity).
 // PUT /api/items/:id
-export async function handleUpdateItem(itemId: string, data: Partial<ShoppingListItem>): Promise<ShoppingListItem> {
+export async function handleUpdateItem(itemId: string, data: Partial<ListItem>): Promise<ListItem> {
     try {
         const response = await API.put(`/items/${itemId}`, data); 
         console.log(data, response)

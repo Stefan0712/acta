@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from '../NewList/NewList.module.css';
-import type { ShoppingList } from '../../types/models';
+import type { List } from '../../types/models';
 import SwitchButton from '../SwitchButton/SwitchButton';
 import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
@@ -11,12 +11,12 @@ import { getIcon } from '../IconSelector/iconCollection';
 
 interface IProps {
     close: ()=>void;
-    listData: ShoppingList;
-    updateData: (data: ShoppingList) => void;
+    listData: List;
+    updateData: (data: List) => void;
     online?: boolean;
 }
 
-const EditShoppingList: React.FC<IProps> = ({close, listData, updateData, online}) => {
+const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
 
     const { showNotification } = useNotifications();
 
@@ -33,7 +33,7 @@ const EditShoppingList: React.FC<IProps> = ({close, listData, updateData, online
 
     const handleSaveList = async () => {
         const currentDate = new Date();
-        const updatedList: ShoppingList = {
+        const updatedList: List = {
             ...listData,
             name,
             description,
@@ -51,7 +51,7 @@ const EditShoppingList: React.FC<IProps> = ({close, listData, updateData, online
                     const apiResponse = await updateList(listData._id, updatedList)
                     updateData(apiResponse)
                 } else {
-                    await db.shoppingLists.update(listData._id, updatedList);
+                    await db.lists.update(listData._id, updatedList);
                     updateData(updatedList)
                 }
                 showNotification("List updated successfully", "success");
@@ -77,7 +77,7 @@ const EditShoppingList: React.FC<IProps> = ({close, listData, updateData, online
         <div className={styles.componentContainer}>
             {showIconSelector ? <IconSelector icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} close={()=>setShowIconSelector(false)}/> : null}
             {showColorSelector ? <ColorSelector currentColor={color} setColor={(newColor)=>setColor(newColor)} close={()=>setShowColorSelector(false)}/> : null}
-            <div className={styles.newShoppingList}>
+            <div className={styles.newList}>
                 <h3>New List</h3>
                 <fieldset>
                     <label>Name</label>
@@ -111,4 +111,4 @@ const EditShoppingList: React.FC<IProps> = ({close, listData, updateData, online
      );
 }
  
-export default EditShoppingList;
+export default EditList;

@@ -1,10 +1,10 @@
 // import { db } from "../db";
 // import { syncLists } from "../services/listService";
-// import type { ShoppingList } from "../types/models";
+// import type { List } from "../types/models";
 
 
 // export const syncListsPush = async () => {
-//     const listsToPush = await db.shoppingLists.where('isDirty').equals('true').toArray();
+//     const listsToPush = await db.lists.where('isDirty').equals('true').toArray();
 //     console.log(listsToPush)
 //     if (listsToPush.length === 0) {
 //         console.log('No dirty lists to sync.');
@@ -20,7 +20,7 @@
 //         }
 //         const localListsMap = new Map(listsToPush.map(list => [list.clientId, list]));
 //         const idMap = new Map();
-//         const listsToBulkPut: ShoppingList[] = [];
+//         const listsToBulkPut: List[] = [];
 
 //         for (const syncedList of updatedLists) {
 //             const localList = localListsMap.get(syncedList.clientId);
@@ -41,11 +41,11 @@
 //             }
 //         }
         
-//         await db.transaction('rw', db.shoppingLists, db.shoppingListItems, async () => {
-//             await db.shoppingLists.bulkPut(listsToBulkPut);
+//         await db.transaction('rw', db.lists, db.listItems, async () => {
+//             await db.lists.bulkPut(listsToBulkPut);
             
 //             for (const [oldLocalId, newApiId] of idMap.entries()) {
-//                 await db.shoppingListItems.where('listId').equals(oldLocalId).modify({listId: newApiId });
+//                 await db.listItems.where('listId').equals(oldLocalId).modify({listId: newApiId });
 //             }
 //         });
 

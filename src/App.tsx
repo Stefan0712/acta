@@ -57,7 +57,7 @@ function App() {
         <NotificationDisplay />
         <main className="content">
           <Routes>
-            <Route path='/' element={<Dashboard />} />
+            <Route path='/' element={<Lists />} />
             <Route path="/lists" element={<Lists />} />
             <Route path="/lists/:id" element={<LocalList />} />
             <Route path="/group/:groupId" element={<ViewGroup />}>

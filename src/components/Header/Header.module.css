@@ -6,11 +6,12 @@
     grid-template-columns: 30px 1fr 40px;
     align-items: center;
     gap: 10px;
+    border-bottom: 1px solid var(--white-10);
 }
 .header button,
 .header a {
     height: 30px;
-    width: 30px;
+    width: 40px;
     border: none;
     background-color: transparent;
     display: flex;
@@ -26,6 +27,11 @@
 }
 .header h1 {
     font-size: 1.2rem;
+    color: var(--text-color);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .header .buttonContainer {
     height: 100%;

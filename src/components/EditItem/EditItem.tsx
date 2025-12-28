@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './EditItem.module.css';
-import { type ShoppingListItem, type GroupMember, type Tag } from '../../types/models';
+import { type ListItem, type GroupMember, type Tag } from '../../types/models';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
@@ -8,9 +8,9 @@ import { loadItem } from '../../helpers/deadlineFormatter.ts';
 import { handleUpdateItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
 
-interface NewShoppingListItemProps {
-    itemData: ShoppingListItem;
-    updateItemLocally: (item: ShoppingListItem) => void;
+interface NewListItemProps {
+    itemData: ListItem;
+    updateItemLocally: (item: ListItem) => void;
     close: () => void;
     members?: GroupMember[];
     online: boolean;
@@ -18,7 +18,7 @@ interface NewShoppingListItemProps {
 
 type Priority = "low" | "normal" | "high";
 
-const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItemLocally, close, members, online}) => {
+const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, close, members, online}) => {
 
 
     const userId = localStorage.getItem('userId');
@@ -74,7 +74,7 @@ const EditItem: React.FC<NewShoppingListItemProps> = ({itemData, updateItemLocal
                 const onlineItem = await handleUpdateItem(itemData._id, updatedItem);
                 updateItemLocally(onlineItem);
             } else {
-                await db.shoppingListItems.update(itemData._id, updatedItem);
+                await db.listItems.update(itemData._id, updatedItem);
                 updateItemLocally(updatedItem);
             }
             close();

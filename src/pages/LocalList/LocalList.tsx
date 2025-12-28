@@ -1,21 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './LocalList.module.css';
-import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList } from '../../types/models.ts';
+import { type ListItem as ItemType, type List as IList } from '../../types/models.ts';
 import { db } from '../../db.ts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../Notification/NotificationContext.tsx';
 import {IconsLibrary} from '../../assets/icons.ts';
-import NewShoppingListItem from '../../components/NewItem/NewItem.js';
+import NewListItem from '../../components/NewItem/NewItem.js';
 import { getDateAndHour } from '../../helpers/dateFormat.ts';
-import EditShoppingList from '../../components/EditList/EditList.tsx';
+import EditList from '../../components/EditList/EditList.tsx';
 import ListItem from '../../components/ListItem/ListItem.tsx';
 import Loading from '../../components/LoadingSpinner/Loading.tsx';
 import Categories from '../../components/Categories/Categories.tsx';
 import Header from '../../components/Header/Header.tsx';
+import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal.tsx';
 
 
 
-const ShoppingList = () => {
+const List = () => {
 
     const {id} = useParams();
     const navigate = useNavigate();
@@ -25,8 +26,10 @@ const ShoppingList = () => {
     const [showEdit, setShowEdit] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState('all');
-    const [listData, setListData] = useState<IShoppingList | null>(null);
+    const [listData, setListData] = useState<IList | null>(null);
     const [listItems, setListItems] = useState<ItemType[]>([]);
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Filter items based on the current category
     const filteredItems = useMemo(() => {
@@ -56,8 +59,8 @@ const ShoppingList = () => {
         }
         const fetchPageData = async () => {
             try {
-                const listDataPromise = db.shoppingLists.get(id);
-                const listItemsPromise = db.shoppingListItems.where('listId').equals(id).toArray();
+                const listDataPromise = db.lists.get(id);
+                const listItemsPromise = db.listItems.where('listId').equals(id).toArray();
 
                 const [listDataResponse, listItemsResponse] = await Promise.all([
                     listDataPromise,
@@ -79,9 +82,9 @@ const ShoppingList = () => {
 
     const deleteList = async () =>{
         try {
-            await db.shoppingLists.update(listData?._id, {isDeleted: true});
-            showNotification("Shopping list deleted", "success");
-            navigate('/');
+            await db.lists.update(listData?._id, {isDeleted: true});
+            showNotification("List deleted", "success");
+            navigate('/lists');
         } catch (error) {
             console.error(error);
             showNotification("Failed to delete list.", "error");
@@ -89,8 +92,8 @@ const ShoppingList = () => {
     }
     const restoreList = async () =>{
         try {
-            await db.shoppingLists.update(listData?._id, {isDeleted: false});
-            showNotification("Shopping list restored", "success");
+            await db.lists.update(listData?._id, {isDeleted: false});
+            showNotification("List restored", "success");
             navigate('/');
         } catch (error) {
             console.error(error);
@@ -99,9 +102,7 @@ const ShoppingList = () => {
     }
     // Optimistically update item list
     const updateItem = (updatedItem: ItemType) => {
-        console.log("Updated item received: ",updatedItem)
         const updatedList = listItems.map(item=>item._id===updatedItem._id ? updatedItem : item);
-        console.log("Item updated:",updatedList)
         setListItems(updatedList);
     };
 
@@ -111,16 +112,16 @@ const ShoppingList = () => {
         )
     } else if(listData && listData._id) {
         return ( 
-            <div className={styles.shoppingList}>
-                {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={deleteList} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
-                {showEdit ? <EditShoppingList close={()=>setShowEdit(false)} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
+            <div className={styles.List}>
+                {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={()=>setShowDeleteModal(true)} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
+                {showEdit ? <EditList close={()=>setShowEdit(false)} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
+                {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)}  confirm={deleteList} title='Delete this list?' content='Are you sure you want to delete this list? You can restore it later' /> : null}
                 <Header 
                     prevUrl={'/lists'} 
                     title={listData.name} 
                     Button={<button onClick={()=>setShowPageMenu(prev=>!prev)}><IconsLibrary.Dots /></button>}
                 />
                 <div className={styles.listMeta}>
-                    <h2>{listData.name}</h2>
                     <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
                     <p>{listData.description}</p>
                 </div>
@@ -135,14 +136,14 @@ const ShoppingList = () => {
                             <p className={styles.noItemsText}>No items yet</p>
                     }
                 </div>
-                <NewShoppingListItem listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} />
+                <NewListItem listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} />
             </div>
         );
     }
     
 }
  
-export default ShoppingList;
+export default List;
 
 
 interface PageMenuProps {

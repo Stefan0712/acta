@@ -45,8 +45,10 @@ import List2 from './list2.svg?react';
 import Poll2 from './poll2.svg?react';
 import Search from './search.svg?react';
 import Bell from './bell.svg?react';
+import Home from './home.svg?react';
 
 export const IconsLibrary = {
+  Home,
   Bell,
   Activity,
   Calendar,

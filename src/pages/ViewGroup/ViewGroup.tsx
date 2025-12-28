@@ -52,7 +52,7 @@ const ViewGroup = () => {
                 {showMenu ? <Menu close={()=>setShowMenu(false)} showEdit={()=>setShowEdit(true)} groupId={groupId} /> : null}
                 {showEdit ? <EditGroup groupId={groupId} close={()=>setShowEdit(false)} handleLocalUpdate={(newData)=>setGroupData(newData)}/> : null}    
                 <div className={styles.header}>
-                    <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
+                    <button onClick={()=>navigate(`/group/${groupData._id}`)}><IconsLibrary.BackArrow/></button>
                     <h3>{groupData.name}</h3>
                     <button onClick={()=>setShowMenu(prev=>!prev)}>
                         <IconsLibrary.Settings />

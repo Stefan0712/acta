@@ -20,6 +20,7 @@
     flex-direction: column;
     gap: 20px;
     padding: 20px;
+    color: var(--text-color);
 }
 .buttons {
     width: 100%;

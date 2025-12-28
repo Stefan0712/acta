@@ -1,4 +1,4 @@
-.newShoppingList {
+.newList {
   bottom: var(--bottom-offset);
   width: calc(100dvw - 20px);
   height: fit-content;
@@ -15,7 +15,7 @@
   border: 1px solid var(--white-10);
   z-index: 15;
 }
-.newShoppingList h3{
+.newList h3{
   font-size: 1rem;
   color: var(--white-50);
   height: 40px;
@@ -121,7 +121,7 @@ fieldset input {
   background-color: var(--accent);
   border: 1px solid var(--white-10);
 }
-.newShoppingList input {
+.newList input {
   background-color: var(--modal-bg);
   height: 50px;
   border-radius: 10px;

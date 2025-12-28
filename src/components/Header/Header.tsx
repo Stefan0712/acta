@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({prevUrl, title, Button}) => {
 
     return (
         <div className={styles.header}>
-            {prevUrl ? <Link to={prevUrl}><IconsLibrary.BackArrow /></Link> : <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow /></button>}
+            {prevUrl ? <Link to={prevUrl}><IconsLibrary.Arrow /></Link> : <button onClick={()=>navigate(-1)}><IconsLibrary.Arrow /></button>}
             <h1>{title}</h1>
             {Button ? <div className={styles.buttonContainer}>{Button}</div> : null}
         </div>

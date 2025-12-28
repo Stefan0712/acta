@@ -1,4 +1,4 @@
-export interface ShoppingList {
+export interface List {
     _id?: string;
     name: string;
     description?: string;
@@ -16,7 +16,7 @@ export interface ShoppingList {
     icon?: string;
 }
 
-export interface ShoppingListItem {
+export interface ListItem {
     _id: string;
     createdAt: Date;
     updatedAt?: Date;

@@ -92,9 +92,13 @@ import {
     MessageSquare,
     Star
 } from "lucide-react";
+import { IconsLibrary } from "../../assets/icons";
 
 export const GROUP_ICONS = [
     { id: 'default-icon', title: "Star", icon: Star},
+    { id: 'default-list-icon', title: "List", icon: IconsLibrary.List2},
+    { id: 'default-group-icon', title: "Group", icon: IconsLibrary.Group},
+
     { id: 'icon-apple-id', title: 'Apple', icon: Apple },
     { id: 'icon-archive-id', title: 'Archive', icon: Archive },
     { id: 'icon-angry-id', title: 'Angry', icon: Angry },

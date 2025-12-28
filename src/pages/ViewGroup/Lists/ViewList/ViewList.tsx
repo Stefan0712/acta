@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './ViewList.module.css';
-import { type ShoppingListItem as ItemType, type ShoppingList as IShoppingList, type GroupMember } from '../../../../types/models';
+import { type ListItem as ItemType, type List as IList, type GroupMember } from '../../../../types/models';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../../Notification/NotificationContext';
 import NewItem from '../../../../components/NewItem/NewItem';
@@ -27,7 +27,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
     const [showEdit, setShowEdit] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
-    const [listData, setListData] = useState<IShoppingList | null>(null);
+    const [listData, setListData] = useState<IList | null>(null);
     const [listItems, setListItems] = useState<ItemType[]>([]);
 
     // Filter items based on the current category

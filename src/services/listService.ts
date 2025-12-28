@@ -1,4 +1,4 @@
-import type { ShoppingList } from '../types/models';
+import type { List } from '../types/models';
 import API from './apiService';
 import axios from 'axios';
 
@@ -9,7 +9,7 @@ interface ListCreateData {
     isDeleted?: boolean;
 }
 
-export async function createList(data: ListCreateData): Promise<ShoppingList> {
+export async function createList(data: ListCreateData): Promise<List> {
     try {
         const response = await API.post('/lists', data);
         
@@ -28,7 +28,7 @@ export async function createList(data: ListCreateData): Promise<ShoppingList> {
 }
 
 // Get a list by id
-export async function getList(listId: string): Promise<ShoppingList> {
+export async function getList(listId: string): Promise<List> {
     try {
         const response = await API.get(`/lists/${listId}`);
         if (response.status === 200) {
@@ -44,7 +44,7 @@ export async function getList(listId: string): Promise<ShoppingList> {
     }
 }
 // Get all lists of a group
-export async function getGroupLists(groupId: string): Promise<ShoppingList[]> {
+export async function getGroupLists(groupId: string): Promise<List[]> {
     try {
         const response = await API.get(`/lists?groupId=${groupId}`);
         if (response.status === 200) {

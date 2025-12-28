@@ -5,7 +5,7 @@ import styles from './Dashboard.module.css';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../db';
 import { useEffect, useState } from 'react';
-import { type ShoppingList, type Notification, type ShoppingListItem} from '../../types/models';
+import { type List, type Notification, type ListItem} from '../../types/models';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 
 // TODO: Add listId to notes so that the user can link them to a certain list
@@ -44,15 +44,15 @@ export default Dashboard;
 
 const DueItems = () => {
 
-    const [items, setItems] = useState<ShoppingListItem[]>([]);
+    const [items, setItems] = useState<ListItem[]>([]);
 
     const getItems = async () => {
         try {
-            const response = await db.shoppingListItems.reverse().limit(5).toArray();
+            const response = await db.listItems.reverse().limit(5).toArray();
             
             const listIds = [...new Set(response.map(item => item.listId).filter(Boolean))];
 
-            const lists = await db.shoppingLists.where('_id').anyOf(listIds).toArray();
+            const lists = await db.lists.where('_id').anyOf(listIds).toArray();
             const listMap = new Map(lists.map(list => [list._id, list]));
 
             const populatedItems = response.map(item => ({
@@ -114,11 +114,11 @@ const Notification = ({data} : {data: Notification}) =>{
 
 const PinnedLists = () => {
     
-    const [lists, setLists] = useState<ShoppingList[]>([])
+    const [lists, setLists] = useState<List[]>([])
 
     const getPinnedListsData = async () => {
         try {
-            const allLists = await db.shoppingLists.toArray()
+            const allLists = await db.lists.toArray()
 
             if (!allLists || allLists.length === 0) {
                 setLists([]);
@@ -128,7 +128,7 @@ const PinnedLists = () => {
             const updatedLists = await Promise.all(
                 allLists.filter(item=>item.isPinned).map(async (list) => {
                     if (!list._id) return { ...list, totalItemsCounter: 0, completedItemsCounter: 0 };
-                    const itemsInList = db.shoppingListItems.where('listId').equals(list._id);
+                    const itemsInList = db.listItems.where('listId').equals(list._id);
                     
                     const totalCount = await itemsInList.filter(item => !item.isDeleted).count();
 
@@ -154,7 +154,7 @@ const PinnedLists = () => {
 
     return (
         <div className={styles.pinnedLists}>
-            {lists && lists.length > 0 ? lists.map(list=>{
+            {lists && lists.length > 0 ? lists.slice(0,2).map(list=>{
                 const Icon = getIcon(list.icon || 'default-icon');
                 return (
                     <div className={styles.list}>

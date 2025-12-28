@@ -56,7 +56,7 @@ export const NotificationService = {
     // Checking for reminders
     async checkLocalReminders(currentUserId: string) {
         const now = new Date();
-        const activeItems = await db.shoppingListItems
+        const activeItems = await db.listItems
         .filter(item => 
             !item.isChecked &&          // Not bought yet
             !!item.deadline &&          // Has a deadline
@@ -73,7 +73,7 @@ export const NotificationService = {
 
             if (hoursUntilDeadline <= item.reminder && hoursUntilDeadline > -12) {
                 await this.send(currentUserId, 'REMINDER', `Reminder: "${item.name}" is due in ${Math.ceil(hoursUntilDeadline)} hours!`, undefined, { listId: item.listId, itemId: item._id });
-                await db.shoppingListItems.update(item._id, { isReminderSent: true });
+                await db.listItems.update(item._id, { isReminderSent: true });
                 console.log(`[Reminders] Sent alert for ${item.name}`);
             }
         }

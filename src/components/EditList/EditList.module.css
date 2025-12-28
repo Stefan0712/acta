@@ -1,4 +1,4 @@
-.newShoppingList {
+.newList {
     position: fixed;
     bottom: var(--bottom-offset);
     width: calc(100vw - 20px);

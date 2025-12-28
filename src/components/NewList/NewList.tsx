@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './NewList.module.css';
-import type { ShoppingList } from '../../types/models';
+import type { List } from '../../types/models';
 import { ObjectId } from 'bson';
 import SwitchButton from '../SwitchButton/SwitchButton';
 import { db } from '../../db';
@@ -14,10 +14,10 @@ import ColorSelector from '../ColorSelector/ColorSelector';
 interface IProps {
     close: ()=>void;
     groupId?: string;
-    addListToState: (list: ShoppingList) => void;
+    addListToState: (list: List) => void;
 }
 
-const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => {
+const NewList: React.FC<IProps> = ({close, groupId, addListToState}) => {
 
     const { showNotification } = useNotifications();
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
 
     const handleSaveList = async () => {
         const currentDate = new Date();
-        const newList: ShoppingList = {
+        const newList: List = {
             name,
             description,
             color,
@@ -60,7 +60,7 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
                 const apiResponse = await createList(newList);
                 navigate(`/group/${groupId}/lists/${apiResponse._id}`);
             }else {
-                await db.shoppingLists.add(newList);
+                await db.lists.add(newList);
                 
                 addListToState(newList)
             }
@@ -73,7 +73,7 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
         <div className={styles.componentContainer}>
             {showIconSelector ? <IconSelector icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} close={()=>setShowIconSelector(false)}/> : null}
             {showColorSelector ? <ColorSelector currentColor={color} setColor={(newColor)=>setColor(newColor)} close={()=>setShowColorSelector(false)}/> : null}
-            <div className={styles.newShoppingList}>
+            <div className={styles.newList}>
                 <h3>New List</h3>
                 <fieldset>
                     <label>Name</label>
@@ -107,4 +107,4 @@ const NewShoppingList: React.FC<IProps> = ({close, groupId, addListToState}) => 
      );
 }
  
-export default NewShoppingList;
+export default NewList;

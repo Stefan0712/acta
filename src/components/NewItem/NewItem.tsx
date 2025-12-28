@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import styles from './NewItem.module.css';
-import { type ShoppingListItem, type GroupMember, type Tag } from '../../types/models';
+import { type ListItem, type GroupMember, type Tag } from '../../types/models';
 import { ObjectId } from 'bson';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
@@ -9,16 +9,16 @@ import { NotificationService } from '../../helpers/NotificationService.ts';
 import { createItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
 
-interface NewShoppingListItemProps {
+interface NewListItemProps {
     listId: string;
-    addItemToList: (item: ShoppingListItem) => void;
+    addItemToList: (item: ListItem) => void;
     members?: GroupMember[];
     online?: boolean;
 }
 
 type Priority = "low" | "normal" | "high";
 
-const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addItemToList, members, online}) => {
+const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, members, online}) => {
     const userId = localStorage.getItem('userId');
 
     const [name, setName] = useState('');
@@ -50,7 +50,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
         if(!userId) return;
         const currentDate = new Date();
         const itemId = new ObjectId().toString();
-        const newItem: ShoppingListItem = {
+        const newItem: ListItem = {
             _id: itemId,
             createdAt: currentDate,
             name,
@@ -87,7 +87,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                 const onlineItem = await createItem(newItem);
                 addItemToList(onlineItem);
             } else {
-                await db.shoppingListItems.add(newItem);
+                await db.listItems.add(newItem);
                 addItemToList(newItem);
             }
             clearInputs();
@@ -206,4 +206,4 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
      );
 }
  
-export default NewShoppingListItem;
+export default NewListItem;
