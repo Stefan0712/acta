@@ -94,6 +94,9 @@ const Lists = () => {
         });
     }, [lists, selectedFilter]);
 
+    const restoreListLocally = (id: string) => {
+        setLists(prev=>prev.map(item=>item._id === id ? {...item, isDeleted: false} : item))
+    }
 
     if (!localStorage.getItem('jwt-token') && groupId) {
         return ( <Auth /> )
@@ -115,7 +118,7 @@ const Lists = () => {
                     {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
                         <IconsLibrary.Plus />
                     </button>}
-                    {filteredLists?.length > 0 ? filteredLists.map((list, index)=><List data={list} key={index} />) : <p className='no-items-text'>There are no lists.</p>}
+                    {filteredLists?.length > 0 ? filteredLists.map((list, index)=><List restoreLocally={(id)=>restoreListLocally(id)} data={list} key={index} />) : <p className='no-items-text'>There are no lists.</p>}
                 </div>
             </div>
         );
@@ -128,32 +131,35 @@ export default Lists;
 
 interface ListProps {
     data: ShoppingList;
+    restoreLocally: (id: string) => void;
 }
 
-const List: React.FC<ListProps> = ({data}) => {
+const List: React.FC<ListProps> = ({data, restoreLocally}) => {
     const {showNotification} = useNotifications();
 
     const restoreList = async () =>{
         if(data._id) {
-            try {
-                await updateList(data._id, {isDeleted: false});
-                showNotification("List restored", "success");
-            } catch (error) {
-                console.error(error);
-                showNotification("Failed to restore list.", "error");
+            if (data.groupId) {
+                try {
+                    await updateList(data._id, {isDeleted: false});
+                    showNotification("Online list was restored", "success");
+                    restoreLocally(data._id);
+                } catch (error) {
+                    console.error(error);
+                    showNotification("Failed to restore online list.", "error");
+                }
+            } else {
+                try {
+                    await db.shoppingLists.update(data._id, {isDeleted: false});
+                    showNotification('Local list was restored!', "success");
+                    restoreLocally(data._id);
+                } catch (error) {
+                    console.error(error);
+                    showNotification("Failed to restore local list","error")
+                }
             }
         }
     }
-            // const restoreList = async (listId: string) =>{
-    //     try {
-    //         await db.shoppingLists.update(listId, {isDeleted: false});
-    //         showNotification("Shopping list restored", "success");
-    //         navigate('/');
-    //     } catch (error) {
-    //         console.error(error);
-    //         showNotification("Failed to restore list.", "error");
-    //     }
-    // }
     const permanentlyDelete = async () =>{
         if(data._id) {
             try {
