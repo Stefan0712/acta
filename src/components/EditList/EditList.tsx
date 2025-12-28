@@ -8,6 +8,8 @@ import { updateList } from '../../services/listService';
 import IconSelector from '../IconSelector/IconSelector';
 import ColorSelector from '../ColorSelector/ColorSelector';
 import { getIcon } from '../IconSelector/iconCollection';
+import { IconsLibrary } from '../../assets/icons';
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
     close: ()=>void;
@@ -19,6 +21,7 @@ interface IProps {
 const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
 
     const { showNotification } = useNotifications();
+    const navigate = useNavigate();
 
     const [name, setName] = useState('')
     const [description, setDescription] = useState('');
@@ -62,7 +65,19 @@ const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
             }
         }
     };
-
+    const handleDeleteList = async () =>{
+        if(listData._id) {
+            try {
+                await updateList(listData._id,{isDeleted: true});
+                showNotification("Shopping list deleted", "success");
+                navigate(`/group/${listData.groupId}`)
+                close();
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to delete list.", "error");
+            }
+        }
+    }
     // Fill in data received from the shopping list
     useEffect(()=>{
         if(listData){
@@ -78,7 +93,12 @@ const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
             {showIconSelector ? <IconSelector icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} close={()=>setShowIconSelector(false)}/> : null}
             {showColorSelector ? <ColorSelector currentColor={color} setColor={(newColor)=>setColor(newColor)} close={()=>setShowColorSelector(false)}/> : null}
             <div className={styles.newList}>
-                <h3>New List</h3>
+                <div className={styles.header}>
+                    <h3>Edit List</h3>
+                    <button onClick={close}>
+                        <IconsLibrary.Close />
+                    </button>
+                </div>
                 <fieldset>
                     <label>Name</label>
                     <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />
@@ -103,7 +123,7 @@ const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
                     </fieldset>
                 </div>
                 <div className={styles.bottomButtons}>
-                    <button className={styles.cancelButton} onClick={close}>Cancel</button>
+                    <button className={styles.deleteButton} onClick={handleDeleteList}>Delete</button>
                     <button className={styles.saveButton} onClick={handleSaveList}>Save</button>
                 </div>
             </div>

@@ -122,18 +122,23 @@ const List = () => {
                     Button={<button onClick={()=>setShowPageMenu(prev=>!prev)}><IconsLibrary.Dots /></button>}
                 />
                 <div className={styles.listMeta}>
-                    <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
+                    <p className={styles.createdAt}>Created on {getDateAndHour(listData.createdAt)}</p>
+                    {listData.updatedAt ? <p className={styles.updatedAt}>Latest update on {getDateAndHour(listData.updatedAt)}</p> : null}
                     <p>{listData.description}</p>
+                    <Summaries 
+                        totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
+                        completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
+                    />
                 </div>
                 <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','deleted']} />
                 <div className={styles.listItemsContainer}>
                     {filteredItems && filteredItems.length > 0 ? 
                         <>
                             {uncompletedItems.map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
-                            {completedItems.length > 0 ? <h3>Completed</h3> : null}
+                            {completedItems.length > 0 ? <h3 className={styles.sectionTitle}>Completed</h3> : null}
                             {completedItems.map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
                         </>  : 
-                            <p className={styles.noItemsText}>No items yet</p>
+                            <p className='no-items-text'>No items yet</p>
                     }
                 </div>
                 <NewListItem listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} />
@@ -144,6 +149,42 @@ const List = () => {
 }
  
 export default List;
+
+interface SummariesProps {
+    totalItems: number;
+    completedItems: number;
+}
+const Summaries: React.FC<SummariesProps> = ({totalItems, completedItems}) => {
+
+    const percentage = (completedItems/totalItems)*100;
+    return (
+        <div className={styles.summaries}>
+            <div className={styles.collumns}>
+                <div className={styles.collumn}>
+                    <b>{totalItems ?? 0}</b>
+                    <p>TOTAL</p>
+                </div>
+                <div className={styles.collumn}>
+                    <b>{(totalItems || 0) - (completedItems || 0)}</b>
+                    <p>ACTIVE</p>
+                </div>
+                <div className={styles.collumn}>
+                    <b>{completedItems || 0}</b>
+                    <p>COMPLETED</p>
+                </div>
+            </div>
+            <div className={styles.progress}>
+                <div className={styles.progressText}>
+                    <p>TOTAL PROGRESS</p>
+                    <b>{percentage || 0}%</b>
+                </div>
+                <div className={styles.progressBar}>
+                    <div className={styles.progressLine} style={{width: `${percentage}%`}} />
+                </div>
+            </div>
+        </div>
+    )
+}
 
 
 interface PageMenuProps {

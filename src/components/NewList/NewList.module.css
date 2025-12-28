@@ -22,6 +22,27 @@
   align-items: center;
   display: flex;
 }
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header button {
+  color: var(--text-colot);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: transparent;
+}
+.deleteButton {
+  background-color: red;
+  color: white;
+  font-size: 1.1rem;
+}
 .componentContainer {
   width: 100dvw;
   height: calc(100dvh - var(--navigation-height));
@@ -115,6 +136,7 @@ fieldset input {
   height: 40px;
   border-radius: 5px;
   border: none;
+  font-size: 1.1rem;
 }
 .saveButton {
   color: var(--text-on-accent);

@@ -90,18 +90,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
         }
     },[listId, showNotification]);
 
-    const handleDeleteList = async () =>{
-        if(listId) {
-            try {
-                await updateList(listId,{isDeleted: true});
-                showNotification("Shopping list deleted", "success");
-                navigate(-1);
-            } catch (error) {
-                console.error(error);
-                showNotification("Failed to delete list.", "error");
-            }
-        }
-    }
+    
     const restoreList = async () =>{
        if(listId) {
          try {
@@ -130,13 +119,14 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                 <div className={styles.listMeta}>
                     <div className={styles.listName}>
                         <h2>{listData.name}</h2>
+                        {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /></button> : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /></button>}
                     </div>
                     <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
-                    <div className={styles.listButtons}>
-                        <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit</button>
-                        {listData.isDeleted ? <button style={{color: 'var(--text-color)'}} onClick={restoreList}><IconsLibrary.Sync /> Restore</button> : <button onClick={handleDeleteList} style={{color: 'red'}}><IconsLibrary.Delete />Delete</button>}
-                    </div>
                     <p>{listData.description}</p>
+                    <Summaries 
+                        totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
+                        completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
+                    />
                 </div>
                 <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','mine', 'deleted']} />
                 <div className={styles.listItemsContainer}>
@@ -158,3 +148,39 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
  
 export default ViewList;
 
+
+interface SummariesProps {
+    totalItems: number;
+    completedItems: number;
+}
+const Summaries: React.FC<SummariesProps> = ({totalItems, completedItems}) => {
+
+    const percentage = (completedItems/totalItems)*100;
+    return (
+        <div className={styles.summaries}>
+            <div className={styles.collumns}>
+                <div className={styles.collumn}>
+                    <b>{totalItems ?? 0}</b>
+                    <p>TOTAL</p>
+                </div>
+                <div className={styles.collumn}>
+                    <b>{(totalItems || 0) - (completedItems || 0)}</b>
+                    <p>ACTIVE</p>
+                </div>
+                <div className={styles.collumn}>
+                    <b>{completedItems || 0}</b>
+                    <p>COMPLETED</p>
+                </div>
+            </div>
+            <div className={styles.progress}>
+                <div className={styles.progressText}>
+                    <p>TOTAL PROGRESS</p>
+                    <b>{percentage || 0}%</b>
+                </div>
+                <div className={styles.progressBar}>
+                    <div className={styles.progressLine} style={{width: `${percentage}%`}} />
+                </div>
+            </div>
+        </div>
+    )
+}

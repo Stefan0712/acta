@@ -3,11 +3,12 @@
     height: 100%;
     max-height: calc(100vh - var(--bottom-offset));
     display: grid;
-    grid-template-rows: var(--page-header-height) auto 40px 1fr;
+    grid-template-rows: var(--page-header-height) auto auto 1fr;
     color: var(--text-color);
     padding: 10px;
     position: relative;
     overflow: hidden;
+    gap: 10px;
 }
 
 .listMeta {
@@ -21,6 +22,7 @@
     flex-direction: column;
     gap: 10px;
     overflow-y: auto;
+    padding-bottom: 70px;
 }
 .newItemButton {
     width: 50px;
@@ -49,6 +51,11 @@
 .newItemButton svg {
     width: 80%;
     height: 80%;
+}
+.createdAt,
+.updatedAt {
+    color: var(--white-50);
+    font-size: 0.9rem;
 }
 .pageMenu {
     height: auto;
@@ -98,7 +105,10 @@
     height: 50px;
     opacity: 0.5;
 }
-
+.sectionTitle{
+    font-size: 0.9rem;
+    color: var(--white-50);
+}
 .categoryButtons {
     display: flex;
     align-items: center;
@@ -116,4 +126,63 @@
 }
 .categoryButtons button.selectedCategory {
     border-color: var(--accent)
+}
+
+
+.summaries {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: var(--text-color);
+    padding: 0 10px;
+}
+.summaries .collumns {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+}
+.summaries .collumn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px 0;
+}
+.summaries .collumn:nth-child(2) {
+    border-left: 1px solid var(--white-10);
+    border-right: 1px solid var(--white-10);
+}
+.summaries .collumn b {
+    font-size: 1rem;
+}
+.summaries .collumn p {
+    font-size: 0.7rem;
+}
+.summaries .progress {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.summaries .progressText {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    color: var(--white-50);
+    font-size: 0.8rem;
+}
+.summaries .progressBar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--item-bg);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.progressBar .progressLine {
+    height: 8px;
+    background-color: white;
 }
