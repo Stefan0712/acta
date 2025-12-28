@@ -163,10 +163,34 @@
     flex-wrap: wrap;
     align-items: center;
 }
-.tagsContainer p{
+.tagsContainer .selectedTag,
+.tagsContainer .addIconButton{
     padding: 5px 10px;
     background-color: var(--bg-primary);
     border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: var(--item-bg);
+    padding-right: 0;
+}
+.addIconButton {
+    border: none;
+    color: var(--text-color);
+    height: 40px;
+    border: 1px solid var(--white-25);
+    padding-right: 10px !important;
+;}
+.tagsContainer .selectedTag button {
+    background-color: transparent;
+    border: none;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tagsContainer .selectedTag button svg {
+    height: 16px;
 }
 .tagIcon {
     height: 40px;
@@ -182,40 +206,7 @@
     height: 20px;
     color: var(--text-on-accent)
 }
-.tagsContainer button {
-    background-color: var(--bg-primary);
-    border-radius: 5px;
-    height: 30px;
-    width: 30px;
-}
-.tagInput {
-    width: 100%;
-    height: 40px;
-    display: grid;
-    grid-template-columns: 1fr 40px;
-    align-items: center;
-}
-.tagInput input {
-    height: 40px;
-    padding-left: 10px;
-    border: none;
-    background-color: white;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-.tagInput button {
-    width: 100%;
-    height: 100%;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border: 1px solid transparent;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-.tagInput button svg {
-    height: 80%;
-    width: 80%
-}
+
 .largeAddButton {
     height: 40px;
     width: 100%;

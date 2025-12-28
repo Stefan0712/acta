@@ -38,7 +38,7 @@ export interface ShoppingListItem {
         name: string;
         color?: string;
     };
-    tags?: string[];
+    tags?: Tag[];
     isDeleted: boolean;
     priority: "low" | "normal" | "high";
     authorId: string;
@@ -183,6 +183,11 @@ export interface ActivityLog {
         pollId?: string;
     };
     isDirty: boolean;
+}
+export interface Tag {
+    _id: string;
+    color?: string;
+    name: string;
 }
 export interface Invite {
     token: string;

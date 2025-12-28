@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react';
 import styles from './NewItem.module.css';
-import { type ShoppingListItem, type GroupMember } from '../../types/models';
+import { type ShoppingListItem, type GroupMember, type Tag } from '../../types/models';
 import { ObjectId } from 'bson';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
 import { NotificationService } from '../../helpers/NotificationService.ts';
 import { createItem } from '../../services/itemService.ts';
+import TagSelector from '../TagSelector/TagSelector.tsx';
 
 interface NewShoppingListItemProps {
     listId: string;
@@ -23,7 +24,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     const [name, setName] = useState('');
     const [unit, setUnit] = useState('');
     const [qty, setQty] = useState(0);
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] = useState<Tag[]>([]);
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
     const [priority, setPriority] = useState<Priority>('normal');
@@ -38,8 +39,8 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
 
 
     const [showMoreInputs, setShowMoreInputs] = useState(false);
-    const [showNewTag, setShowNewTag] = useState(false);
     const [showUserSelector, setShowUserSelector] = useState(false);
+    const [showTagSelector, setShowTagSelector] = useState(false);
 
     const [error, setError] = useState('');
 
@@ -112,12 +113,6 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
         setName(value)
         setError('');
     }
-    const addTag = (tag: string) => {
-        if(tag){
-            setTags(prev=>[...prev, tag]);
-            setShowNewTag(false);
-        }
-    };
 
     const handleClaimItem = () => {
         setClaimedBy(prev => prev ? null : userId);
@@ -134,7 +129,18 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
     ];
     return ( 
         <div className={styles.newItem}>
-            {showUserSelector ? <UserSelector users={members ?? []} close={()=>setShowUserSelector(false)} selectUser={(user)=>setAssignedTo(user)} selectedUser={assignedTo} /> : null}
+            {showTagSelector ? <TagSelector 
+                removeTag={(id)=>setTags(prev=>[...prev.filter(item=>item._id !== id)])}
+                close={()=>setShowTagSelector(false)} 
+                addTag={(newTag)=>setTags(prev=>[...prev, newTag])} 
+                tags={tags}  
+            /> : null}
+            {showUserSelector ? <UserSelector 
+                users={members ?? []} 
+                close={()=>setShowUserSelector(false)} 
+                selectUser={(user)=>setAssignedTo(user)} 
+                selectedUser={assignedTo} 
+            /> : null}
             <div className={styles.basicInputs}>
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
                     <IconsLibrary.Arrow style={showMoreInputs ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'}} />
@@ -191,34 +197,15 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
                     <div className={styles.tagIcon}>
                         <IconsLibrary.Tag />
                     </div>
-                    {tags?.length > 0 ? tags.map(tag=><p key={tag}>{tag}</p>) : <p>No tags</p>}
-                    <button className={styles.iconButton} onClick={()=>setShowNewTag(prev=>!prev)}><IconsLibrary.Plus /></button>
+                    <button className={styles.addIconButton} onClick={()=>setShowTagSelector(true)}>Add Tag <IconsLibrary.Plus /></button>
+                    {tags?.length > 0 ? tags.map(tag=><div className={styles.selectedTag} key={tag._id}>
+                        <p>{tag.name}</p>
+                        <button onClick={()=>setTags(prev=>[...prev.filter(item=>item._id !== tag._id)])}><IconsLibrary.Close /></button>
+                    </div>) : <p>No tags</p>}
                 </div>
-                {showNewTag ? <NewTag addTag={addTag}/> : null}
             </div> : null}
         </div>
      );
 }
  
 export default NewShoppingListItem;
-
-interface NewTagProps {
-    addTag: (tag: string) => void;
-}
-const NewTag: React.FC<NewTagProps> = ({addTag}) => {
-    
-    const [tag, setTag] = useState('')
-
-    return (
-        <div className={styles.tagInput}>
-            <input autoComplete="off" type="text" name="tags" onChange={(e)=>setTag(e.target.value)} value={tag} placeholder='Tag' required minLength={0} />
-            <button onClick={()=>addTag(tag)}><IconsLibrary.Plus /></button>
-        </div>
-    )
-}
-
-
-
-
-
-
