@@ -38,7 +38,7 @@ export interface ShoppingListItem {
         name: string;
         color?: string;
     };
-    tags?: string[];
+    tags?: Tag[];
     isDeleted: boolean;
     priority: "low" | "normal" | "high";
     authorId: string;

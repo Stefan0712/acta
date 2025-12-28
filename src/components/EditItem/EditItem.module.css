@@ -1,61 +1,37 @@
 .newItem {
     padding: 10px;
-    width: calc(100vw - 20px);
-    left: 10px;
-    background-color: var(--bg-primary);
-    border-radius: 5px;
-    gap: 10px;
+    width: 100dvw;
+    left: 0;
+    background-color: var(--modal-bg);
+    position: fixed;
+    bottom: var(--navigation-height);
     display: flex;
     flex-direction: column;
-    animation: slideUp 0.1s;
     transform-origin: bottom;
     flex-shrink: 0;
-    position: fixed;
-    bottom: var(--bottom-offset);
-    z-index: 10;
-    border: 1px solid rgba(211, 211, 211, 0.1);
-}
-@keyframes slideUp {
-    0% {
-        opacity: 0;
-        transform: scale(0);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+    z-index: 50;
+    border-top: 1px solid rgba(102, 102, 102, 0.5);
+    transition: all 0.1s;
 }
 .header {
     width: 100%;
-    height: 30px;
     display: grid;
-    grid-template-columns: 1fr 30px;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
     align-items: center;
 }
+.header h1 {
+    font-size: 1.1rem;
+}
 .header button {
-    height: 100%;
-    width: 30px;
-    background-color: transparent;
-    border: none;
-}
-.header button svg {
-    height: 20px;
-    width: 20px;
     color: var(--text-color);
-}
-.iconButton {
-    width: 40px;
-    height: 40px;
     background-color: transparent;
     border: none;
+    height: 40px;
+    width: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-.iconButton svg {
-    height: 80%;
-    width: 80%;
-    color: white;
 }
 .claimButtons {
     width: 100%;
@@ -67,62 +43,59 @@
     flex: 1;
     width: auto;
 }
-.basicInputs {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    align-items: center;
-    width: 100%;
-    height: 40px;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border-radius: 5px;
-    overflow: hidden;
-}
-.basicInputs input {
-    height: 40px;
-    width: 100%;
-    background-color: white;
-    border: 1px solid transparent;
-    padding-left: 10px;
-}
-#unitInput {
-    border-right: 1px solid var(--text-on-accent);
-    border-left: 1px solid var(--text-on-accent);
-}
-.basicInputs button svg {
-    color: var(--text-on-accent);
-}
-.descriptionInput {
-    height: 40px;
-    width: 100%;
-    border-radius: 5px;
-    background-color: white;
-    border: 1px solid transparent;
-    padding-left: 10px;
-}
 .moreInputs {
     display: flex;
     flex-direction: column;
     gap: 10px;
     overflow: hidden;
-    height: 30px;
-    animation: expandMoreInputs 0.2s;
-    transform-origin: top;
+    height: 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+input,
+select,
+option,
+.name input,
+.description input{
+    background-color: var(--input-bg);
+    border: 1px solid var(--white-10);
+    color: var(--text-color);
+    padding-left: 10px;
+    height: 50px;
+    border-radius: 10px;
+    transition: all 0.1s;
 }
 .moreInputs.show {
     height: auto;
     animation: expandMoreInputs 0.2s;
 }
-@keyframes expandMoreInputs {
-    from {
-        transform: scaleY(0);
-        opacity: 0;
-    }
-    to {
-        transform: scaleY(1);
-        opacity: 1;
-    }
+.secondRow label {
+    width: 100%;
 }
+.secondRow {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    overflow: hidden;
+    gap: 10px;
+    box-sizing: border-box;    
+}
+.secondRow .rowSection label
+.secondRow .rowSection input {
+    width: 100%;
+    min-width: 0 !important;
+}
+.secondRow .rowSection {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    min-width: 0 !important;
+}
+
 .showMoreButton {
     height: 30px;
     width: 100%;
@@ -140,145 +113,60 @@
     border-radius: 5px;
     color: var(--text-color);
 }
-.tagsContainer {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    align-items: center;
-}
-.tagsContainer p{
-    padding: 5px 10px;
-    background-color: var(--bg-primary);
-    border-radius: 5px;
-}
-.tagIcon {
-    height: 30px;
-    width: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--accent);
-    border-radius: 5px;
-}
-.tagIcon svg {
-    width: 20px;
-    height: 20px;
-    color: var(--text-on-accent)
-}
-.tagsContainer button {
-    background-color: var(--bg-primary);
-    border-radius: 5px;
-    height: 30px;
-    width: 30px;
-}
-.priority {
-    display: flex;
-    align-items: center;
-}
-.priority select {
-    margin-right: 10px;
-    height: 30px;
-    border-radius: 5px;
-    background-color: white;
-    border: none;
-}
-.priority p {
-    margin-right: auto;
-}
-.priorityButtons {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-.priority button {
-    height: 30px;
-    padding: 0 10px;
-    border-radius: 5px;
-    background-color: transparent;
-    border: 1px solid transparent;
-    color: var(--text-color);
-    transition: all 0.1s;
-}
-.priority button.selectedPriority {
-    background-color: var(--accent);
-    transition: all 0.1s;
-    color: var(--text-on-accent);
-}
-.tagInput {
-    width: 100%;
-    height: 40px;
-    display: grid;
-    grid-template-columns: 1fr 40px;
-    align-items: center;
-}
-.tagInput input {
-    height: 40px;
-    padding-left: 10px;
-    border: none;
-    background-color: white;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-.tagInput button {
-    width: 100%;
-    height: 100%;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border: 1px solid transparent;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-.tagInput button svg {
-    height: 80%;
-    width: 80%
-}
-.twoCols {
-    width: 100%;
-    height: 40px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-.twoCols button {
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-    border: 1px solid var(--accent);
-    background-color: transparent;
-    color: var(--text-color);
-}
-.largeAddButton {
-    height: 40px;
-    width: 100%;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border:1px solid transparent;
-}
-.largeAddButton svg {
-    height: 25px;
-    width: 25px;
-}
-.deadline {
+.name,
+.description {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-top: 10px;
 }
-.deadlineInputs {
+.deadline {
     width: 100%;
-    height: 40px;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1fr 2fr;
     gap: 10px;
+    align-items: center;
 }
-.deadlineInputs input {
-    height: 100%;
+.deadline label {
     width: 100%;
-    background-color: white;
-    border: 1px solid transparent;
-    border-radius: 5px;
-    padding-left: 10px
+    text-align: start;
+}
+.deadline fieldset {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+.deadline input {
+    width: 100%;
+    height: 50px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--white-10);
+    color: var(--text-color);
+    padding-left: 10px;
+    border-radius: 10px;
+    transition: all 0.1s;
+}
+.manageTagsButton,
+.saveButton {
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    border: 1px solid var(--white-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    gap: 5px;
+}
+.manageTagsButton {
+    background-color: transparent;
+    border-color: var(--accent);
+    color: var(--text-color);
 }

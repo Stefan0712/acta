@@ -84,7 +84,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, online}) =>
     if(data){
         return ( 
             <div className={`${styles.item} ${expandItem ? styles.expandedItem : ''}`}>
-                {showEdit ? <EditItem online={online} itemData={data} updateItem={updateItemLocally} close={()=>setShowEdit(false)} /> : null}
+                {showEdit ? <EditItem online={online} itemData={data} updateItemLocally={updateItemLocally} close={()=>setShowEdit(false)} /> : null}
                 <div className={styles.mainSection}>
                     <div className={styles.checkbox} onClick={toggleCheck}>
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
@@ -103,7 +103,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, online}) =>
                     </div> : null}
                     {data.tags && data.tags.length > 0 ? <div className={styles.tags}>
                         <IconsLibrary.Tag />
-                        {data.tags && data.tags.length > 0 ? data.tags?.map(tag=><p key={tag} className={styles.tag}>{tag}</p>) : <p>No tags</p>}
+                        {data.tags && data.tags.length > 0 ? data.tags?.map(tag=><p key={tag._id} className={styles.tag}>{tag.name}</p>) : <p>No tags</p>}
                     </div> : null}
                     <div className={styles.threeCol}>
                         <div className={styles.col} onClick={togglePin}>

@@ -70,8 +70,8 @@
     background-color: transparent;
     border: 1px solid transparent;
     padding-left: 10px;
-    flex-shrink: 
-    0;
+    flex-shrink: 0;
+    color: white;
 }
 .basicInputs .addButton {
     width: 40px;

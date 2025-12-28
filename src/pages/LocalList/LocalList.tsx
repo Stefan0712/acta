@@ -99,8 +99,10 @@ const ShoppingList = () => {
     }
     // Optimistically update item list
     const updateItem = (updatedItem: ItemType) => {
-        const updatedList = listItems.map(item=>item._id===updatedItem._id ? updatedItem : item)
-        setListItems(updatedList); // Updates the list of all items with the updated one
+        console.log("Updated item received: ",updatedItem)
+        const updatedList = listItems.map(item=>item._id===updatedItem._id ? updatedItem : item);
+        console.log("Item updated:",updatedList)
+        setListItems(updatedList);
     };
 
     if(!listData) {

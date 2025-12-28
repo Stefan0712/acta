@@ -143,7 +143,7 @@ const NewShoppingListItem: React.FC<NewShoppingListItemProps> = ({listId, addIte
             /> : null}
             <div className={styles.basicInputs}>
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
-                    <IconsLibrary.Arrow style={showMoreInputs ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'}} />
+                    <IconsLibrary.Arrow style={showMoreInputs ? {transform: 'rotateZ(-90deg)'} : {transform: 'rotateZ(90deg)'}} />
                 </button>
                 <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
                 <button className={styles.addButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
