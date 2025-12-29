@@ -46,7 +46,6 @@
   color: red;
   animation: showError 0.1s;
   font-size: 0.8rem;
-  padding: 10px;
 }
 @keyframes showError {
   from {

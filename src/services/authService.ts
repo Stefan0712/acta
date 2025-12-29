@@ -17,6 +17,17 @@ export interface AuthResponse {
 }
 
 
+// Check API status
+export async function checkApi(): Promise<boolean> {
+    try {
+        await API.get('/');
+        return true;
+    } catch (error) {
+        console.error(error)
+        return false;
+    }
+}
+
 // User Registration
 // POST /api/auth/register
 export async function register(data: UserRegisterData): Promise<AuthResponse> {
@@ -38,6 +49,7 @@ export async function register(data: UserRegisterData): Promise<AuthResponse> {
         throw new Error('Network error or unknown issue.');
     }
 }
+
 
 // User Login
 // POST /api/auth/login

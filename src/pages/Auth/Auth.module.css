@@ -1,6 +1,6 @@
 .auth {
-    width: 100dvw;
-    height: calc(100dvh - var(--bottom-offset));
+    width: 100%;
+    height: 100%;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -77,4 +77,72 @@ form {
     height: 15px;
     border: 1px solid var(--text-color);
     border-radius: 100px;
+}
+
+
+.local {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+.local h1 {
+    width: 100%;
+}
+.local .warning {
+    width: 100%;
+    margin-bottom: auto;
+    background-color: var(--item-bg);
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid var(--white-10);
+}
+.warning .header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.warning .header h2 {
+    font-size: 1.2rem;
+}
+.warning h3 {
+    font-size: 1rem;
+}
+.local fieldset {
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.local fieldset input {
+    height: 50px;
+    padding-left: 10px;
+    border-radius: 10px;
+}
+.local .submitButton {
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    border: none;
+    font-size: 1.1rem;
+}
+.local .backButton{
+    width: 50px;
+    margin-top: auto;
+    height: 50px;
+    border-radius: 10px;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    border: none;
+    font-size: 1.1rem;
 }

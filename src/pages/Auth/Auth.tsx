@@ -2,18 +2,21 @@ import { useState } from 'react';
 import styles from './Auth.module.css';
 import { IconsLibrary } from '../../assets/icons';
 import { login, register, type AuthResponse } from '../../services/authService';
-import { useNavigate } from 'react-router-dom';
 import { finalizeAuthentication } from '../../sync/authSync';
+import { useNotifications } from '../../Notification/NotificationContext';
+import { db } from '../../db';
+import { MessageCircleWarning } from 'lucide-react';
 
-const Auth = () => {
+const Auth = ({next}: {next: ()=>void}) => {
 
     const [currentScreen, setCurrentScreen] = useState('login');
 
     return (
         <div className={styles.auth}>
-            <h1>Docket</h1>
             <div className={styles.authContainer}>
-                    {currentScreen === 'login' ? <Login toRegister={()=>setCurrentScreen('register')} /> : <Register toLogin={()=>setCurrentScreen('login')} />}
+                    {currentScreen === 'login' ? <Login next={next} toRegister={()=>setCurrentScreen('register')} toLocal={()=>setCurrentScreen("local")} /> 
+                    : currentScreen === 'local' ? <Local next={next} /> 
+                    : <Register next={next} toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
             </div>
         </div>
     )
@@ -21,10 +24,69 @@ const Auth = () => {
 
 export default Auth;
 
+const Local = ({next}: {next: ()=>void}) => {
 
+    const {showNotification} = useNotifications();
 
-const Login = ({toRegister} : {toRegister: ()=>void;}) => {
+    const [username, setUsername] = useState('');
+    const [usernameError, setUsernameError] = useState<null | string>(null);
 
+    const handleUsernameInput = (value: string) => {
+        setUsernameError(null)
+        setUsername(value);
+    }
+
+    const handleSaveLocalAccount = async () =>{
+        if(username.length > 0 && username.length < 16){
+            const newUser = {
+                _id: "local-user-id",
+                username,
+                email: "",
+                avatarUrl: "",
+            }
+            await db.profile.add(newUser);
+            localStorage.setItem('userId','local-user-id')
+            localStorage.setItem('username', username);
+            showNotification(`A local account with username ${username} was created!`, "success")
+            next()
+        } else {
+            setUsernameError("Username is invalid. It should be between 1 and 16 characters!")
+        }
+    }
+
+    return (
+        <div className={styles.local}>
+            <h1>Create a local account</h1>
+            <div className={styles.warning}>
+                <div className={styles.header}>
+                    <h2>Warning</h2>
+                    <MessageCircleWarning />
+                </div>
+                <h3>You can't access online features with a local account</h3>
+            </div>
+
+            <fieldset>
+                <label>Username</label>
+                <input value={username} onChange={(e)=>handleUsernameInput(e.target.value)} placeholder='Enter your username...' />
+                {usernameError ? <p className='error-message'>{usernameError}</p> : null}
+            </fieldset>
+
+            <button className={styles.submitButton} onClick={handleSaveLocalAccount}>Create</button>
+            <button className={styles.backButton}>
+                <IconsLibrary.Arrow />
+            </button>
+        </div>
+    )
+}
+
+interface LoginProps {
+    toRegister: ()=>void;
+    toLocal: ()=>void;
+    next: ()=>void;
+}
+const Login: React.FC<LoginProps> = ({toRegister, toLocal, next}) => {
+
+    const {showNotification} = useNotifications();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -50,10 +112,12 @@ const Login = ({toRegister} : {toRegister: ()=>void;}) => {
         try {
             const authResponse: AuthResponse = await login(loginData);
             await finalizeAuthentication(authResponse); 
-            window.location.reload();
+            showNotification("Logged in successfully", "success")
+            next();
             
         } catch (error) {
-            setLoginError('Incorrect email or password. Please try again.'+error.message);
+            setLoginError('Incorrect email or password. Please try again.');
+            showNotification("Failed to login", "error")
             console.error(error);
         }
     };
@@ -63,7 +127,7 @@ const Login = ({toRegister} : {toRegister: ()=>void;}) => {
             <form>
                 <h2>Login</h2>
                 <h3>Welcome back!</h3>
-                {loginError ? <p>{loginError}</p> : null}
+                {loginError ? <p className='error-message'>{loginError}</p> : null}
                 <fieldset>
                     <label>Email</label>
                     <input type='email' value={email} name='email' onChange={(e)=>setEmail(e.target.value)} required />
@@ -75,13 +139,22 @@ const Login = ({toRegister} : {toRegister: ()=>void;}) => {
                 <p className={styles.forgotPasswordLink}>Forgot Password?</p>
                 <button type='button' onClick={handleLogin}>Sign in</button>
             </form>
-                <p className={styles.bottomLink}>Don't have an account? <b onClick={toRegister}>Create one here!</b></p>
+            <p className={styles.bottomLink}>Don't have an account? <b onClick={toRegister}>Create one here!</b> or create a <b onClick={toLocal}>Local Account</b></p>
+            
         </div>
     )
 }
-const Register = ({toLogin} : {toLogin: ()=>void;}) => {
 
-    const navigate = useNavigate();
+
+interface RegisterProps {
+    toLogin: ()=>void;
+    toLocal: ()=>void;
+    next: ()=>void;
+}
+
+const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
+
+    const {showNotification} = useNotifications();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -157,10 +230,11 @@ const Register = ({toLogin} : {toLogin: ()=>void;}) => {
             try {
                 const authResponse = await register(registrationData);
                 await finalizeAuthentication(authResponse); 
-                navigate('/groups');
+                showNotification("You registered successfully", "success")
+                next();
                 
             } catch (error) {
-
+                showNotification("Failed to register", "error");
                 const errorMessage = (error instanceof Error) 
                     ? error.message 
                     : 'An unknown registration error occurred.';
@@ -224,7 +298,7 @@ const Register = ({toLogin} : {toLogin: ()=>void;}) => {
                     </div>
                 </div>
             </form>
-            <p className={styles.bottomLink}>Have an account already? <b onClick={toLogin}>Log in here</b></p>
+            <p className={styles.bottomLink}>Have an account already? <b onClick={toLogin}>Log in here</b> or create <b onClick={toLocal}>Local Account</b></p>
         </div>
     )
 }

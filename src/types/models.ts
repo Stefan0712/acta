@@ -58,8 +58,8 @@ export interface User {
     email: string;
     avatarUrl?: string;
     createdAt: string;
-    updatedAt: string;
-    isDirty: boolean;
+    updatedAt?: string;
+    isDirty?: boolean;
 }
 
 export type GroupRole = 'owner' | 'moderator' | 'member' | 'guest';
