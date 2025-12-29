@@ -19,6 +19,7 @@ import Activity from './pages/Groups/Activity/Activity.tsx';
 import Notes from './pages/ViewGroup/Notes/Notes.tsx';
 import Polls from './pages/ViewGroup/Polls/Polls.tsx';
 import NewUserFlow from './pages/NewUserFlow/NewUserFlow.tsx';
+import Export from './pages/Export/Export.tsx';
 
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
               <Route path="/groups" element={<Groups />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/invite" element={<AcceptInvite />} />
+              <Route path="/export" element={<Export />} />
             </Routes>
           </main>
           <Navigation />

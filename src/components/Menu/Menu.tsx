@@ -19,7 +19,7 @@ const Menu = ({close}: {close:()=>void}) => {
             <p>Id: {localStorage.getItem('userId')}</p>
             <p>Token: {isLoggedIn}</p> */}
             <div className={styles.section}>
-                <Link to={'/'}>
+                <Link to={'/export'}>
                     <IconsLibrary.Export />
                     <p>Export</p>
                 </Link>
