@@ -31,7 +31,9 @@ const Import = () => {
 
     const saveLists = async () => {
         try {
-            await db.lists.bulkAdd(selectedLists);
+            await db.lists.bulkPut(selectedLists);
+            const itemsToSave = selectedLists.flatMap(list => list.items || []);
+            await db.listItems.bulkPut(itemsToSave);
         }  catch (error) {
             console.error(error);
             showNotification("Failed to save lists. Try again!", "error");
@@ -39,7 +41,7 @@ const Import = () => {
     }
     const saveTags = async () => {
         try {
-            await db.tags.bulkAdd(selectedTags);
+            await db.tags.bulkPut(selectedTags);
         } catch (error) {
             console.error(error)
             showNotification("Failed to save tags. Try again", "error")
@@ -138,14 +140,14 @@ const Import = () => {
                 <input type="file" accept=".json" style={{display: 'none'}} onChange={handleFileUpload} />
                 <span className={styles.fileInput}> <Folder /> Import JSON </span>
             </label>
-            <div className={styles.warning}>
-                <div className={styles.warningHeader}>
-                    <h2>Warning</h2>
-                    <button onClick={()=>setShowWarning(false)}> <IconsLibrary.Close /> </button>
-                </div>
-                <p>Selecting items marked as Conflict will replace your existing local copies.</p>
-            </div>
             <div className={styles.cardsContainer}>
+                {showWarning ? <div className={styles.warning}>
+                    <div className={styles.warningHeader}>
+                        <h2>Warning</h2>
+                        <button onClick={()=>setShowWarning(false)}> <IconsLibrary.Close /> </button>
+                    </div>
+                    <p>Selecting items marked as Conflict will replace your existing local copies.</p>
+                </div> : null}
                 <div className={`${styles.category} ${expandLists ? styles.expandCategory : ''}`}>
                     <div className={styles.categoryTop}>
                         <div className={styles.iconContainer}>

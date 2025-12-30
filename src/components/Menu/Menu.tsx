@@ -17,11 +17,11 @@ const Menu = ({close}: {close:()=>void}) => {
             <div className={styles.menu}>
                 <h2>Menu</h2>
                 <div className={styles.section}>
-                    <Link to={'/export'}>
+                    <Link to={'/export'} onClick={close}>
                         <IconsLibrary.Export />
                         <p>Export</p>
                     </Link>
-                    <Link to={'/import'}>
+                    <Link to={'/import'} onClick={close}>
                         <IconsLibrary.Import />
                         <p>Import</p>
                     </Link>

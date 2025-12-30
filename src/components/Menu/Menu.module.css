@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    animation: showMenu 0.5s;
+    animation: showMenu 0.2s;
     color: var(--text-color);
     z-index: 601;
     margin-top: auto;
@@ -26,15 +26,11 @@
 @keyframes showMenu {
     0% {
         opacity: 0;
-        bottom: -120%;
-    }
-    70% {
-        opacity: 1;
-        bottom: 95px;
+        transform: translateY(calc(100% + 100px));
     }
     100% {
         opacity: 1;
-        bottom: 75px;
+        transform: translateY(0)
     }
 }
 .menu a svg {

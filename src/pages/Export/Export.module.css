@@ -9,7 +9,7 @@
     color: var(--text-color);
 }
 .import {
-    grid-template-rows: var(--page-header-height) auto auto auto 1fr 50px;
+    grid-template-rows: var(--page-header-height) auto auto 1fr 50px;
 }
 .warning {
     padding: 10px;
