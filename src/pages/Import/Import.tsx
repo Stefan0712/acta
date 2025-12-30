@@ -1,68 +1,50 @@
-import { useEffect, useState } from 'react';
-import styles from './Export.module.css';
-import type { List, ListItem, Note, Tag } from '../../types/models';
+import { useState } from 'react';
+import styles from '../Export/Export.module.css';
+import type { List, Note, Tag } from '../../types/models';
 import { IconsLibrary } from '../../assets/icons';
 import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
 import Header from '../../components/Header/Header';
+import { Folder } from 'lucide-react';
 
 
+// TODO: Check for duplicates before saving them and show user id and username that were imported, together with more metadata
 
-const Export = () => {
+
+const Import = () => {
 
     const {showNotification} = useNotifications();
 
-    const [lists, setLists] = useState<List[]>([]);
+    const [showWarning, setShowWarning] = useState(false);
+
+    const [lists, setLists] = useState<(List & {status: 'new' | 'conflict'})[]>([]);
     const [selectedLists, setSelectedLists] = useState<List[]>([]);
     const [expandLists, setExpandLists] = useState(false);
 
-    const [notes, setNotes] = useState<Note[]>([]);
+    const [notes, setNotes] = useState<(Note & {status: 'new' | 'conflict'})[]>([]);
     const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
     const [expandNotes, setExpandNotes] = useState(false);
 
-    const [tags, setTags] = useState<Tag[]>([]);
+    const [tags, setTags] = useState<(Tag & {status: 'new' | 'conflict'})[]>([]);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [expandTags, setExpandTags] = useState(false);
 
-    const getLists = async () => {
+    const saveLists = async () => {
         try {
-            const listsResponse = await db.lists.toArray();
-            if(listsResponse && listsResponse.length > 0) {
-                const itemsResponse: ListItem[] = await db.listItems.toArray();
-                if(itemsResponse){
-                    const updatedLists: List[] = listsResponse.map((list)=>(
-                        {
-                            ...list, 
-                            items: itemsResponse.filter(item=>item.listId === list._id),
-                            totalItemsCounter: itemsResponse.filter(item=>item.listId === list._id && !item.isDeleted).length, 
-                            completedItemsCounter: itemsResponse.filter(item=>item.listId === list._id && item.isChecked && !item.isDeleted).length
-                        }
-                    )
-                    )
-                    setLists(updatedLists);
-                }
-            }
-
+            await db.lists.bulkAdd(selectedLists);
         }  catch (error) {
             console.error(error);
-            showNotification("Failed to load local lists. Try again!", "error");
+            showNotification("Failed to save lists. Try again!", "error");
         }
     }
-    const getTags = async () => {
+    const saveTags = async () => {
         try {
-            const tagsResponse = await db.tags.toArray();
-            if(tagsResponse && tagsResponse.length > 0) {
-                setTags(tagsResponse)
-            }
+            await db.tags.bulkAdd(selectedTags);
         } catch (error) {
             console.error(error)
-            showNotification("Failed to get tags. Try again", "error")
+            showNotification("Failed to save tags. Try again", "error")
         }
     }
-    useEffect(()=>{
-        getLists();
-        getTags();
-    },[]);
 
     const toggleSelectList = (selectedList: List) => {
         if (selectedLists.some(item=>item._id === selectedList._id)){
@@ -96,46 +78,72 @@ const Export = () => {
     }
 
 
-    const handleExport = () => {
-        const dataToExport = {
-            exportedAt: new Date(),
-            profileData: {
-                username: localStorage.getItem('username'),
-                userId: localStorage.getItem('userId'),
-            },
-            data: {
-                lists,
-                tags,
-                notes
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+        try {
+            const fileContent = event.target?.result as string;
+            
+            const jsonData = JSON.parse(fileContent);
+            const [preparedNotes, preparedLists, preparedTags] = await Promise.all([
+                prepareImportData(jsonData.data.notes as Note[], db.notes),
+                prepareImportData(jsonData.data.lists as List[], db.lists),
+                prepareImportData(jsonData.data.tags as Tag[], db.tags)
+            ]);
+
+            if(preparedLists?.length > 0){
+                setLists(preparedLists);
             }
-        }
-        const jsonString = JSON.stringify(dataToExport, null, 2);
-        
-        // Create a Blob
-        const blob = new Blob([jsonString], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        
-        // Set the filename
-        link.download = `export-${new Date().toISOString().slice(0, 10)}.json`;
-        
-        // Append to body, trigger click, and cleanup
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showNotification('Data exported successfully!', "success");
+            if(preparedTags?.length > 0){
+                setTags(preparedTags);
+            }
+            if(preparedNotes?.length > 0){
+                setNotes(preparedNotes);
+            }
+            setShowWarning(true);
+                
+
+            console.log("Imported Data:", jsonData);
+            
+            showNotification("File loaded successfully!", "success")
+
+            } catch (error) {
+                console.error("Error parsing JSON:", error);
+                showNotification("Invalid JSON file", "error");
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
     };
+
+    const handleImport = () => {
+        saveLists();
+        saveTags();
+        showNotification(`Successfully imported ${selectedLists.length} lists and ${selectedTags.length} tags`, "success")
+    }
 
     const isAllSelected = lists.length > 0 && tags.length > 0 && lists.length === selectedLists.length && tags.length === selectedTags.length
     return (
-        <div className={styles.export}>
-            <Header title='Export' />
+        <div className={styles.import}>
+            <Header title='Import' />
             <div className={styles.exportButtons}>
                 <label>Select All</label>
                 <button 
                     onClick={()=>handleSelectAll(isAllSelected)} 
                     className={`${styles.checkbox} ${isAllSelected ? styles.checked : ''}`} >{isAllSelected ? <IconsLibrary.Checkmark /> : null}</button>
+            </div>
+            <label className={styles.customFileInput}>
+                <input type="file" accept=".json" style={{display: 'none'}} onChange={handleFileUpload} />
+                <span className={styles.fileInput}> <Folder /> Import JSON </span>
+            </label>
+            <div className={styles.warning}>
+                <div className={styles.warningHeader}>
+                    <h2>Warning</h2>
+                    <button onClick={()=>setShowWarning(false)}> <IconsLibrary.Close /> </button>
+                </div>
+                <p>Selecting items marked as Conflict will replace your existing local copies.</p>
             </div>
             <div className={styles.cardsContainer}>
                 <div className={`${styles.category} ${expandLists ? styles.expandCategory : ''}`}>
@@ -189,7 +197,10 @@ const Export = () => {
                     </div>
                     {expandTags ? <div className={styles.container}>
                         {tags?.length > 0 ? tags.map(tag=><div key={tag._id} className={styles.tag}>
-                            <p>{tag.name}</p>
+                            <div className={styles.itemName}>
+                                <p>{tag.name}</p>
+                                {tag.status === 'conflict' ? <p className={styles.conflictMessage}>Conflict</p> : null}
+                            </div>
                             <button className={`${styles.checkbox} ${selectedTags.some(item=>item._id === tag._id) ? styles.checked : ''}`} onClick={()=>toggleSelectTag(tag)}>
                                 {selectedTags.some(item=>item._id === tag._id) ? <IconsLibrary.Checkmark /> : null}
                             </button>
@@ -225,9 +236,29 @@ const Export = () => {
                     </div> : null}
                 </div>
             </div>
-            <button className={styles.confirmButton} onClick={handleExport}>Export</button>
+            <button className={styles.confirmButton} onClick={handleImport}>Import</button>
         </div>
     )
 }
 
-export default Export;
+export default Import;
+
+
+const prepareImportData = async <T extends {_id?: string }> (
+    incomingItems: T[], 
+    table: any,
+): Promise<(T & { status: 'new' | 'conflict'})[]> => {
+
+    if (!incomingItems) return [];
+
+    const existingIds = await table.toCollection().primaryKeys();
+    const existingSet = new Set(existingIds);
+
+    return incomingItems.map(item => {
+        const isConflict = existingSet.has(item._id);
+        return {
+            ...item,
+            status: isConflict ? 'conflict' : 'new',
+        };
+    });
+};

@@ -1,8 +1,16 @@
-.menu {
-    width: 100vw;
+.menuBg {
     position: fixed;
-    bottom: 75px;
+    width: 100dvw;
+    height: calc(100dvh - var(--navigation-height));
     left: 0;
+    top: 0;
+    z-index: 600;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(25px);
+}
+.menu {
+    width: 100%;
     background-color: var(--item-bg);
     border: 1px solid rgba(211, 211, 211, 0.1);
     border-radius: 5px;
@@ -12,6 +20,8 @@
     gap: 10px;
     animation: showMenu 0.5s;
     color: var(--text-color);
+    z-index: 601;
+    margin-top: auto;
 }
 @keyframes showMenu {
     0% {
@@ -40,6 +50,7 @@
     border-radius: 10px;
     background-color: var(--bg-primary);
     padding: 0 10px;
+    border: 1px solid var(--white-10);
 }
 .menu .section a {
     width: 100%;
@@ -60,18 +71,32 @@
 
 .authButton {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 10px;
     background-color: var(--bg-primary);
     color: var(--text-color);
-    border-radius: 5px;
-    height: 50px;
+    border-radius: 10px;
     width: 100%;
     padding: 0 10px;
+    box-sizing: border-box;
+}
+.authButton .buttonContent {
+    display: grid;
+    grid-template-columns: 40px 1fr 40px;
+    gap: 10px;
+    align-items: center;
+    box-sizing: border-box;
+    height: 40px;
 }
 .authButton button {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: end;
+}
+.authButton fieldset {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: row;
 }

@@ -6,21 +6,21 @@ import { IconsLibrary } from '../../assets/icons';
 
 const Navigation = () => {
 
-    const [showMenu, setShowMenu] = useState(false);
+    const [showMenu, setShowMenu] = useState(true);
 
 
     return ( 
         <div className={styles.navigation}>
             {showMenu ? <Menu close={()=>setShowMenu(false)} /> : null}
-            <Link to={'/lists'}>
+            <Link to={'/lists'} onClick={()=>setShowMenu(false)}>
                 <IconsLibrary.Dashboard />
                 <p>Home</p>
             </Link>
-            <Link to={'/lists'}>
+            <Link to={'/lists'} onClick={()=>setShowMenu(false)}>
                 <IconsLibrary.Lists />
                 <p>Lists</p>
             </Link>
-            <Link to={'/groups'}>
+            <Link to={'/groups'} onClick={()=>setShowMenu(false)}>
                 <IconsLibrary.Group />
                 <p>Groups</p>
             </Link>
