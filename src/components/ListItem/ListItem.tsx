@@ -8,6 +8,7 @@ import { getDateAndHour } from '../../helpers/dateFormat';
 import { formatDeadline } from '../../helpers/deadlineFormatter';
 import EditItem from '../EditItem/EditItem';
 import { handleUpdateItem } from '../../services/itemService';
+import { Pin } from 'lucide-react';
 
 
 interface ListItemProps {
@@ -89,10 +90,15 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, online}) =>
                     <div className={styles.checkbox} onClick={toggleCheck}>
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
                     </div>
+
                     <div onClick={()=>setExpandItem(prev=>!prev)} className={styles.mainInfo}>
                         <p>{data.name}</p>
                     </div>
-                    <b>{data.qty > 0 ? data.qty : ''} {data.unit ?? ''}</b>
+                    <div className={styles.moreMeta}>
+                        <b>{data.qty > 0 ? data.qty : ''} {data.unit ?? ''}</b>
+                        {data.isPinned ? <Pin /> : null}
+                    </div>
+                    
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>
                     <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>

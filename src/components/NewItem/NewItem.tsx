@@ -91,6 +91,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, members
                 addItemToList(newItem);
             }
             clearInputs();
+            setShowMoreInputs(false);
         } else {
             setError('Name is invalid. It should be between one and 20 characters.');
         }

@@ -8,6 +8,7 @@ import { getDateAndHour } from '../../../../helpers/dateFormat';
 import EditItem from '../../../../components/EditItem/EditItem';
 import { formatDeadline } from '../../../../helpers/deadlineFormatter';
 import { handleUpdateItem } from '../../../../services/itemService';
+import { Pin } from 'lucide-react';
 
 
 interface ListItemProps {
@@ -91,7 +92,10 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, on
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
                     </div>
                     <p onClick={()=>setExpandItem(prev=>!prev)}>{data.name}</p>
-                    <b>{data.qty} {data.unit}</b>
+                    <div className={styles.moreMeta}>
+                        <b>{data.qty > 0 ? data.qty : ''} {data.unit ?? ''}</b>
+                        {data.isPinned ? <Pin /> : null}
+                    </div>
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>
                     <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>
