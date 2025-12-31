@@ -11,15 +11,21 @@ const Auth = ({next}: {next?: ()=>void}) => {
 
     const [currentScreen, setCurrentScreen] = useState('login');
 
-    return (
-        <div className={styles.auth}>
-            <div className={styles.authContainer}>
-                    {currentScreen === 'login' ? <Login next={next} toRegister={()=>setCurrentScreen('register')} toLocal={()=>setCurrentScreen("local")} /> 
-                    : currentScreen === 'local' ? <Local next={next} /> 
-                    : <Register next={next} toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
+    const localUserToken = localStorage.getItem('jwt-token');
+
+    if(localUserToken){
+        next()
+    } else {
+        return (
+            <div className={styles.auth}>
+                <div className={styles.authContainer}>
+                        {currentScreen === 'login' ? <Login next={next} toRegister={()=>setCurrentScreen('register')} toLocal={()=>setCurrentScreen("local")} /> 
+                        : currentScreen === 'local' ? <Local next={next} /> 
+                        : <Register next={next} toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
+                </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default Auth;

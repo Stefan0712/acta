@@ -158,7 +158,7 @@ const Summaries: React.FC<SummariesProps> = ({totalLists, completedLists}) => {
             <div className={styles.progress}>
                 <div className={styles.progressText}>
                     <p>TOTAL PROGRESS</p>
-                    <b>{percentage || 0}%</b>
+                    <b>{percentage.toFixed(2) || 0}%</b>
                 </div>
                 <div className={styles.progressBar}>
                     <div className={styles.progressLine} style={{width: `${percentage}%`}} />
@@ -250,7 +250,7 @@ const List: React.FC<ListProps> = ({data, restoreLocally, removeLocally}) => {
                     <div className={styles.progressBarBackground}>
                         <div className={styles.progressBar} style={{backgroundColor: data.color, width: data?.totalItemsCounter === 0 ? '0px' : `${percentage}%`}} />
                     </div>
-                    <p>{percentage}%</p>
+                    <p>{percentage.toFixed(0)}%</p>
                 </div>
             </Link>
             {data.isDeleted ? <div className={styles.deleteButtons}>

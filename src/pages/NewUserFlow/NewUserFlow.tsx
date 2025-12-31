@@ -3,7 +3,7 @@ import styles from './NewUserFlow.module.css';
 import { ArrowBigLeft, ArrowBigRight, Flag, Info } from 'lucide-react';
 import Step1 from './Step1/Step1';
 import Auth from '../Auth/Auth';
-import InitialImport from './InitialImport/InitialImport';
+import PostAuth from './PostAuth/PostAuth';
 
 type Step = 1 | 2 | 3
 const NewUserFlow = () => {
@@ -32,16 +32,16 @@ const NewUserFlow = () => {
                 </button>
             </div>
             <div className={styles.stepContainer}>
-                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth next={nextStep}/> : step === 3 ? <InitialImport /> : null}
+                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth next={nextStep}/> : step === 3 ? <PostAuth /> : null}
             </div>
             <div className={styles.stepNavigator}>
                 <button onClick={prevStep}>
                     <ArrowBigLeft />
                 </button>
                 <div className={styles.stepsCircles}>
-                    <div className={`${styles.circle} ${step === 1 ? styles.currentStep : ''}`}><p>1</p></div>
-                    <div className={`${styles.circle} ${step === 2 ? styles.currentStep : ''}`}><p>2</p></div>
-                    <div className={`${styles.circle} ${step === 3 ? styles.currentStep : ''}`}><p>3</p></div>
+                    <div className={`${styles.circle} ${step === 1 ? styles.currentStep : ''}`} onClick={()=>setStep(1)}><p>1</p></div>
+                    <div className={`${styles.circle} ${step === 2 ? styles.currentStep : ''}`} onClick={()=>setStep(2)}><p>2</p></div>
+                    <div className={`${styles.circle} ${step === 3 ? styles.currentStep : ''}`} onClick={()=>setStep(3)}><p>3</p></div>
                 </div>
                 <button onClick={nextStep}>
                     <ArrowBigRight />

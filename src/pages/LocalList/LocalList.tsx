@@ -180,7 +180,7 @@ const Summaries: React.FC<SummariesProps> = ({totalItems, completedItems}) => {
             <div className={styles.progress}>
                 <div className={styles.progressText}>
                     <p>TOTAL PROGRESS</p>
-                    <b>{percentage || 0}%</b>
+                    <b>{percentage.toFixed(2) || 0}%</b>
                 </div>
                 <div className={styles.progressBar}>
                     <div className={styles.progressLine} style={{width: `${percentage}%`}} />
