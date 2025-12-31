@@ -31,6 +31,8 @@ const List = () => {
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    const [showMore, setShowMore] = useState(true);
+
     // Filter items based on the current category
     const filteredItems = useMemo(() => {
         if(selectedCategory === 'all'){
@@ -122,13 +124,15 @@ const List = () => {
                     Button={<button onClick={()=>setShowPageMenu(prev=>!prev)}><IconsLibrary.Dots /></button>}
                 />
                 <div className={styles.listMeta}>
+                    {showMore ? <>
                     <p className={styles.createdAt}>Created on {getDateAndHour(listData.createdAt)}</p>
                     {listData.updatedAt ? <p className={styles.updatedAt}>Latest update on {getDateAndHour(listData.updatedAt)}</p> : null}
                     <p>{listData.description}</p>
                     <Summaries 
                         totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
                         completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
-                    />
+                    /></> : null}
+                    <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}>{showMore ? 'Show less' : 'Show more'}</button>
                 </div>
                 <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','deleted']} />
                 <div className={styles.listItemsContainer}>

@@ -23,12 +23,13 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
     const userId = localStorage.getItem('userId');
     const { showNotification } = useNotifications();
     const [isPageLoading, setIsPageLoading] = useState(true);
-
     const [showEdit, setShowEdit] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
     const [listData, setListData] = useState<IList | null>(null);
     const [listItems, setListItems] = useState<ItemType[]>([]);
+
+    const [showMore, setShowMore] = useState(true);
 
     // Filter items based on the current category
     const filteredItems = useMemo(() => {
@@ -69,7 +70,6 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                         setIsPageLoading(false)
                     }
                     setListItems(listItemsResponse);
-                    console.log(listItemsResponse)
                 } else {
                     showNotification('No list data found', "error");
                 }
@@ -121,12 +121,15 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                         <h2>{listData.name}</h2>
                         {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /></button> : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /></button>}
                     </div>
-                    <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
-                    <p>{listData.description}</p>
-                    <Summaries 
-                        totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
-                        completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
-                    />
+                    {showMore ? <>
+                        <p className={styles.createdAt}>Created at {getDateAndHour(listData.createdAt)}</p>
+                        <p>{listData.description}</p>
+                        <Summaries 
+                            totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
+                            completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
+                        />
+                    </> : null}
+                    <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}>{showMore ? 'Show less' : 'Show more'}</button>
                 </div>
                 <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','mine', 'deleted']} />
                 <div className={styles.listItemsContainer}>
@@ -139,7 +142,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                             <p className={styles.noItemsText}>No items yet</p>
                     }
                 </div>
-                <NewItem members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} />
+                <NewItem groupId={listData.groupId} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} />
             </div>
         );
     }

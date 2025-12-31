@@ -110,7 +110,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, on
                     </div> : null}
                     {data.tags && data.tags.length > 0 ? <div className={styles.tags}>
                         <IconsLibrary.Tag />
-                        {data.tags?.map(tag=><p key={tag} className={styles.tag}>{tag}</p>)}
+                        {data.tags?.map(tag=><p key={tag._id} className={styles.tag}>{tag.name}</p>)}
                     </div> : null}
                     <div className={styles.threeCol}>
                         <div className={styles.col} onClick={togglePin}>

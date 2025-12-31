@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import styles from './NewItem.module.css';
-import { type ListItem, type GroupMember, type Tag } from '../../types/models';
+import { type ListItem, type Tag } from '../../types/models';
 import { ObjectId } from 'bson';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
@@ -8,17 +8,18 @@ import UserSelector from '../UserSelector/UserSelector.tsx';
 import { NotificationService } from '../../helpers/NotificationService.ts';
 import { createItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
+import { Maximize, Minimize } from 'lucide-react';
 
 interface NewListItemProps {
     listId: string;
     addItemToList: (item: ListItem) => void;
-    members?: GroupMember[];
+    groupId?: string;
     online?: boolean;
 }
 
 type Priority = "low" | "normal" | "high";
 
-const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, members, online}) => {
+const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId, online}) => {
     const userId = localStorage.getItem('userId');
 
     const [name, setName] = useState('');
@@ -33,6 +34,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, members
     const [dueDate, setDueDate] = useState("");
     const [dueTime, setDueTime] = useState("");
     const [reminder, setReminder] = useState(0);
+
     
     const moreInputsRef = useRef<HTMLDivElement>(null);
 
@@ -43,8 +45,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, members
     const [showTagSelector, setShowTagSelector] = useState(false);
 
     const [error, setError] = useState('');
-
-
 
     const addNewItem = async () =>{
         if(!userId) return;
@@ -109,6 +109,9 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, members
         setDueDate("");
         setError('')
         setDueTime("");
+        setClaimedBy(null);
+        setReminder(0);
+        setAssignedTo(null);
     }
     const handleNameInput = (value: string) => {
         setName(value)
@@ -136,15 +139,15 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, members
                 addTag={(newTag)=>setTags(prev=>[...prev, newTag])} 
                 tags={tags}  
             /> : null}
-            {showUserSelector ? <UserSelector 
-                users={members ?? []} 
+            {showUserSelector && groupId ? <UserSelector 
+                groupId={groupId} 
                 close={()=>setShowUserSelector(false)} 
                 selectUser={(user)=>setAssignedTo(user)} 
                 selectedUser={assignedTo} 
             /> : null}
             <div className={styles.basicInputs}>
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
-                    <IconsLibrary.Arrow style={showMoreInputs ? {transform: 'rotateZ(-90deg)'} : {transform: 'rotateZ(90deg)'}} />
+                    {showMoreInputs ? <Minimize /> : <Maximize />}
                 </button>
                 <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
                 <button className={styles.addButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
@@ -172,8 +175,14 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, members
                 </div>
                 <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
                 {online ? <div className={styles.claimButtons}>
-                    <button onClick={handleClaimItem} className={styles.userSelectorButton}>{claimedBy ? 'Claimed' : 'Claim item'}</button>
-                    {claimedBy ? null : <button onClick={()=>setShowUserSelector(true)} className={styles.userSelectorButton}>{assignedTo ? 'Assigned to an user' : 'Assign item to user'}</button>}
+                    <button 
+                        onClick={handleClaimItem} 
+                        className={styles.userSelectorButton}
+                        style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
+                    >
+                        {claimedBy ? 'Claimed' : 'Claim item'}
+                    </button>
+                    <button onClick={()=>setShowUserSelector(true)} style={claimedBy ? {} : {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'}} className={styles.userSelectorButton}>{assignedTo ? 'Assigned' : 'Assign'}</button>
                 </div> : null}
                 <div className={styles.deadline}>
                     <fieldset>

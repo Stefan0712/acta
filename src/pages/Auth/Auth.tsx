@@ -7,7 +7,7 @@ import { useNotifications } from '../../Notification/NotificationContext';
 import { db } from '../../db';
 import { MessageCircleWarning } from 'lucide-react';
 
-const Auth = ({next}: {next: ()=>void}) => {
+const Auth = ({next}: {next?: ()=>void}) => {
 
     const [currentScreen, setCurrentScreen] = useState('login');
 

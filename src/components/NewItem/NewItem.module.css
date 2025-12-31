@@ -7,7 +7,6 @@
     bottom: var(--navigation-height);
     display: flex;
     flex-direction: column;
-    transform-origin: bottom;
     flex-shrink: 0;
     z-index: 10;
     border-top: 1px solid rgba(102, 102, 102, 0.5);
@@ -23,7 +22,6 @@
     justify-content: center;
 }
 .expandButton svg {
-    transform: rotateZ(-90deg);
     transition: all 0.1s;
     color: var(--text-color);
 }
@@ -50,6 +48,8 @@
 .claimButtons button {
     flex: 1;
     width: auto;
+    border-radius: 10px;
+    border: 1px solid var(--white-10);
 }
 .basicInputs {
     display: grid;
