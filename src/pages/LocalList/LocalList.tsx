@@ -31,7 +31,7 @@ const List = () => {
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const [showMore, setShowMore] = useState(true);
+    const [showMore, setShowMore] = useState(false);
 
     // Filter items based on the current category
     const filteredItems = useMemo(() => {

@@ -29,7 +29,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
     const [listData, setListData] = useState<IList | null>(null);
     const [listItems, setListItems] = useState<ItemType[]>([]);
 
-    const [showMore, setShowMore] = useState(true);
+    const [showMore, setShowMore] = useState(false);
 
     // Filter items based on the current category
     const filteredItems = useMemo(() => {

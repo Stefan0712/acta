@@ -211,6 +211,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
                     <p>Manage tags ({tags.length})</p>
                     
                 </button>
+                <button onClick={addNewItem} className={styles.bigNewItemButton}>Add Item</button>
             </div> : null}
         </div>
      );
