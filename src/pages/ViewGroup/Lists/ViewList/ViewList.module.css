@@ -3,12 +3,11 @@
     height: 100%;
     max-height: calc(100dvh - var(--navigation-height));
     display: grid;
-    grid-template-rows: auto 50px 1fr;
+    grid-template-rows: auto 50px 1fr auto;
     color: var(--text-color);
     padding: 10px;
     position: relative;
     overflow: hidden;
-    gap: 10px;
 }
 .viewList .createdAt {
     opacity: 0.5;

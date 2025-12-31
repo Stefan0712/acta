@@ -70,6 +70,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                         setIsPageLoading(false)
                     }
                     setListItems(listItemsResponse);
+                    console.log(listItemsResponse)
                 } else {
                     showNotification('No list data found', "error");
                 }
@@ -139,7 +140,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
                             {completedItems.map(item=><GroupListItem members={members} online={true} updateItemLocally={updateItem} key={item._id} data={item} />)}
                         </>  : 
-                            <p className={styles.noItemsText}>No items yet</p>
+                            <p className='no-items-text'>No items yet</p>
                     }
                 </div>
                 <NewItem groupId={listData.groupId} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} />

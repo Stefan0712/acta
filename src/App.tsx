@@ -41,7 +41,7 @@ function App() {
 
   },[userId])
 
-  if (!userId || !username) {
+  if (!localStorage.getItem('userId') || !username) {
     return (<NewUserFlow />)
   } else {
     return (

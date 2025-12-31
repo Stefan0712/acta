@@ -82,7 +82,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
             const localDateTime = new Date(`${dueDate}T${timeString}`);
             newItem.deadline = localDateTime.toISOString();
         }
-        if (name && name.length > 0 && name.length < 21) {
+        if (name && name.length > 0 && name.length < 50) {
             if( online ) {
                 const onlineItem = await createItem(newItem);
                 addItemToList(onlineItem);
