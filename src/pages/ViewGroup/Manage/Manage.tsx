@@ -1,9 +1,10 @@
 import { useParams } from 'react-router-dom';
 import styles from './Manage.module.css';
-import { db } from '../../../db';
 import { useEffect, useState } from 'react';
 import { type Group } from '../../../types/models';
 import InviteModal from './InviteModal';
+import Loading from '../../../components/LoadingSpinner/Loading';
+import { getGroup } from '../../../services/groupService';
 
 const Manage = () => {
     const {groupId} = useParams();
@@ -11,13 +12,15 @@ const Manage = () => {
     const [showInviteModal, setShowInviteModal] = useState(false);
 
     const getGroupData = async () => {
-        try {
-            const response = await db.groups.get(groupId);
-            if(response){
-                setGroupData(response)
+        if (groupId) {
+            try {
+                const response = await getGroup(groupId);
+                if(response){
+                    setGroupData(response)
+                }
+            } catch (error) {
+                console.error(error);
             }
-        } catch (error) {
-            console.error(error);
         }
     };
     useEffect(()=>{
@@ -28,12 +31,11 @@ const Manage = () => {
 
     if (!groupData) {
         return (
-            <p>Loading</p>
+            <Loading />
         )
     } else {
         return ( 
             <div className={styles.manage}>
-                {groupId}
                 {showInviteModal && groupId ? <InviteModal groupId={groupId}  close={()=>setShowInviteModal(false)} /> : null}
                 <h4>Members</h4>
                 <div className={styles.membersContainer}>

@@ -54,7 +54,7 @@ const Groups = () => {
                 {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} addGroup={(newGroup)=>setGroups(prev=>[...prev, newGroup])} /> : null}
                 {!showNewGroup ? <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button> : null}
                 <div className={styles.header}>
-                    <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
+                    <button onClick={()=>navigate(-1)}><IconsLibrary.Arrow fill='white'/></button>
                     <h2>My Groups</h2>
                     <button><IconsLibrary.Bell /></button>
                 </div>

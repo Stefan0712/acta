@@ -36,7 +36,6 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
             }
             const newId = new ObjectId().toString();
             const newGroup: Group = {
-                _id: newId,
                 authorId: userId,
                 name: name ?? "My group",
                 description,
@@ -51,11 +50,9 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
             }
             setIsCreating(true);
             try {
-                console.log(newGroup)
                 const groupResponse = await createGroup(newGroup);
-                console.log(groupResponse.icon)
                 if(groupResponse){
-                    addGroup(groupResponse)
+                    addGroup(groupResponse);
                     showNotification("Group created successfully", "success");
                     navigate(`/group/${groupResponse._id}`)
                     close();
