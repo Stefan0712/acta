@@ -1,7 +1,7 @@
 .viewList {
     width: 100%;
     height: 100%;
-    max-height: calc(100dvh - var(--navigation-height));
+    max-height: calc(100dvh - var(--navigation-height) - var(--page-header-height));
     display: grid;
     grid-template-rows: auto 50px 1fr auto;
     color: var(--text-color);

@@ -60,7 +60,7 @@ const ViewGroup = () => {
                     </button>
                 </div>
                 <div className={styles.content}>
-                    <Outlet />
+                    <Outlet context={{members: groupData.members}} />
                 </div>
             </div>
         );

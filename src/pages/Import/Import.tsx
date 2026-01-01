@@ -6,16 +6,21 @@ import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
 import Header from '../../components/Header/Header';
 import { Folder } from 'lucide-react';
+import { getDateAndHour } from '../../helpers/dateFormat';
 
 
-// TODO: Check for duplicates before saving them and show user id and username that were imported, together with more metadata
-
+interface ImportMeta {
+    username: string;
+    cretedAt: Date;
+}
 
 const Import = () => {
 
     const {showNotification} = useNotifications();
 
     const [showWarning, setShowWarning] = useState(false);
+
+    const [importMeta, setImportMeta] = useState<null | ImportMeta>();
 
     const [lists, setLists] = useState<(List & {status: 'new' | 'conflict'})[]>([]);
     const [selectedLists, setSelectedLists] = useState<List[]>([]);
@@ -104,6 +109,9 @@ const Import = () => {
             if(preparedNotes?.length > 0){
                 setNotes(preparedNotes);
             }
+            if(jsonData.exportedAt && jsonData.profileData.username) {
+                setImportMeta({username: jsonData.profileData.username, cretedAt: jsonData.exportedAt});
+            }
             setShowWarning(true);
                 
 
@@ -148,6 +156,10 @@ const Import = () => {
                     </div>
                     <p>Selecting items marked as Conflict will replace your existing local copies.</p>
                 </div> : null}
+                {importMeta ? <div className={styles.importMeta}>
+                    <p><b>Created by</b> {importMeta.username}</p>
+                    <p><b>Exported on</b> {getDateAndHour(importMeta.cretedAt)}</p>
+                </div> : null}
                 <div className={`${styles.category} ${expandLists ? styles.expandCategory : ''}`}>
                     <div className={styles.categoryTop}>
                         <div className={styles.iconContainer}>
@@ -158,10 +170,10 @@ const Import = () => {
                             <p>{selectedLists.length}/{lists.length}</p>
                         </div>
                         <div 
-                            className={`${styles.checkbox} ${selectedLists.length === lists.length ? styles.checked : ''}`}
+                            className={`${styles.checkbox} ${lists.length > 0 && selectedLists.length === lists.length ? styles.checked : ''}`}
                             onClick={()=>lists.length === selectedLists.length ? setSelectedLists([]) : setSelectedLists([...lists])}
                         >
-                            {lists.length === selectedLists.length ? <IconsLibrary.Checkmark /> : null}
+                            {lists.length > 0 && lists.length === selectedLists.length ? <IconsLibrary.Checkmark /> : null}
                         </div>
                         <button onClick={()=>setExpandLists(prev=>!prev)}>
                             <IconsLibrary.Arrow style={expandLists ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'}} />
@@ -188,10 +200,10 @@ const Import = () => {
                             <p>{selectedTags.length}/{tags.length}</p>
                         </div>
                         <div 
-                            className={`${styles.checkbox} ${selectedTags.length === tags.length ? styles.checked : ''}`}
+                            className={`${styles.checkbox} ${tags.length > 0 && selectedTags.length === tags.length ? styles.checked : ''}`}
                             onClick={()=>tags.length === selectedTags.length ? setSelectedTags([]) : setSelectedTags([...tags])}
                         >
-                            {tags.length === selectedTags.length ? <IconsLibrary.Checkmark /> : null}
+                            {tags.length > 0 && tags.length === selectedTags.length ? <IconsLibrary.Checkmark /> : null}
                         </div>
                         <button onClick={()=>setExpandTags(prev=>!prev)}>
                             <IconsLibrary.Arrow style={expandTags ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'}} />
@@ -238,7 +250,11 @@ const Import = () => {
                     </div> : null}
                 </div>
             </div>
-            <button className={styles.confirmButton} onClick={handleImport}>Import</button>
+            <button 
+                className={styles.confirmButton} 
+                onClick={handleImport}
+                disabled={selectedLists.length === 0 && selectedTags.length === 0 && selectedNotes.length === 0}
+            >Import</button>
         </div>
     )
 }

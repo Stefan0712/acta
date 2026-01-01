@@ -8,7 +8,7 @@ import UserSelector from '../UserSelector/UserSelector.tsx';
 import { NotificationService } from '../../helpers/NotificationService.ts';
 import { createItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
-import { Maximize, Minimize } from 'lucide-react';
+import { Maximize } from 'lucide-react';
 
 interface NewListItemProps {
     listId: string;
@@ -147,7 +147,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
             /> : null}
             <div className={styles.basicInputs}>
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
-                    {showMoreInputs ? <Minimize /> : <Maximize />}
+                    {showMoreInputs ? <IconsLibrary.Close /> : <Maximize />}
                 </button>
                 <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
                 <button className={styles.addButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
@@ -177,12 +177,12 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
                 {online ? <div className={styles.claimButtons}>
                     <button 
                         onClick={handleClaimItem} 
-                        className={styles.userSelectorButton}
+                        className={styles.assignButton}
                         style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
                     >
                         {claimedBy ? 'Claimed' : 'Claim item'}
                     </button>
-                    <button onClick={()=>setShowUserSelector(true)} style={claimedBy ? {} : {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'}} className={styles.userSelectorButton}>{assignedTo ? 'Assigned' : 'Assign'}</button>
+                    <button onClick={()=>setShowUserSelector(true)} style={claimedBy ? {} : {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'}} className={styles.assignButton}>{assignedTo ? 'Assigned' : 'Assign'}</button>
                 </div> : null}
                 <div className={styles.deadline}>
                     <fieldset>

@@ -11,6 +11,18 @@
 .import {
     grid-template-rows: var(--page-header-height) auto auto 1fr 50px;
 }
+.importMeta {
+    width: 100%;
+    height: fit-content;
+    background-color: var(--item-bg);
+    border-radius: 10px;
+    border: 1px solid var(--white-10);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    gap: 10px;
+}
 .warning {
     padding: 10px;
     width: 100%;

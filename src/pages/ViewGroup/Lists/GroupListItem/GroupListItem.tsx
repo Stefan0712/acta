@@ -14,10 +14,11 @@ import { Pin } from 'lucide-react';
 interface ListItemProps {
     data: ItemInterface;
     updateItemLocally: (item: ItemInterface) => void;
-    members?: GroupMember[];
     online: boolean;
+    groupId?: string;
+    members?: GroupMember[];
 }
-const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, online}) => {
+const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, online, members}) => {
 
     const {showNotification} = useNotifications();
     const metaRef = useRef<HTMLDivElement>(null);
@@ -86,7 +87,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, on
     if(data){
         return ( 
             <div className={`${styles.item} ${expandItem ? styles.expandedItem : ''}`}>
-                {showEdit ? <EditItem online={online} itemData={data} updateItem={updateItemLocally} members={members} close={()=>setShowEdit(false)} /> : null}
+                {showEdit ? <EditItem groupId={groupId} online={online} itemData={data} updateItemLocally={updateItemLocally} close={()=>setShowEdit(false)} members={members} /> : null}
                 <div className={styles.mainSection}>
                     <div className={styles.checkbox} onClick={toggleCheck}>
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
@@ -102,7 +103,8 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, members, on
                     {data.description ? <p>{data.description}</p> : null}
                     {data.assignedTo || data.claimedBy ? <div className={styles.assignedUser}>
                         <IconsLibrary.Assigned />
-                        <p>Assigned to {data.assignedTo ? members?.find(item=>item.userId === data.assignedTo)?.username : data.claimedBy ? members?.find(item=>item.userId === data.claimedBy)?.username : 'nobody'}</p> 
+                        {data.assignedTo ? <p>Assigned to {members?.find(u=>u.userId === data.assignedTo)?.username}</p> : null}
+                        {data.claimedBy ? <p>Claimed by {members?.find(u=>u.userId === data.claimedBy)?.username}</p> : null}
                     </div> : null}
                     {data.deadline ? <div className={styles.deadline}>
                         <IconsLibrary.Time />

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './ViewList.module.css';
-import { type ListItem as ItemType, type List as IList, type GroupMember } from '../../../../types/models';
-import { useNavigate, useParams } from 'react-router-dom';
+import { type ListItem as ItemType, type List as IList } from '../../../../types/models';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../../Notification/NotificationContext';
 import NewItem from '../../../../components/NewItem/NewItem';
 import { getDateAndHour } from '../../../../helpers/dateFormat.ts';
@@ -10,18 +10,21 @@ import GroupListItem from '../GroupListItem/GroupListItem.tsx'
 import {  getList, updateList } from '../../../../services/listService.ts';
 import { getListItems } from '../../../../services/itemService.ts';
 import Loading from '../../../../components/LoadingSpinner/Loading.tsx';
-import Auth from '../../../Auth/Auth.tsx';
 import Categories from '../../../../components/Categories/Categories.tsx';
 import { IconsLibrary } from '../../../../assets/icons.ts';
 
 
 
-const ViewList = ({ members}: {members?: GroupMember[]}) => {
+const ViewList = () => {
 
     const {listId} = useParams();
+    const {members} = useOutletContext();
     const navigate = useNavigate();
+
     const userId = localStorage.getItem('userId');
     const { showNotification } = useNotifications();
+
+
     const [isPageLoading, setIsPageLoading] = useState(true);
     const [showEdit, setShowEdit] = useState(false);
 
@@ -110,7 +113,7 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
         setListItems(updatedList); // Updates the list of all items with the updated one
     };
     if (!localStorage.getItem('jwt-token')){
-        return <Auth />
+        navigate('/auth');
     }else if (isPageLoading) {
         return <Loading />
     } else if(listData) {
@@ -136,14 +139,14 @@ const ViewList = ({ members}: {members?: GroupMember[]}) => {
                 <div className={styles.listItemsContainer}>
                     { filteredItems && filteredItems.length > 0 ? 
                         <>
-                            {uncompletedItems.map(item=><GroupListItem members={members} online={true} updateItemLocally={updateItem} key={item._id} data={item} />)}
+                            {uncompletedItems.map(item=><GroupListItem groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
-                            {completedItems.map(item=><GroupListItem members={members} online={true} updateItemLocally={updateItem} key={item._id} data={item} />)}
+                            {completedItems.map(item=><GroupListItem groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
                         </>  : 
                             <p className='no-items-text'>No items yet</p>
                     }
                 </div>
-                <NewItem groupId={listData.groupId} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} />
+                <NewItem groupId={listData.groupId} members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} />
             </div>
         );
     }

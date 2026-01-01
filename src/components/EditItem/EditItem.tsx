@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './EditItem.module.css';
-import { type ListItem, type GroupMember, type Tag } from '../../types/models';
+import { type GroupMember, type ListItem, type Tag } from '../../types/models';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
 import UserSelector from '../UserSelector/UserSelector.tsx';
@@ -12,13 +12,14 @@ interface NewListItemProps {
     itemData: ListItem;
     updateItemLocally: (item: ListItem) => void;
     close: () => void;
-    members?: GroupMember[];
+    groupId?: string;
     online: boolean;
+    members?: GroupMember[]
 }
 
 type Priority = "low" | "normal" | "high";
 
-const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, close, members, online}) => {
+const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, close, groupId, online, members}) => {
 
 
     const userId = localStorage.getItem('userId');
@@ -113,8 +114,8 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
                 addTag={(newTag)=>setTags(prev=>[...prev, newTag])} 
                 tags={tags}  
             /> : null}
-            {showUserSelector ? <UserSelector 
-                users={members ?? []} 
+            {showUserSelector && groupId ? <UserSelector 
+                groupId={groupId} 
                 close={()=>setShowUserSelector(false)} 
                 selectUser={(user)=>setAssignedTo(user)} 
                 selectedUser={assignedTo} 
@@ -148,8 +149,14 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
                     </div>
                 </div>
                 {online ? <div className={styles.claimButtons}>
-                    <button onClick={handleClaimItem} className={styles.userSelectorButton}>{claimedBy ? 'Claimed' : 'Claim item'}</button>
-                    {claimedBy ? null : <button onClick={()=>setShowUserSelector(true)} className={styles.userSelectorButton}>{assignedTo ? 'Assigned to an user' : 'Assign item to user'}</button>}
+                    <button 
+                        onClick={handleClaimItem} 
+                        className={styles.assignButton}
+                        style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
+                    >
+                        {claimedBy ? `Claimed by ${members ? members.find(member=>member.userId===claimedBy)?.username : 'other user'}` : 'Claim item'}
+                    </button>
+                    <button onClick={()=>setShowUserSelector(true)} style={claimedBy ? {} : {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'}} className={styles.assignButton}>{assignedTo ? `Assigned to ${members ? members.find(member=>member.userId===assignedTo)?.username : 'other user'}` : 'Assign'}</button>
                 </div> : null}
                 <div className={styles.deadline}>
                     <fieldset>
