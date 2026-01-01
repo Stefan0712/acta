@@ -19,7 +19,7 @@ createRoot(document.getElementById('root')!).render(
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swUrl = `${import.meta.env.BASE_URL}/sw.js`;
+    const swUrl = `${import.meta.env.BASE_URL}sw.js`;
 
     navigator.serviceWorker.register(swUrl)
       .then((reg) => console.log('SW Registered!', reg.scope))
