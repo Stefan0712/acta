@@ -91,29 +91,34 @@ form {
 }
 .local h1 {
     width: 100%;
+    font-size: 1.2rem;
 }
 .local .warning {
     width: 100%;
-    margin-bottom: auto;
     background-color: var(--item-bg);
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
     border: 1px solid var(--white-10);
 }
 .warning .header {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 5px;
+}
+.warning .header svg {
+    height: 1rem;
+    color: var(--white-50);
 }
 .warning .header h2 {
     font-size: 1.2rem;
 }
-.warning h3 {
+.warning p {
     font-size: 1rem;
+    color: var(--white-50);
 }
 .local fieldset {
     width: 100%;
@@ -137,12 +142,15 @@ form {
     font-size: 1.1rem;
 }
 .local .backButton{
-    width: 50px;
     margin-top: auto;
     height: 50px;
     border-radius: 10px;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border: none;
+    background-color: transparent;
+    border: 1px solid var(--white-10);
+    color: var(--text-color);
     font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
 }
