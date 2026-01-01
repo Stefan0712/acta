@@ -1,6 +1,6 @@
 .overlay {
   width: 100%;
-  height: var(--pahe-height);
+  height: var(--page-height);
   display: flex;
   flex-direction: column;
   justify-content: center;

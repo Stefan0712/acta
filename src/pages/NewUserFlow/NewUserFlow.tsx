@@ -32,7 +32,7 @@ const NewUserFlow = () => {
                 </button>
             </div>
             <div className={styles.stepContainer}>
-                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth next={nextStep}/> : step === 3 ? <PostAuth /> : null}
+                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth next={nextStep}/> : step === 3 ? <PostAuth goBack={()=>setStep(2)} /> : null}
             </div>
             <div className={styles.stepNavigator}>
                 <button onClick={prevStep}>
