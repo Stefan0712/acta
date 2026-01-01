@@ -148,10 +148,10 @@ const Export = () => {
                             <p>{selectedLists.length}/{lists.length}</p>
                         </div>
                         <div 
-                            className={`${styles.checkbox} ${selectedLists.length === lists.length ? styles.checked : ''}`}
+                            className={`${styles.checkbox} ${lists.length > 0 && selectedLists.length === lists.length ? styles.checked : ''}`}
                             onClick={()=>lists.length === selectedLists.length ? setSelectedLists([]) : setSelectedLists([...lists])}
                         >
-                            {lists.length === selectedLists.length ? <IconsLibrary.Checkmark /> : null}
+                            {lists.length > 0 && lists.length === selectedLists.length ? <IconsLibrary.Checkmark /> : null}
                         </div>
                         <button onClick={()=>setExpandLists(prev=>!prev)}>
                             <IconsLibrary.Arrow style={expandLists ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'}} />
@@ -178,10 +178,10 @@ const Export = () => {
                             <p>{selectedTags.length}/{tags.length}</p>
                         </div>
                         <div 
-                            className={`${styles.checkbox} ${selectedTags.length === tags.length ? styles.checked : ''}`}
+                            className={`${styles.checkbox} ${tags.length > 0 && selectedTags.length === tags.length ? styles.checked : ''}`}
                             onClick={()=>tags.length === selectedTags.length ? setSelectedTags([]) : setSelectedTags([...tags])}
                         >
-                            {tags.length === selectedTags.length ? <IconsLibrary.Checkmark /> : null}
+                            {tags.length > 0 && tags.length === selectedTags.length ? <IconsLibrary.Checkmark /> : null}
                         </div>
                         <button onClick={()=>setExpandTags(prev=>!prev)}>
                             <IconsLibrary.Arrow style={expandTags ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'}} />

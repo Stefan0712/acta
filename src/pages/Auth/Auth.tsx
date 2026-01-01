@@ -7,7 +7,12 @@ import { MessageCircleWarning } from 'lucide-react';
 import Login from './Login';
 import Register from './Register';
 
-const Auth = ({next}: {next?: ()=>void}) => {
+
+interface AuthProps {
+    next: ()=>void;
+    onLoginSuccess: ()=>void;
+}
+const Auth: React.FC<AuthProps> = ({next, onLoginSuccess}) => {
 
     const [currentScreen, setCurrentScreen] = useState('login');
 
@@ -19,8 +24,8 @@ const Auth = ({next}: {next?: ()=>void}) => {
             return (
                 <div className={styles.auth}>
                     <div className={styles.authContainer}>
-                            {currentScreen === 'login' ? <Login next={next} toRegister={()=>setCurrentScreen('register')} toLocal={()=>setCurrentScreen("local")} /> 
-                            : currentScreen === 'local' ? <Local back={()=>setCurrentScreen('login')} next={next} /> 
+                            {currentScreen === 'login' ? <Login onLoginSuccess={onLoginSuccess} next={next} toRegister={()=>setCurrentScreen('register')} /> 
+                            : currentScreen === 'local' ? <Local onLoginSuccess={onLoginSuccess} back={()=>setCurrentScreen('login')} next={next} /> 
                             : <Register next={next} toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
                     </div>
                 </div>
@@ -30,7 +35,7 @@ const Auth = ({next}: {next?: ()=>void}) => {
         return (
             <div className={styles.auth}>
                 <div className={styles.authContainer}>
-                        {currentScreen === 'login' ? <Login toRegister={()=>setCurrentScreen('register')} toLocal={()=>setCurrentScreen("local")} /> 
+                        {currentScreen === 'login' ? <Login toRegister={()=>setCurrentScreen('register')} /> 
                         : <Register toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
                 </div>
             </div>
@@ -43,9 +48,10 @@ export default Auth;
 interface LocalProps {
     next: () => void;
     back: () => void;
+    onLoginSuccess: ()=>void;
 }
 
-const Local: React.FC<LocalProps> = ({next, back}) => {
+const Local: React.FC<LocalProps> = ({next, back, onLoginSuccess}) => {
 
     const {showNotification} = useNotifications();
 
@@ -69,8 +75,9 @@ const Local: React.FC<LocalProps> = ({next, back}) => {
             await db.profile.add(newUser);
             localStorage.setItem('userId','local-user-id')
             localStorage.setItem('username', username);
-            showNotification(`A local account with username ${username} was created!`, "success")
-            next()
+            showNotification(`A local account with username ${username} was created!`, "success");
+            next();
+            onLoginSuccess();
         } else {
             setUsernameError("Username is invalid. It should be between 1 and 16 characters!")
         }

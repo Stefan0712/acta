@@ -23,6 +23,21 @@
     z-index: 601;
     margin-top: auto;
 }
+.menu .header {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.menu .header button {
+    width: 40px;
+    height: 40px;
+}
+.menu h2 {
+    font-size: 1.2rem;
+    padding-left: 5px
+}
 @keyframes showMenu {
     0% {
         opacity: 0;
@@ -40,20 +55,33 @@
 
 .menu .section {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border-radius: 10px;
-    background-color: var(--bg-primary);
-    padding: 0 10px;
-    border: 1px solid var(--white-10);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
 }
 .menu .section a {
     width: 100%;
-    height: 40px;
-    display: grid;
-    grid-template-columns: 20px 1fr;
+    height: auto;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background-color: var(--modal-bg);
+    border-radius: 10px;
+    border: 1px solid var(--white-10);
+}
+.menu .fullWidthButton {
+    height: 50px;
+    background-color: var(--modal-bg);
+    border: 1px solid var(--white-10);
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
     gap: 10px;
+    flex-direction: row;
+    justify-content: start;
+    padding: 0 10px;
 }
 #closeButton {
     width: 100%;
@@ -75,6 +103,9 @@
     width: 100%;
     padding: 0 10px;
     box-sizing: border-box;
+    min-height: 50px;
+    justify-content: center;
+    border: 1px solid var(--white-10);
 }
 .authButton .buttonContent {
     display: grid;

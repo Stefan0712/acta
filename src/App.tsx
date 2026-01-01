@@ -4,7 +4,7 @@ import Navigation from './components/Navigation/Navigation.tsx';
 import LocalList from './pages/LocalList/LocalList.tsx';
 import Settings from './pages/Settings/Settings.tsx';
 import { NotificationDisplay } from './Notification/NotificationDisplay.tsx';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Groups from './pages/Groups/Groups.tsx';
 import ViewGroup from './pages/ViewGroup/ViewGroup.tsx';
 import { UserProvider } from './contexts/UserContext.tsx';
@@ -21,12 +21,15 @@ import Polls from './pages/ViewGroup/Polls/Polls.tsx';
 import NewUserFlow from './pages/NewUserFlow/NewUserFlow.tsx';
 import Export from './pages/Export/Export.tsx';
 import Import from './pages/Import/Import.tsx';
+import Welcome from './pages/NewUserFlow/Welcome/Welcome.tsx';
 
 
 function App() {
 
-  const username = localStorage.getItem('username');
   const userId = localStorage.getItem("userId");
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return !!localStorage.getItem('userId') && !!localStorage.getItem('username');
+  });
 
   useEffect(()=>{
     if(!userId) return;
@@ -41,8 +44,8 @@ function App() {
 
   },[userId])
 
-  if (!localStorage.getItem('userId') || !username) {
-    return (<NewUserFlow />)
+  if (!isAuthenticated) {
+    return (<NewUserFlow onLoginSuccess={()=>setIsAuthenticated(true)} />)
   } else {
     return (
       <div className="app-container">
@@ -51,6 +54,7 @@ function App() {
           <main className="content">
             <Routes>
               <Route path="/" element={<Navigate to="/lists" replace />} />
+              <Route path='/welcome' element={<Welcome />} />
               <Route path="/lists" element={<Lists />} />
               <Route path="/lists/:id" element={<LocalList />} />
               <Route path="/group/:groupId" element={<ViewGroup />}>

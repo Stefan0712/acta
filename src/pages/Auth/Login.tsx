@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
     toRegister: ()=>void;
-    toLocal: ()=>void;
     next?: ()=>void;
+    onLoginSuccess?: ()=>void;
 }
-const Login: React.FC<LoginProps> = ({toRegister, toLocal, next}) => {
+const Login: React.FC<LoginProps> = ({toRegister, onLoginSuccess, next}) => {
 
     const {showNotification} = useNotifications();
     const navigate = useNavigate();
@@ -41,7 +41,8 @@ const Login: React.FC<LoginProps> = ({toRegister, toLocal, next}) => {
             const authResponse: AuthResponse = await login(loginData);
             await finalizeAuthentication(authResponse); 
             showNotification("Logged in successfully", "success");
-            if(next){
+            if(next && onLoginSuccess){
+                onLoginSuccess();
                 next();
             } else {
                 navigate('/groups')
