@@ -1,7 +1,6 @@
-import { createContext, useState, useContext, type ReactNode } from 'react';
-import { ObjectId } from 'bson';
+import { createContext, useContext } from 'react';
 
-interface Notification {
+export interface Notification {
   _id: string;
   message: string;
   type: 'success' | 'error' | 'info';
@@ -13,35 +12,10 @@ interface NotificationContextType {
   removeNotification: (id: string) => void;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+// Create the context
+export const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
-export const NotificationProvider = ({ children }: { children: ReactNode }) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const showNotification = (message: string, type: 'success' | 'error' | 'info') => {
-    const newNotification: Notification = {
-      _id: new ObjectId().toString(),
-      message,
-      type,
-    };
-    setNotifications(prev => [...prev, newNotification]);
-    
-    setTimeout(() => {
-      removeNotification(newNotification._id);
-    }, 3000);
-  };
-
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n._id !== id));
-  };
-
-  return (
-    <NotificationContext.Provider value={{ notifications, showNotification, removeNotification }}>
-      {children}
-    </NotificationContext.Provider>
-  );
-};
-
+// Export the hook
 export const useNotifications = () => {
   const context = useContext(NotificationContext);
   if (!context) {

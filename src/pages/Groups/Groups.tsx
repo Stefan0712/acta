@@ -42,9 +42,6 @@ const Groups = () => {
         fetchAndSync();
     }, [userToken])
 
-
-
-
     if(!userToken) {
         navigate('/auth')
     }else if (isLoading) {
