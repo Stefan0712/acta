@@ -139,7 +139,9 @@ const List = () => {
                 <div className={styles.listItemsContainer}>
                     {filteredItems && filteredItems.length > 0 ? 
                         <>
-                            {uncompletedItems.map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
+                            {uncompletedItems
+                            .sort((a, b) => Number(b.isPinned) - Number(a.isPinned))
+                            .map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
                             {completedItems.length > 0 ? <h3 className={styles.sectionTitle}>Completed</h3> : null}
                             {completedItems.map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
                         </>  : 

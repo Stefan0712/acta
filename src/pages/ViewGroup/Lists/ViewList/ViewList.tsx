@@ -140,7 +140,9 @@ const ViewList = () => {
                 <div className={styles.listItemsContainer}>
                     { filteredItems && filteredItems.length > 0 ? 
                         <>
-                            {uncompletedItems.map(item=><GroupListItem groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
+                            {uncompletedItems
+                                .sort((a, b) => Number(b.isPinned) - Number(a.isPinned))
+                                .map(item=><GroupListItem groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
                             {completedItems.map(item=><GroupListItem groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
                         </>  : 
