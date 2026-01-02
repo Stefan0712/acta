@@ -26,12 +26,14 @@ const NewNote: React.FC<NoteProps> = ({close, addNote, groupId}) => {
                 content,
                 isPinned,
                 groupId,
-                isDeleted: false
+                isDeleted: false,
+                authorUsername: localStorage.getItem('username') ?? 'Local user'
             }
             try {
                 const apiResponse = await createNote(newNote);
                 if(apiResponse) {
                     addNote(apiResponse);
+                    console.log(apiResponse)
                     close();
                 }
             } catch (error){

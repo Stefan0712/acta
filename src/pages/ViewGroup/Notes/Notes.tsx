@@ -4,7 +4,6 @@ import type { Note, NoteComment } from '../../../types/models';
 import { IconsLibrary } from '../../../assets/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../Notification/NotificationContext';
-import Auth from '../../Auth/Auth';
 import Loading from '../../../components/LoadingSpinner/Loading';
 import { createComment, deleteComment, deleteNote, getNoteComments, getNotesByGroup, updateNote } from '../../../services/notesServices';
 import NewNote from './NewNote';
@@ -69,7 +68,7 @@ const Notes = () => {
         )
     }
     if (!localStorage.getItem('jwt-token') && groupId) {
-        return ( <Auth /> )
+        navigate('/auth')
     } else if(isLoading) {
         return ( <Loading /> )
     } else if (notes) {
@@ -144,7 +143,7 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
             /> : null}
             <div className={styles.noteHeader}>
                 <div className={styles.userPfp}>
-                    <p>{data.authorUsername[0].toUpperCase()}</p>
+                    <p>{data.authorUsername ? data?.authorUsername.charAt(0).toUpperCase() : '?'}</p>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
                     <p className={styles.author}>{data.authorUsername ?? ""}</p>
@@ -190,6 +189,7 @@ const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, c
                 await updateNote(noteId, {isDeleted: false});
                 handleEditNote(noteId, {isDeleted: false});
                 showNotification("Note restored", "success");
+                close();
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to restore note.", "error");
@@ -203,6 +203,7 @@ const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, c
                 await deleteNote(noteId);
                 handleEditNote(noteId, {isDeleted: true});
                 showNotification("Note deleted permanently", "success");
+                close();
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to delete Note.", "error");
@@ -217,6 +218,7 @@ const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, c
                 await updateNote(noteId, {isDeleted: true});
                 handleEditNote(noteId, {isDeleted: true});
                 showNotification("Note deleted", "success");
+                close();
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to delete Note.", "error");
