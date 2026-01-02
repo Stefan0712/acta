@@ -6,6 +6,7 @@
     grid-template-rows: auto 50px 1fr auto;
     color: var(--text-color);
     padding: 10px;
+    padding-top: 0;
     position: relative;
     overflow: hidden;
 }
@@ -50,7 +51,7 @@
     grid-template-columns: 1fr 30px;
     gap: 10px;
     align-items: center;
-    font-size: 1rem;
+    font-size: 0.8rem;
 }
 .listName button {
     height: 30px;
@@ -113,7 +114,6 @@
 .listInfo {
     display: flex;
     flex-direction: column;
-    gap: 10px;
 }
 .listMeta {
     padding: 10px;
@@ -123,6 +123,7 @@
     flex-direction: column;
     gap: 10px;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 .listMeta .listTimestamps {
     width: 100%;

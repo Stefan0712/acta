@@ -121,7 +121,7 @@ const ViewList = () => {
         return ( 
             <div className={styles.viewList}>
                 {showEdit ? <EditList close={()=>setShowEdit(false)} online={true} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
-                <div className={styles.listMeta}>
+                <div className={styles.listInfo}>
                     {showMore ? <>
                     <div className={styles.listName}>
                         <h2>{listData.name}</h2>
@@ -138,7 +138,7 @@ const ViewList = () => {
                         totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
                         completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
                     /></> : null}
-                    <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}>{showMore ? 'Show less' : 'Show more'}</button>
+                    <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}><IconsLibrary.Arrow style={showMore ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'} } />{showMore ? 'Show less' : 'Show more'}</button>
                 </div>
                 <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','mine', 'deleted']} />
                 <div className={styles.listItemsContainer}>
