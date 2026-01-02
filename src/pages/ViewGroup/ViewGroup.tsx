@@ -4,7 +4,7 @@ import { IconsLibrary } from '../../assets/icons';
 import { useEffect, useState } from 'react';
 import { type Group } from '../../types/models';
 import { useNotifications } from '../../Notification/NotificationContext';
-import { deleteGroup, getGroup } from '../../services/groupService';
+import { deleteGroup, getGroup, leaveGroup } from '../../services/groupService';
 import Loading from '../../components/LoadingSpinner/Loading';
 import EditGroup from '../Groups/EditGroup';
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal';
@@ -76,13 +76,24 @@ const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void,
     const {showNotification} = useNotifications();
 
 
-    const handleLeaveGroup = () =>{
-        console.log("Group left")
+    const handleLeaveGroup = async () =>{
+         try {
+            const response = await leaveGroup(groupId);
+            if(response){
+                showNotification(response, 'info');
+                navigate('/groups');
+            }
+        } catch (error) {
+            console.error(error)
+            showNotification("Failed to leave group", "error");
+        }
     }
+
     const handleEdit = () => {
         showEdit();
         close();
     }
+
     const handleDelete = async () => {
         try {
             const response = await deleteGroup(groupId);

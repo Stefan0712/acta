@@ -158,3 +158,20 @@ export async function getGroupActivity(groupId: string): Promise<ActivityLog[]> 
         throw new Error('Network error or unknown issue.');
     }
 }
+// Leave group
+export async function leaveGroup(groupId: string): Promise<string> {
+    try {
+        const response = await API.delete(`/groups/${groupId}/leave`);
+
+        if (response.status === 200) {
+            return response.data.message;
+        }
+        throw new Error(response.data.message || 'Failed to leave group.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error deleting group.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}

@@ -38,7 +38,7 @@ const NewUserFlow: React.FC<NewUserFlowProps> = ({onLoginSuccess}) => {
                 </button>
             </div>
             <div className={styles.stepContainer}>
-                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth onLoginSuccess={onLoginSuccess} next={()=>navigate('/welcome')}/>  : null}
+                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth onLoginSuccess={onLoginSuccess} next={()=>navigate('/groups')}/>  : null}
             </div>
             <div className={styles.stepNavigator}>
                 <button onClick={prevStep}>

@@ -5,7 +5,6 @@ import { type Group } from '../../types/models';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { IconsLibrary } from '../../assets/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import Auth from '../Auth/Auth';
 import { getMyGroups } from '../../services/groupService';
 import Loading from '../../components/LoadingSpinner/Loading';
 import { getIcon } from '../../components/IconSelector/iconCollection';
