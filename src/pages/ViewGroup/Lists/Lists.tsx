@@ -3,19 +3,21 @@ import styles from './Lists.module.css';
 import type { List, ListItem } from '../../../types/models';
 import { IconsLibrary } from '../../../assets/icons';
 import NewList from '../../../components/NewList/NewList';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../Notification/NotificationContext';
 import { deleteList, getGroupLists, updateList } from '../../../services/listService';
-import Auth from '../../Auth/Auth';
 import Loading from '../../../components/LoadingSpinner/Loading';
 import { db } from '../../../db';
 import { getIcon } from '../../../components/IconSelector/iconCollection';
 import Categories from '../../../components/Categories/Categories';
 import Header from '../../../components/Header/Header';
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal';
+import Summaries from '../../../components/Summaries/Summaries';
 
 
 const Lists = () => {
+
+    const navigate = useNavigate();
     const { groupId } = useParams();
 
     const {showNotification} = useNotifications();
@@ -100,7 +102,7 @@ const Lists = () => {
     }
 
     if (!localStorage.getItem('jwt-token') && groupId) {
-        return ( <Auth /> )
+        navigate('/auth;')
     } else if(isLoading) {
         return ( <Loading /> )
     } else if (lists) {
@@ -109,7 +111,7 @@ const Lists = () => {
                 {!groupId ? 
                     <Header title='My Lists' />
                 : null}
-                <Summaries totalLists={lists.length} completedLists={lists.filter(list=>list.completedItemsCounter === list.totalItemsCounter && list.completedItemsCounter && list.completedItemsCounter > 0).length} />
+                <Summaries totalItems={lists.length} completedItems={lists.filter(list=>list.completedItemsCounter === list.totalItemsCounter && list.completedItemsCounter && list.completedItemsCounter > 0).length} />
                 <Categories category={selectedFilter} setCategory={(newCat)=>setSelectedFilter(newCat)} categories={['active','completed','deleted']} />
                 <div className={styles.listsContainer}>
                     {showNewList ? <NewList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} groupId={groupId} /> : null}
@@ -128,48 +130,7 @@ const Lists = () => {
     }
 }
     
-
- 
 export default Lists;
-
-interface SummariesProps {
-    totalLists: number;
-    completedLists: number;
-}
-const Summaries: React.FC<SummariesProps> = ({totalLists, completedLists}) => {
-
-    const percentage = (completedLists/totalLists)*100;
-    return (
-        <div className={styles.summaries}>
-            <div className={styles.collumns}>
-                <div className={styles.collumn}>
-                    <b>{totalLists ?? 0}</b>
-                    <p>TOTAL</p>
-                </div>
-                <div className={styles.collumn}>
-                    <b>{totalLists && completedLists ? (totalLists - completedLists) : 0}</b>
-                    <p>ACTIVE</p>
-                </div>
-                <div className={styles.collumn}>
-                    <b>{completedLists || 0}</b>
-                    <p>COMPLETED</p>
-                </div>
-            </div>
-            <div className={styles.progress}>
-                <div className={styles.progressText}>
-                    <p>TOTAL PROGRESS</p>
-                    <b>{percentage.toFixed(2) || 0}%</b>
-                </div>
-                <div className={styles.progressBar}>
-                    <div className={styles.progressLine} style={{width: `${percentage}%`}} />
-                </div>
-            </div>
-        </div>
-    )
-}
-
-
-
 
 interface ListProps {
     data: List;
