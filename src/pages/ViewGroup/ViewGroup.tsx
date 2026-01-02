@@ -72,6 +72,7 @@ export default ViewGroup;
 const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void, groupId: string}) => {
     
     const [showDelete, setShowDelete] = useState(false);
+    const [showLeave, setShowLeave] = useState(false);
     const navigate = useNavigate();
     const {showNotification} = useNotifications();
 
@@ -84,8 +85,9 @@ const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void,
                 navigate('/groups');
             }
         } catch (error) {
-            console.error(error)
-            showNotification("Failed to leave group", "error");
+            console.error(error);
+            showNotification("Failed to leave group.", "error");
+            setShowLeave(false);
         }
     }
 
@@ -109,10 +111,11 @@ const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void,
     return (
         <div className={styles.menu}>
             {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} title='Delete this group?' content='Are you sure you want to delete this group and all items related to it? This cannot be undone'/>  : null}
+            {showLeave ? <ConfirmationModal cancel={()=>setShowLeave(false)} confirm={handleLeaveGroup} title='Leave this group?' content='Are you sure you want to leave this group? If you want to rejoin, you must receive another invitation from a group member.'/>  : null}
             <Link to={'manage'} className={styles.menuButton} onClick={()=>close()}><IconsLibrary.Group /><p>Manage Group</p></Link>
             <button className={styles.menuButton} onClick={handleEdit}><IconsLibrary.Edit /><p>Edit Group</p></button>
             <button className={styles.menuButton} onClick={()=>setShowDelete(true)} style={{color: 'red'}}><IconsLibrary.Delete /><p>Delete Group</p></button>
-            <button className={styles.menuButton} onClick={handleLeaveGroup}><IconsLibrary.Logout /><p>Leave Group</p></button>
+            <button className={styles.menuButton} onClick={()=>setShowLeave(true)}><IconsLibrary.Logout /><p>Leave Group</p></button>
             <button className={styles.menuButton} onClick={close}><IconsLibrary.Close />Close</button>            
         </div>
     )
