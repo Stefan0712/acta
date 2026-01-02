@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { type Group } from '../../types/models';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { deleteGroup, getGroup } from '../../services/groupService';
-import Auth from '../Auth/Auth';
 import Loading from '../../components/LoadingSpinner/Loading';
 import EditGroup from '../Groups/EditGroup';
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal';
@@ -44,7 +43,7 @@ const ViewGroup = () => {
     }, [groupId]);
 
     if(!userToken){
-       return (  <Auth />)
+       navigate('/auth');
     } else if (isLoading) {
         return ( <Loading /> )
     }else if(groupData && groupId) {
@@ -100,11 +99,11 @@ const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void,
     return (
         <div className={styles.menu}>
             {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} />  : null}
-            <Link to={'manage'} onClick={()=>close()}><IconsLibrary.Group /><p>Manage Group</p></Link>
-            <button onClick={handleEdit}><IconsLibrary.Edit /><p>Edit Group</p></button>
-            <button onClick={()=>setShowDelete(true)}><IconsLibrary.Delete /><p>Delete Group</p></button>
-            <button onClick={handleLeaveGroup}><IconsLibrary.Logout /><p>Leave Group</p></button>
-            <button onClick={close}>Close</button>            
+            <Link to={'manage'} className={styles.menuButton} onClick={()=>close()}><IconsLibrary.Group /><p>Manage Group</p></Link>
+            <button className={styles.menuButton} onClick={handleEdit}><IconsLibrary.Edit /><p>Edit Group</p></button>
+            <button className={styles.menuButton} onClick={()=>setShowDelete(true)} style={{color: 'red'}}><IconsLibrary.Delete /><p>Delete Group</p></button>
+            <button className={styles.menuButton} onClick={handleLeaveGroup}><IconsLibrary.Logout /><p>Leave Group</p></button>
+            <button className={styles.menuButton} onClick={close}><IconsLibrary.Close />Close</button>            
         </div>
     )
 }

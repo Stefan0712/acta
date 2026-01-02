@@ -13,7 +13,7 @@ const ConfirmationModal: React.FC<ConfirmatinoModalProps> = ({cancel, confirm, t
             <div className={styles.confirmationModal}>
                 <h3>{title ?? "Are you sure?"}</h3>
                 <h4>{content ?? "Are you sure you want to do this?"}</h4>
-                <div className={styles.buttons}>
+                <div className={styles.modalButtons}>
                     <button onClick={cancel}>Cancel</button>
                     <button onClick={confirm}>Confirm</button>
                 </div>
