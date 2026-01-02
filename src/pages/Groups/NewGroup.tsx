@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 import IconSelector from '../../components/IconSelector/IconSelector';
 import SwitchButton from '../../components/SwitchButton/SwitchButton';
+import ColorSelector from '../../components/ColorSelector/ColorSelector';
 
 const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Group) => void}) => {
 
@@ -18,10 +19,11 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
     const [description, setDescription] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [icon, setIcon] = useState<string>('default-icon');
-    const [color, setColor] = useState('white');
+    const [color, setColor] = useState('var(--item-bg)');
     const [isPinned, setIsPinned] = useState(false);
 
     const [showIconSelector, setShowIconSelector] = useState(false);
+    const [showColorSelector, setShowColorSelector] = useState(false)
 
 
     const handleCreateGroup = async () => {
@@ -66,17 +68,10 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
     }
     const SelectedIcon = getIcon(icon);
 
-    const DEFAULT_COLORS = [
-        "#6366f1", // Indigo
-        "#10b981", // Emerald
-        "#f43f5e", // Rose
-        "#f59e0b", // Amber
-        "#0ea5e9", // Sky
-        "#8b5cf6", // Violet
-    ];
     return ( 
         <div className={styles.newGroup}>
             {showIconSelector ? <IconSelector close={()=>setShowIconSelector(false)} icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} /> : null}
+            {showColorSelector ? <ColorSelector close={()=>setShowColorSelector(false)} color={color} setColor={(newColor)=>setColor(newColor)} /> : null}
             <div className={styles.content}>
                 <h3>New Group</h3>
                 <fieldset>
@@ -87,28 +82,23 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                     <label>Description</label>
                     <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='Write something about your group here...' />
                 </fieldset>
-                <div className={styles.pinInput}>
-                    <div className={styles.pinLabel}>
-                        <label>Pin Group?</label>
-                        <p>Pin this group to your Dashboard</p>
-                    </div>
-                    <SwitchButton isActivated={isPinned} onPress={()=>setIsPinned(prev=>!prev)} />
-                </div>
-                <div className={styles.customizationInputs}>
+                <div className={styles.threeCols}>
+                    <fieldset>
+                        <label>Pin</label>
+                        <SwitchButton isActivated={isPinned} onPress={()=>setIsPinned(prev=>!prev)} />
+                    </fieldset>
                     <fieldset>
                         <label>Color</label>
-                        <div className={styles.colors}>
-                            {DEFAULT_COLORS.map(c=><div onClick={()=>setColor(c)} key={c} className={`${styles.colorButton} ${color === c ? styles.selectedColor : ''}`} style={{backgroundColor: c}} />)}
-                        </div>
+                        <button onClick={()=>setShowColorSelector(true)} className={styles.colorButton}><div className={styles.color} style={{backgroundColor: color}} /></button>
                     </fieldset>
                     <fieldset>
                         <label>Icon</label>
-                        <button className={styles.iconButton} onClick={()=>setShowIconSelector(true)}><SelectedIcon stroke={color}/></button>
+                        <button className={styles.iconButton} onClick={()=>setShowIconSelector(true)}><SelectedIcon color={color} /></button>
                     </fieldset>
                 </div>
-                <div className={styles.buttons}>
+                <div className={styles.bottomButtons}>
                     <button onClick={close}>Close</button>
-                    <button onClick={handleCreateGroup} disabled={isCreating}>{isCreating ? 'Saving...' : 'Create'}</button>
+                    <button className={styles.saveButton} onClick={handleCreateGroup} disabled={isCreating}>{isCreating ? 'Saving...' : 'Create'}</button>
                 </div>
             </div>
         </div>

@@ -9,6 +9,10 @@ interface ColorSelectorProps {
 }
 const ColorSelector: React.FC<ColorSelectorProps> = ({close, setColor, currentColor}) => {
 
+    const handleSelectColor = (newColor: string) => {
+        setColor(newColor);
+        close();
+    }
 
 
     return (
@@ -18,7 +22,7 @@ const ColorSelector: React.FC<ColorSelectorProps> = ({close, setColor, currentCo
                 <button onClick={close}><IconsLibrary.Close /></button>
             </div>
             <div className={styles.container}>
-                {COLORS.map(color=><button className={currentColor === color ? styles.selectedColor : ''} onClick={()=>setColor(color)} key={color} style={{backgroundColor: color}}>{currentColor === color ? <IconsLibrary.Checkmark /> : null}</button>)}
+                {COLORS.map((color, index)=><button className={currentColor === color ? styles.selectedColor : ''} onClick={()=>handleSelectColor(color)} key={color+index} style={{backgroundColor: color}}>{currentColor === color ? <IconsLibrary.Checkmark /> : null}</button>)}
             </div>
             <button onClick={close} className={styles.doneButton}>Done</button>
         </div>

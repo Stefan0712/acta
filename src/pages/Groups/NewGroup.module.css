@@ -28,76 +28,86 @@
 label {
     color: var(--white-25);
 }
-.pinInput {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 10px;
-    align-items: center;
-    width: 100%;
-    padding: 10px 0;
+.pin {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 0;
 }
-.pinLabel {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-
+.pinText {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
-.content .buttons {
-    width: 100%;
-    height: 40px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+.pinText p:last-child{
+  color: var(--white-25);
+  font-size: 0.75rem;
 }
-.content .buttons button {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
+fieldset {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
-.content .buttons button:nth-child(1) {
-    background-color: var(--bg-primary);
-    color: var(--text-color);
-    border: 1px solid var(--white-10);
+fieldset input {
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  padding-left: 5px;
 }
-.customizationInputs {
-    width: 100%;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr 50px;
-    gap: 10px;
+.threeCols fieldset {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
-.customizationInputs fieldset {
-    overflow: hidden;
-    width: 100%;
+ fieldset .iconButton,
+ fieldset .colorButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background-color: rgb(37, 37, 37);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
-.customizationInputs .colors {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    width: 100%;
-    overflow: hidden;
+.colorButton .color {
+  width: 100%;
+  height: 100%;
 }
-.customizationInputs .colors .colorButton {
-    height: 30px;
-    width: 30px;
-    border-radius: 5px;
-}
-.colorButton.selectedColor {
-    border: 1px solid white !important;
-}
-.customizationInputs .iconButton {
-    background-color: var(--input-bg);
-    height: 40px;
-    width: 40px;
-    border-radius: 5px;
-    border: 1px solid var(--white-10);
-    color: var(--text-color);
+.threeCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
 }
 .newGroup input {
     background-color: var(--input-bg);
     padding-left: 10px;
+    height: 50px;
+    border-radius: 10px;
+}
+.bottomButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  height: 40px;
+}
+.bottomButtons button {
+  width: 100%;
+  height: 50px;
+  border-radius: 5px;
+  border: none;
+  font-size: 1rem;
+}
+.saveButton {
+  color: var(--text-on-accent);
+  background-color: var(--accent);
+  border: 1px solid var(--white-10);
 }
