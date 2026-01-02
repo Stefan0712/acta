@@ -49,8 +49,7 @@ const Groups = () => {
         return ( 
             <div className={styles.groups}>
                 {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} addGroup={(newGroup)=>setGroups(prev=>[...prev, newGroup])} /> : null}
-                {!showNewGroup ? <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button> : null}
-                <Header title='My Groups' Button={<button><IconsLibrary.Bell /></button>} />
+                <Header title='My Groups' Button={<button onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button>} />
                 <div className={styles.groupsContainer}>
                     {groups?.length > 0 ? groups.map(item=><Group key={item._id} data={item} />) : <p className={styles.noGroupsText}>You have no groups. Create one or join one.</p>}
                 </div>
