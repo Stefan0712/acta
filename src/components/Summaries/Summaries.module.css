@@ -18,14 +18,14 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 10px 0;
+    padding: 5px 0;
 }
 .summaries .collumn:nth-child(2) {
     border-left: 1px solid var(--white-10);
     border-right: 1px solid var(--white-10);
 }
 .summaries .collumn b {
-    font-size: 1rem;
+    font-size: 0.8rem;
 }
 .summaries .collumn p {
     font-size: 0.7rem;
@@ -33,7 +33,7 @@
 .summaries .progress {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 .summaries .progressText {
     display: flex;
@@ -41,7 +41,7 @@
     justify-content: space-between;
     width: 100%;
     color: var(--white-50);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 }
 .summaries .progressBar {
     width: 100%;

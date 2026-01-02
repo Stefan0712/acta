@@ -18,7 +18,7 @@ const Summaries: React.FC<SummariesProps> = ({totalItems, completedItems}) =>{
                     <p>TOTAL</p>
                 </div>
                 <div className={styles.collumn}>
-                    <b>{totalItems && completedItems ? (totalItems - completedItems) : 0}</b>
+                    <b>{totalItems ? (totalItems - completedItems) : 0}</b>
                     <p>ACTIVE</p>
                 </div>
                 <div className={styles.collumn}>
