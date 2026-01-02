@@ -124,16 +124,20 @@ const List = () => {
                     title={listData.name} 
                     Button={<button onClick={()=>setShowPageMenu(prev=>!prev)}><IconsLibrary.Dots /></button>}
                 />
-                <div className={styles.listMeta}>
+                <div className={styles.listInfo}>
                     {showMore ? <>
-                    <p className={styles.createdAt}>Created on {getDateAndHour(listData.createdAt)}</p>
-                    {listData.updatedAt ? <p className={styles.updatedAt}>Latest update on {getDateAndHour(listData.updatedAt)}</p> : null}
-                    <p>{listData.description}</p>
+                    <div className={styles.listMeta}>
+                        <div className={styles.listTimestamps}>
+                            <p className={styles.createdAt}><IconsLibrary.Calendar />{getDateAndHour(listData.createdAt)}</p>
+                            <p className={styles.updatedAt}><IconsLibrary.Sync /> {listData.updatedAt ? getDateAndHour(listData.updatedAt) : getDateAndHour(listData.createdAt)}</p>
+                        </div>
+                        <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
+                    </div>
                     <Summaries 
                         totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
                         completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
                     /></> : null}
-                    <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}>{showMore ? 'Show less' : 'Show more'}</button>
+                    <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}><IconsLibrary.Arrow style={showMore ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'} } />{showMore ? 'Show less' : 'Show more'}</button>
                 </div>
                 <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','deleted']} />
                 <div className={styles.listItemsContainer}>

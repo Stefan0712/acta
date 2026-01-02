@@ -9,8 +9,17 @@
     position: relative;
     overflow: hidden;
 }
-.viewList .createdAt {
-    opacity: 0.5;
+.createdAt,
+.updatedAt {
+    color: var(--white-50);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.createdAt svg,
+.updatedAt svg {
+    height: 0.9rem;
 }
 .viewList .listButtons {
     height: 40px;
@@ -54,11 +63,6 @@
     width: 70%;
     color: var(--text-color);
 }
-.listMeta {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
 .listItemsContainer {
     display: flex;
     flex-direction: column;
@@ -68,11 +72,15 @@
     padding-bottom: 70px;
 }
 .showMoreButton {
-    height: 30px;
-    text-align: start;
-    color: var(--accent);
+    color: var(--white-50);
     background-color: transparent;
     border: none;
+    padding: 10px 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 .newItemButton {
     width: 50px;
@@ -101,4 +109,32 @@
 .newItemButton svg {
     width: 80%;
     height: 80%;
+}
+.listInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.listMeta {
+    padding: 10px;
+    background-color: var(--item-bg);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+.listMeta .listTimestamps {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: center;
+}
+.listMeta .updatedAt {
+    margin-left: auto;
+}
+.listMeta .description {
+    color: var(--white-50);
+    width: 100%;
 }
