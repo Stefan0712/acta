@@ -8,6 +8,7 @@ import { deleteGroup, getGroup } from '../../services/groupService';
 import Loading from '../../components/LoadingSpinner/Loading';
 import EditGroup from '../Groups/EditGroup';
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal';
+import Header from '../../components/Header/Header';
 
 const ViewGroup = () => {
 
@@ -51,13 +52,11 @@ const ViewGroup = () => {
             <div className={styles.viewGroup}>
                 {showMenu ? <Menu close={()=>setShowMenu(false)} showEdit={()=>setShowEdit(true)} groupId={groupId} /> : null}
                 {showEdit ? <EditGroup groupId={groupId} close={()=>setShowEdit(false)} handleLocalUpdate={(newData)=>setGroupData(newData)}/> : null}    
-                <div className={styles.header}>
-                    <button onClick={()=>navigate(`/group/${groupData._id}`)}><IconsLibrary.Arrow/></button>
-                    <h3>{groupData.name}</h3>
-                    <button onClick={()=>setShowMenu(prev=>!prev)}>
-                        <IconsLibrary.Settings />
-                    </button>
-                </div>
+                <Header 
+                    prevUrl={`/group/${groupData._id}`}
+                    title={groupData.name ?? 'View Group'}
+                    Button={<button onClick={()=>setShowMenu(prev=>!prev)}><IconsLibrary.Settings /></button>}
+                />
                 <div className={styles.content}>
                     <Outlet context={{members: groupData.members}} />
                 </div>
@@ -98,7 +97,7 @@ const Menu = ({close, showEdit, groupId}: {close: ()=> void, showEdit: ()=>void,
     }
     return (
         <div className={styles.menu}>
-            {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} />  : null}
+            {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} title='Delete this group?' content='Are you sure you want to delete this group and all items related to it? This cannot be undone'/>  : null}
             <Link to={'manage'} className={styles.menuButton} onClick={()=>close()}><IconsLibrary.Group /><p>Manage Group</p></Link>
             <button className={styles.menuButton} onClick={handleEdit}><IconsLibrary.Edit /><p>Edit Group</p></button>
             <button className={styles.menuButton} onClick={()=>setShowDelete(true)} style={{color: 'red'}}><IconsLibrary.Delete /><p>Delete Group</p></button>

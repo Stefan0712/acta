@@ -9,6 +9,7 @@ import Auth from '../Auth/Auth';
 import { getMyGroups } from '../../services/groupService';
 import Loading from '../../components/LoadingSpinner/Loading';
 import { getIcon } from '../../components/IconSelector/iconCollection';
+import Header from '../../components/Header/Header';
 
 
 const Groups = () => {
@@ -45,7 +46,7 @@ const Groups = () => {
 
 
     if(!userToken) {
-        return (<Auth />)
+        navigate('/auth')
     }else if (isLoading) {
         return (<Loading />)
     } else {
@@ -53,11 +54,7 @@ const Groups = () => {
             <div className={styles.groups}>
                 {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} addGroup={(newGroup)=>setGroups(prev=>[...prev, newGroup])} /> : null}
                 {!showNewGroup ? <button className={styles.addButton} onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button> : null}
-                <div className={styles.header}>
-                    <button onClick={()=>navigate(-1)}><IconsLibrary.Arrow fill='white'/></button>
-                    <h2>My Groups</h2>
-                    <button><IconsLibrary.Bell /></button>
-                </div>
+                <Header title='My Groups' Button={<button><IconsLibrary.Bell /></button>} />
                 <div className={styles.groupsContainer}>
                     {groups?.length > 0 ? groups.map(item=><Group key={item._id} data={item} />) : <p className={styles.noGroupsText}>You have no groups. Create one or join one.</p>}
                 </div>
