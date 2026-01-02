@@ -14,6 +14,11 @@
     --white-10: rgba(255, 255, 255, 0.1);
     --input-bg: #111111;
     --modal-bg: #0a0a0a;
+
+    /* New variables */
+
+    --new-item-bg: #0a0a0a;
+    --list-meta-bg: #111111;
 }
 .no-items-text {
     width: 100%;
