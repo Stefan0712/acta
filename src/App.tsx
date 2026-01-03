@@ -22,6 +22,7 @@ import NewUserFlow from './pages/NewUserFlow/NewUserFlow.tsx';
 import Export from './pages/Export/Export.tsx';
 import Import from './pages/Import/Import.tsx';
 import Welcome from './pages/NewUserFlow/Welcome/Welcome.tsx';
+import About from './pages/About/About.tsx';
 
 
 function App() {
@@ -72,6 +73,7 @@ function App() {
               <Route path="/invite" element={<AcceptInvite />} />
               <Route path="/export" element={<Export />} />
               <Route path="/import" element={<Import />} />
+              <Route path="/about" element={<About />} />
             </Routes>
           </main>
           <Navigation />

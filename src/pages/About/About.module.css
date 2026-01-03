@@ -1,0 +1,93 @@
+.about {
+    height: var(--page-height);
+    width: 100%;
+    display: grid;
+    grid-template-rows: var(--page-header-height) 1fr;
+    gap: 10px;
+    transition: all 0.1s;
+}
+.aboutContent {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    overflow-y: auto;
+}
+.sectionContent {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+.about .section {
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: var(--item-bg);
+    color: var(--text-color);
+}
+.section h1{
+    font-size: 1.1rem;
+}
+.section h2 {
+    font-size: 1rem;
+}
+.section p,
+.section p {
+    font-size: 0.8rem;
+}
+.about .section .header {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 20px;
+    gap: 10px;
+    align-items: center;
+    height: 40px;
+}
+.about .header h2 {
+    font-size: 0.9rem;
+}
+
+.contactItem {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+}
+.contactItem b {
+    color: var(--white-50);
+    font-size: 0.9rem;
+}
+.contactItem a {
+    color: var(--accent);
+    background-color: var(--bg-primary);
+    height: 40px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+}
+.contactItem svg {
+    height: 1rem;
+}
+.apiStatus {
+    height: 50px;
+    width: 100%;
+    background-color: var(--item-bg);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: auto;
+}
+.statusCircle {
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+}

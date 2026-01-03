@@ -25,7 +25,8 @@ const Step1 = ({next}: {next: ()=>void}) =>{
         <div className={styles.stepComponent}>
             <div className={styles.message}>
                 <h1>Warning!</h1>
-                <p>Welcome and thank you for trying this app! Before continuing, please remember that this app is still in development and 
+                <p>
+                    Welcome and thank you for trying this app! Before continuing, please remember that this app is still in development and 
                     you will find some bugs. There are still some features that does NOT work yet and some buttons, menus, or other elements might
                     be broken, but most of the app should work by now. 
                 </p>

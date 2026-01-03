@@ -3,6 +3,7 @@ import styles from './Menu.module.css';
 import { IconsLibrary } from '../../assets/icons';
 import { logout } from '../../services/authService';
 import { useState } from 'react';
+import { HelpCircleIcon } from 'lucide-react';
 
 
 const Menu = ({close}: {close:()=>void}) => {
@@ -37,6 +38,10 @@ const Menu = ({close}: {close:()=>void}) => {
                 <Link className={styles.fullWidthButton} to={'/'}>
                     <IconsLibrary.Settings />
                     <p>Settings</p>
+                </Link>
+                <Link className={styles.fullWidthButton} to={'/about'} onClick={close}>
+                    <HelpCircleIcon />
+                    <p>About</p>
                 </Link>
                 <div className={styles.authButton}>
                     <div className={styles.buttonContent}>
