@@ -117,9 +117,13 @@ svg {
 }
 .deadline {
     display: grid;
-    grid-template-columns: 20px 1fr;
+    grid-template-columns: auto 1fr;
     align-items: center;
     gap: 5px;
+    font-size: 0.8rem;
+}
+.deadline svg {
+    height: 0.9rem;
 }
 .createdAt {
     color: var(--white-25);
