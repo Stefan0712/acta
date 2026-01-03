@@ -12,6 +12,8 @@ const Export = () => {
 
     const {showNotification} = useNotifications();
 
+    const [fileName, setFileName] = useState(`export-${new Date().toISOString().slice(0, 10)}`)
+
     const [lists, setLists] = useState<List[]>([]);
     const [selectedLists, setSelectedLists] = useState<List[]>([]);
     const [expandLists, setExpandLists] = useState(false);
@@ -118,7 +120,11 @@ const Export = () => {
         link.href = url;
         
         // Set the filename
-        link.download = `export-${new Date().toISOString().slice(0, 10)}.json`;
+        if(fileName.length > 0){
+            link.download = `${fileName}.json`;
+        } else {
+            link.download = `export-${new Date().toISOString().slice(0, 10)}.json`;
+        }
         
         // Append to body, trigger click, and cleanup
         document.body.appendChild(link);
@@ -126,6 +132,7 @@ const Export = () => {
         document.body.removeChild(link);
         showNotification('Data exported successfully!', "success");
     };
+
 
     const isAllSelected = lists.length > 0 && tags.length > 0 && lists.length === selectedLists.length && tags.length === selectedTags.length
     return (
@@ -138,6 +145,10 @@ const Export = () => {
                     className={`${styles.checkbox} ${isAllSelected ? styles.checked : ''}`} >{isAllSelected ? <IconsLibrary.Checkmark /> : null}</button>
             </div>
             <div className={styles.cardsContainer}>
+                <fieldset>
+                    <label>Export File Name</label>
+                    <input value={fileName} onChange={(e)=>setFileName(e.target.value)} name='filename' />
+                </fieldset>
                 <div className={`${styles.category} ${expandLists ? styles.expandCategory : ''}`}>
                     <div className={styles.categoryTop}>
                         <div className={styles.iconContainer}>
