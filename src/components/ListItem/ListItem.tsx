@@ -102,7 +102,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, online}) =>
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>
                     <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>
-                    {data.description ? <p>{data.description}</p> : null }
+                    {data.description ? <p className={styles.description}>{data.description}</p> : null }
                     {data.deadline ? <div className={styles.deadline}>
                         <IconsLibrary.Time />
                         {data.deadline ? <p>Due {formatDeadline(data.deadline)}</p> : <p>No deadline</p>}

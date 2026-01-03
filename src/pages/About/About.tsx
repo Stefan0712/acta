@@ -89,6 +89,11 @@ const About = () => {
                             <p><b>Right to Data Portability:</b> You can copy your text data out of the application at any time.</p>
 
                             <p>To exercise these rights, please contact us at <b>support@stefanvladulescu.com</b>.</p>
+                            <h2>8. Changes to This Policy</h2>
+                            <p>We may update our Privacy Policy from time to time as the application evolves(e.g., if we add new features like payments or advertising).</p>
+                            <p><b>Minor Changes:</b> We will post the new Privacy Policy on this page and update the "Last Updated" date at the top. You are advised to review this page periodically for any changes. </p>
+                            <p><b>Significant Changes:</b> If we make material changes to how we use your personal data (such as introducing third-party advertising or payment processing), we will provide a more prominent notice (e.g., a notification inside the app or via email).</p>
+                            <p>Continued use of the application after any changes constitutes your acceptance of the new Privacy Policy.</p>
                         </div> 
                     : null}
                 </div>

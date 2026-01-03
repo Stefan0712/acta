@@ -100,7 +100,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>
                     <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>
-                    {data.description ? <p>{data.description}</p> : null}
+                    {data.description ? <p className={styles.description}>{data.description}</p> : null}
                     {data.assignedTo || data.claimedBy ? <div className={styles.assignedUser}>
                         <IconsLibrary.Assigned />
                         {data.assignedTo ? <p>Assigned to {members?.find(u=>u.userId === data.assignedTo)?.username}</p> : null}
