@@ -17,7 +17,7 @@ const NewUserFlow: React.FC<NewUserFlowProps> = ({onLoginSuccess}) => {
     const [step, setStep] = useState<Step>(1);
 
     const nextStep = () => {
-        if(step < 3) {
+        if(step < 2) {
             setStep(prev=>prev+1 as Step)
         }
     }

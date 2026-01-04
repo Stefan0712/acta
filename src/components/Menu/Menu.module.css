@@ -109,21 +109,25 @@
 }
 .authButton .buttonContent {
     display: grid;
-    grid-template-columns: 40px 1fr 40px;
+    grid-template-columns: 40px 1fr auto;
     gap: 10px;
     align-items: center;
     box-sizing: border-box;
     height: 40px;
 }
-.authButton button {
-    width: 40px;
+.authButton a {
     height: 40px;
+    padding: 0 10px;
+    gap: 5px;
     display: flex;
-    align-items: end;
+    flex-direction: row;
 }
 .authButton fieldset {
     display: flex;
     align-items: center;
     gap: 10px;
     flex-direction: row;
+}
+.authButton .userInfo {
+    padding-bottom: 10px;
 }

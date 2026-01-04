@@ -9,13 +9,13 @@ import { getMyGroups } from '../../services/groupService';
 import Loading from '../../components/LoadingSpinner/Loading';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 import Header from '../../components/Header/Header';
+import Auth from '../Auth/Auth';
 
 
 const Groups = () => {
     
     const userToken = localStorage.getItem('jwt-token');
     const { showNotification } = useNotifications();
-    const navigate = useNavigate();
 
     const [showNewGroup, setShowNewGroup] = useState(false);
     const [groups, setGroups] = useState<Group[]>([]);
@@ -42,7 +42,7 @@ const Groups = () => {
     }, [userToken])
 
     if(!userToken) {
-        navigate('/auth')
+        return (<Auth />)
     }else if (isLoading) {
         return (<Loading />)
     } else {

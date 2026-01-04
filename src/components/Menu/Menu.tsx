@@ -49,8 +49,8 @@ const Menu = ({close}: {close:()=>void}) => {
                             style={expandUserInfo ? {transform: "rotateZ(90deg)"} : {transform: "rotateZ(-90deg)"}} 
                             onClick={()=>setExpandUserInfo(prev=>!prev)}
                         />
-                        <b onClick={()=>setExpandUserInfo(prev=>!prev)}>{isLoggedIn ? localStorage.getItem('username') : 'Login'}</b>
-                        {isLoggedIn ? <button onClick={logout}><IconsLibrary.Logout /></button> : <Link to={'/auth'}><IconsLibrary.Login /></Link>}
+                        <b onClick={()=>setExpandUserInfo(prev=>!prev)}>{isLoggedIn ? localStorage.getItem('username') : 'Local Account'}</b>
+                        {isLoggedIn ? <button onClick={logout}><IconsLibrary.Logout /> <p>Logout</p></button> : <Link to={'/auth'}><IconsLibrary.Login /> <p>Login</p></Link>}
                     </div>
                     {expandUserInfo ? <div className={styles.userInfo}>
                         <fieldset>

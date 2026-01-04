@@ -39,7 +39,7 @@ body {
   width: 100dvw;
   height: 100dvh;
   display: grid;
-  grid-template-rows: 1fr 75px;
+  grid-template-rows: 1fr var(--navigation-height);
   overflow: hidden;
   background-color: var(--bg-primary);
 }
