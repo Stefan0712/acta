@@ -13,7 +13,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/docket/",
+  "start_url": "/acta/",
   "display": "standalone",
   "theme_color": "#09090B",
   "background_color": "#09090B"

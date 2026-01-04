@@ -6,6 +6,6 @@ import svgr from 'vite-plugin-svgr'
 export default defineConfig(({ command }) => {
   return {
     plugins: [react(), svgr()],
-    base: command === 'build' ? '/docket/' : '/',
+    base: command === 'build' ? '/acta/' : '/',
   }
 })
