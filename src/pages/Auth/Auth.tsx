@@ -6,6 +6,7 @@ import { db } from '../../db';
 import { MessageCircleWarning } from 'lucide-react';
 import Login from './Login';
 import Register from './Register';
+import Header from '../../components/Header/Header';
 
 
 interface AuthProps {
@@ -34,6 +35,7 @@ const Auth: React.FC<AuthProps> = ({next, onLoginSuccess}) => {
     } else {
         return (
             <div className={styles.auth}>
+                {!next ? <Header title="Welcome" /> : null}
                 <div className={styles.authContainer}>
                         {currentScreen === 'login' ? <Login toRegister={()=>setCurrentScreen('register')} /> 
                         : <Register toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}

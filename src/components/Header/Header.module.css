@@ -7,6 +7,7 @@
     align-items: center;
     gap: 10px;
     border-bottom: 1px solid var(--white-10);
+    flex-shrink: 0;
 }
 .header button,
 .header a {
