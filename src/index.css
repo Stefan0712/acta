@@ -18,7 +18,7 @@
     /* New variables */
 
     --new-item-bg: #0a0a0a;
-    --list-meta-bg: #111111;
+    --list-meta-bg:rgb(17, 17, 17)1;
 }
 .no-items-text {
     width: 100%;

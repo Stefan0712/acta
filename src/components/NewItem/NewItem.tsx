@@ -126,6 +126,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
                 addTag={(newTag)=>setTags(prev=>[...prev, newTag])} 
                 tags={tags}  
             /> : null}
+            {showMoreInputs ? <h1>New Item</h1> : null}
             <div className={styles.basicInputs}>
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
                     {showMoreInputs ? <IconsLibrary.Close /> : <Maximize />}
