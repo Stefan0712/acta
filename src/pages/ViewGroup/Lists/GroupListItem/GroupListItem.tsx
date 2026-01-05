@@ -8,7 +8,7 @@ import { getDateAndHour } from '../../../../helpers/dateFormat';
 import EditItem from '../../../../components/EditItem/EditItem';
 import { formatDeadline } from '../../../../helpers/deadlineFormatter';
 import { handleUpdateItem } from '../../../../services/itemService';
-import { Pin } from 'lucide-react';
+import { Pin, UserPlus } from 'lucide-react';
 
 
 interface ListItemProps {
@@ -17,8 +17,9 @@ interface ListItemProps {
     online: boolean;
     groupId?: string;
     members?: GroupMember[];
+    showAssignUser: ()=> void;
 }
-const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, online, members}) => {
+const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, online, members, showAssignUser}) => {
 
     const {showNotification} = useNotifications();
     const metaRef = useRef<HTMLDivElement>(null);
@@ -99,13 +100,15 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
                     </div>
                 </div>
                 <div className={styles.itemMeta} ref={metaRef}>
-                    <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>
+                    <div className={styles.metaRow}>
+                        <p className={styles.createdAt}>{data.createdAt ? `Added on ${getDateAndHour(data.createdAt)}` : ''}</p>
+                        {data.assignedTo || data.claimedBy ? <div className={styles.assignedUser}>
+                            <IconsLibrary.Assigned />
+                            {data.assignedTo ? <p>Assigned to {members?.find(u=>u.userId === data.assignedTo)?.username}</p> : null}
+                            {data.claimedBy ? <p>Claimed by {members?.find(u=>u.userId === data.claimedBy)?.username}</p> : null}
+                        </div> : null}
+                    </div>
                     {data.description ? <p className={styles.description}>{data.description}</p> : null}
-                    {data.assignedTo || data.claimedBy ? <div className={styles.assignedUser}>
-                        <IconsLibrary.Assigned />
-                        {data.assignedTo ? <p>Assigned to {members?.find(u=>u.userId === data.assignedTo)?.username}</p> : null}
-                        {data.claimedBy ? <p>Claimed by {members?.find(u=>u.userId === data.claimedBy)?.username}</p> : null}
-                    </div> : null}
                     {data.deadline ? <div className={styles.deadline}>
                         <IconsLibrary.Time />
                         <p>Due {formatDeadline(data.deadline)}</p>
@@ -115,6 +118,10 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
                         {data.tags?.map(tag=><p key={tag._id} className={styles.tag}>{tag.name}</p>)}
                     </div> : null}
                     <div className={styles.threeCol}>
+                        <div className={styles.col} onClick={showAssignUser}>
+                            <UserPlus />
+                            <p>Assign</p>
+                        </div>
                         <div className={styles.col} onClick={togglePin}>
                             {data.isPinned ? <IconsLibrary.FullStar /> : <IconsLibrary.Star />}
                             <p>{data.isPinned ? 'Unpin' : 'Pin' }</p>

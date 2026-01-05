@@ -4,8 +4,6 @@ import { type ListItem, type Tag } from '../../types/models';
 import { ObjectId } from 'bson';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
-import UserSelector from '../UserSelector/UserSelector.tsx';
-import { NotificationService } from '../../helpers/NotificationService.ts';
 import { createItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
 import { Maximize } from 'lucide-react';
@@ -13,13 +11,12 @@ import { Maximize } from 'lucide-react';
 interface NewListItemProps {
     listId: string;
     addItemToList: (item: ListItem) => void;
-    groupId?: string;
     online?: boolean;
 }
 
 type Priority = "low" | "normal" | "high";
 
-const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId, online}) => {
+const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}) => {
     const userId = localStorage.getItem('userId');
 
     const [name, setName] = useState('');
@@ -29,7 +26,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
     const [priority, setPriority] = useState<Priority>('normal');
-    const [assignedTo, setAssignedTo] = useState<string | null>(null);
     const [claimedBy, setClaimedBy] = useState<string | null>(null);
     const [dueDate, setDueDate] = useState("");
     const [dueTime, setDueTime] = useState("");
@@ -41,7 +37,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
 
 
     const [showMoreInputs, setShowMoreInputs] = useState(false);
-    const [showUserSelector, setShowUserSelector] = useState(false);
     const [showTagSelector, setShowTagSelector] = useState(false);
 
     const [error, setError] = useState('');
@@ -69,13 +64,8 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
             isDirty: true,
             clientId: itemId
         };
-        if(assignedTo) {
-            newItem.assignedTo = assignedTo;
-            NotificationService.send({recipientId: assignedTo, category: "ASSIGNMENT", message: `${name} was assigned to you`, metadata: {listId, itemId}});
-        }
         if(claimedBy) {
             newItem.claimedBy = claimedBy;
-            NotificationService.send({recipientId: userId, category: "ASSIGNMENT", message: `${name} was assigned to you`, metadata: {listId, itemId}});
         }
         if(dueDate) {
             const timeString = dueTime || "23:59";
@@ -103,7 +93,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
         setQty(0);
         setDescription('');
         setIsPinned(false);
-        setAssignedTo(null);
         setTags([]);
         setPriority('normal');
         setDueDate("");
@@ -111,7 +100,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
         setDueTime("");
         setClaimedBy(null);
         setReminder(0);
-        setAssignedTo(null);
     }
     const handleNameInput = (value: string) => {
         setName(value)
@@ -120,7 +108,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
 
     const handleClaimItem = () => {
         setClaimedBy(prev => prev ? null : userId);
-        setAssignedTo(null);
     }
     const REMINDER_OPTIONS = [
         { value: 0, label: "No Reminder" },
@@ -138,12 +125,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
                 close={()=>setShowTagSelector(false)} 
                 addTag={(newTag)=>setTags(prev=>[...prev, newTag])} 
                 tags={tags}  
-            /> : null}
-            {showUserSelector && groupId ? <UserSelector 
-                groupId={groupId} 
-                close={()=>setShowUserSelector(false)} 
-                selectUser={(user)=>setAssignedTo(user)} 
-                selectedUser={assignedTo} 
             /> : null}
             <div className={styles.basicInputs}>
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
@@ -174,16 +155,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
                     </div>
                 </div>
                 <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
-                {online ? <div className={styles.claimButtons}>
-                    <button 
-                        onClick={handleClaimItem} 
-                        className={styles.assignButton}
-                        style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
-                    >
-                        {claimedBy ? 'Claimed' : 'Claim item'}
-                    </button>
-                    <button onClick={()=>setShowUserSelector(true)} style={claimedBy ? {} : {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'}} className={styles.assignButton}>{assignedTo ? 'Assigned' : 'Assign'}</button>
-                </div> : null}
                 <div className={styles.deadline}>
                     <fieldset>
                         <label>Due date</label>
@@ -203,6 +174,15 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, groupId
                         </select>
                     </fieldset>
                 </div>
+                {online ? <div className={styles.claimButtons}>
+                    <button 
+                        onClick={handleClaimItem} 
+                        className={styles.assignButton}
+                        style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
+                    >
+                        {claimedBy ? 'Claimed' : 'Claim item'}
+                    </button>
+                </div> : null}
                 <button 
                     className={styles.manageTagsButton} 
                     onClick={()=>setShowTagSelector(true)}

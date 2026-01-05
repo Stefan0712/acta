@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './ViewList.module.css';
-import { type ListItem as ItemType, type List as IList } from '../../../../types/models';
+import { type ListItem as ItemType, type List as IList, type GroupMember } from '../../../../types/models';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../../Notification/NotificationContext';
 import NewItem from '../../../../components/NewItem/NewItem';
@@ -13,13 +13,16 @@ import Loading from '../../../../components/LoadingSpinner/Loading.tsx';
 import Categories from '../../../../components/Categories/Categories.tsx';
 import { IconsLibrary } from '../../../../assets/icons.ts';
 import Summaries from '../../../../components/Summaries/Summaries.tsx';
+import UserSelector from '../../../../components/UserSelector/UserSelector.tsx';
 
-
+interface IListOutletContext {
+  members: GroupMember[]; 
+}
 
 const ViewList = () => {
 
     const {listId} = useParams();
-    const {members} = useOutletContext();
+    const {members} = useOutletContext<IListOutletContext>();
     const navigate = useNavigate();
 
     const userId = localStorage.getItem('userId');
@@ -33,6 +36,8 @@ const ViewList = () => {
     const [listData, setListData] = useState<IList | null>(null);
     const [listItems, setListItems] = useState<ItemType[]>([]);
 
+
+    const [showAssignUser, setShowAssignUser] = useState<null | string>(null);
     const [showMore, setShowMore] = useState(false);
 
     // Filter items based on the current category
@@ -85,6 +90,18 @@ const ViewList = () => {
         }
     };
 
+    const handleUpdateAssigned = (itemId: string, assignedUserId: string) => {
+        setListItems(prev=>{
+            return prev.map(item=>item._id === itemId
+            ? (assignedUserId === userId 
+                ? { ...item, claimedBy: assignedUserId, assignedTo: null } 
+                : { ...item, claimedBy: null, assignedTo: assignedUserId }
+            )
+            : item)
+        });
+        setShowAssignUser(null);
+    }
+    
 
     useEffect(()=>{
         if (!listId){
@@ -121,6 +138,7 @@ const ViewList = () => {
         return ( 
             <div className={styles.viewList}>
                 {showEdit ? <EditList close={()=>setShowEdit(false)} online={true} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
+                {showAssignUser && listData.groupId ? <UserSelector close={()=>setShowAssignUser(null)} itemId={showAssignUser} groupId={listData.groupId} selectUser={(userId)=>handleUpdateAssigned(showAssignUser, userId)}/> : null}
                 <div className={styles.listInfo}>
                     {showMore ? <>
                     <div className={styles.listName}>
@@ -146,14 +164,14 @@ const ViewList = () => {
                         <>
                             {uncompletedItems
                                 .sort((a, b) => Number(b.isPinned) - Number(a.isPinned))
-                                .map(item=><GroupListItem groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
+                                .map(item=><GroupListItem showAssignUser={()=>setShowAssignUser(item._id)} groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
-                            {completedItems.map(item=><GroupListItem groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
+                            {completedItems.map(item=><GroupListItem showAssignUser={()=>setShowAssignUser(item._id)} groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
                         </>  : 
                             <p className='no-items-text'>No items yet</p>
                     }
                 </div>
-                <NewItem groupId={listData.groupId} members={members} listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} />
+                {listData._id && members ? <NewItem listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} /> : null}
             </div>
         );
     }

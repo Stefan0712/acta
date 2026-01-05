@@ -49,10 +49,13 @@
 .item .assignedUser {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 5px;
     align-items: center;
     font-size: 0.75rem;
     color: var(--white-50);
+    gap: 5px;
+}
+.item .assignedUser svg {
+    height: 1rem;
 }
 .item .checkbox svg {
     height: 200%;
@@ -91,7 +94,7 @@ svg {
 }
 .threeCol {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     height: 40px;
     align-items: center;
     width: fit-content;
@@ -101,7 +104,10 @@ svg {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    font-size: 0.8rem;
+}
+.threeCol .col svg {
+    height: 0.9rem;
 }
 .tags {
     width: 100%;
@@ -128,4 +134,11 @@ svg {
 .createdAt {
     color: var(--white-25);
     font-size: 0.75rem;
+}
+.metaRow {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }

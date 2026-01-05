@@ -67,6 +67,25 @@ export async function handleUpdateItem(itemId: string, data: Partial<ListItem>):
         throw new Error('Network error or unknown issue.');
     }
 }
+// Assign/Unassign items
+// PUT /api/items/:id
+export async function handleAssignItem(itemId: string, data: Partial<ListItem>): Promise<string> {
+    try {
+        const response = await API.patch(`/items/${itemId}/assign`, data); 
+        console.log(data, response)
+        if (response.status === 200) {
+            return response.data;
+        }
+
+        throw new Error(response.data.message || 'Failed to update item.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error updating item.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
 
 // Soft-deletes a list item.
 // DELETE /api/items/:id

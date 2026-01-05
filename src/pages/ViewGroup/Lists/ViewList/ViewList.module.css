@@ -73,6 +73,10 @@
     padding-bottom: 70px;
     padding-right: 15px;
 }
+.listItemsContainer h3 {
+    font-size: 1rem;
+    color: var(--white-50);
+}
 .showMoreButton {
     color: var(--white-50);
     background-color: transparent;
