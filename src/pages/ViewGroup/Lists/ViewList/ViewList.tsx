@@ -79,7 +79,6 @@ const ViewList = () => {
                         setIsPageLoading(false)
                     }
                     setListItems(listItemsResponse);
-                    console.log(listItemsResponse)
                 } else {
                     showNotification('No list data found', "error");
                 }

@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getDateAndHour } from '../../../../helpers/dateFormat';
 import EditItem from '../../../../components/EditItem/EditItem';
 import { formatDeadline } from '../../../../helpers/deadlineFormatter';
-import { handleUpdateItem } from '../../../../services/itemService';
+import { handleToggleCheck, handleTogglePin, handleUpdateItem } from '../../../../services/itemService';
 import { Pin, UserPlus } from 'lucide-react';
 
 
@@ -40,9 +40,8 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
         try {
             const newValue = !data.isChecked;
             if(online){
-                const onlineItem = await handleUpdateItem(data._id, {isChecked: newValue});
-                console.log(online)
-                updateItemLocally(onlineItem)
+                const apiResponse = await handleToggleCheck(data._id);
+                updateItemLocally({...data, isChecked: apiResponse})
             } else {
                 await db.listItems.update(data._id, {isChecked: newValue});
                 updateItemLocally({...data, isChecked: newValue});
@@ -56,8 +55,8 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
         try {
             const newValue = !data.isPinned;
             if(online){
-                const onlineItem = await handleUpdateItem(data._id, {isPinned: newValue});
-                updateItemLocally(onlineItem)
+                const apiResponse = await handleTogglePin(data._id);
+                updateItemLocally({...data, isPinned: apiResponse})
             } else {
                 await db.listItems.update(data._id, {isPinned: newValue});
                 updateItemLocally({...data, isPinned: newValue});
