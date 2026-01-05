@@ -83,7 +83,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
             clearInputs();
             setShowMoreInputs(false);
         } else {
-            setError('Name is invalid. It should be between one and 20 characters.');
+            setError('Name is invalid. It should be between one and 50 characters.');
         }
 
     }

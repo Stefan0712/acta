@@ -3,7 +3,6 @@ import styles from './EditItem.module.css';
 import { type GroupMember, type ListItem, type Tag } from '../../types/models';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
-import UserSelector from '../UserSelector/UserSelector.tsx';
 import { loadItem } from '../../helpers/deadlineFormatter.ts';
 import { handleUpdateItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
@@ -12,14 +11,13 @@ interface NewListItemProps {
     itemData: ListItem;
     updateItemLocally: (item: ListItem) => void;
     close: () => void;
-    groupId?: string;
     online: boolean;
     members?: GroupMember[]
 }
 
 type Priority = "low" | "normal" | "high";
 
-const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, close, groupId, online, members}) => {
+const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, close, online, members}) => {
 
 
     const userId = localStorage.getItem('userId');
@@ -31,7 +29,6 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
     const [tags, setTags] = useState<Tag[]>(itemData.tags ?? []);
     const [description, setDescription] = useState(itemData.description ?? '');
     const [priority, setPriority] = useState<Priority>(itemData.priority ?? 'normal');
-    const [assignedTo, setAssignedTo] = useState<string | null>(itemData.assignedTo ?? null);
     const [claimedBy, setClaimedBy] = useState<string | null>(itemData.claimedBy ?? null);
     const [dueDate, setDueDate] = useState(itemData.deadline ? loadItem(itemData.deadline).slice(0,10) : '');
     const [dueTime, setDueTime] = useState(itemData.deadline ? loadItem(itemData.deadline).slice(11,16) : '');
@@ -39,7 +36,6 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
     const [error, setError] = useState<null | string>(null);
 
 
-    const [showUserSelector, setShowUserSelector] = useState(false);
     const [showTagSelector, setShowTagSelector] = useState(false);
 
     const updateItem = async () =>{
@@ -55,9 +51,6 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
             priority,
             reminder
         };
-        if(assignedTo) {
-            updatedItem.assignedTo = assignedTo;
-        }
         if(claimedBy) {
             updatedItem.claimedBy = claimedBy;
         }
@@ -70,7 +63,7 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
             }
             updatedItem.reminder = reminder;
         }
-        if (name && name.length > 0 && name.length < 21) {
+        if (name && name.length > 0 && name.length < 51) {
             if (online) {
                 const onlineItem = await handleUpdateItem(itemData._id, updatedItem);
                 updateItemLocally(onlineItem);
@@ -80,12 +73,11 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
             }
             close();
         } else {
-            setError('Name is invalid. It should be between one and 20 characters.');
+            setError('Name is invalid. It should be between one and 50 characters.');
         }
     }
     const handleClaimItem = () => {
         setClaimedBy(prev => prev ? null : userId);
-        setAssignedTo(null);
     }
     const handleNameInput = (value: string) => {
         setName(value)
@@ -113,12 +105,6 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
                 close={()=>setShowTagSelector(false)} 
                 addTag={(newTag)=>setTags(prev=>[...prev, newTag])} 
                 tags={tags}  
-            /> : null}
-            {showUserSelector && groupId ? <UserSelector 
-                groupId={groupId} 
-                close={()=>setShowUserSelector(false)} 
-                selectUser={(user)=>setAssignedTo(user)} 
-                selectedUser={assignedTo} 
             /> : null}
             <fieldset className={styles.name}>
                 <label>Item name</label>
@@ -156,7 +142,6 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
                     >
                         {claimedBy ? `Claimed by ${members ? members.find(member=>member.userId===claimedBy)?.username : 'other user'}` : 'Claim item'}
                     </button>
-                    <button onClick={()=>setShowUserSelector(true)} style={claimedBy ? {} : {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'}} className={styles.assignButton}>{assignedTo ? `Assigned to ${members ? members.find(member=>member.userId===assignedTo)?.username : 'other user'}` : 'Assign'}</button>
                 </div> : null}
                 <div className={styles.deadline}>
                     <fieldset>
