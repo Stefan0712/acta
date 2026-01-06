@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import styles from './NewGroup.module.css';
 import type { Group, GroupMember } from '../../types/models';
-import { ObjectId } from 'bson';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { createGroup } from '../../services/groupService';
 import { useNavigate } from 'react-router-dom';
@@ -35,20 +34,27 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                 userId,
                 username: username,
                 role: 'owner',
+                joinedAt: new Date(),
+                isPinned: false,
+                notificationPreferences: {
+                    POLL: true,
+                    ASSIGNMENT: true,
+                    MENTION: true,
+                    GROUP: true,
+                    REMINDER: true
+                }
             }
-            const newId = new ObjectId().toString();
             const newGroup: Group = {
                 authorId: userId,
                 name: name ?? "My group",
                 description,
                 isDeleted: false,
                 isDirty: true,
-                createdAt: new Date().toISOString(),
+                createdAt: new Date(),
                 members: [user],
-                clientId: newId,
                 icon,
                 color,
-                isPinned
+                updatedAt: new Date()
             }
             setIsCreating(true);
             try {
@@ -71,7 +77,7 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
     return ( 
         <div className={styles.newGroup}>
             {showIconSelector ? <IconSelector close={()=>setShowIconSelector(false)} icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} /> : null}
-            {showColorSelector ? <ColorSelector close={()=>setShowColorSelector(false)} color={color} setColor={(newColor)=>setColor(newColor)} /> : null}
+            {showColorSelector ? <ColorSelector close={()=>setShowColorSelector(false)} currentColor={color} setColor={(newColor)=>setColor(newColor)} /> : null}
             <div className={styles.content}>
                 <h3>New Group</h3>
                 <fieldset>
