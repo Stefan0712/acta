@@ -4,13 +4,12 @@ import Navigation from './components/Navigation/Navigation.tsx';
 import LocalList from './pages/LocalList/LocalList.tsx';
 import Settings from './pages/Settings/Settings.tsx';
 import { NotificationDisplay } from './Notification/NotificationDisplay.tsx';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import Groups from './pages/Groups/Groups.tsx';
 import ViewGroup from './pages/ViewGroup/ViewGroup.tsx';
 import { UserProvider } from './contexts/UserContext.tsx';
 import ViewList from './pages/ViewGroup/Lists/ViewList/ViewList.tsx';
 import Lists from './pages/ViewGroup/Lists/Lists.tsx';
-import { NotificationService } from './helpers/NotificationService.ts';
 import Notifications from './pages/Notifications/Notifications.tsx';
 import Manage from './pages/ViewGroup/Manage/Manage.tsx';
 import AcceptInvite from './pages/Groups/AcceptInvite/AcceptInvite.tsx';
@@ -28,23 +27,9 @@ import Auth from './pages/Auth/Auth.tsx';
 
 function App() {
 
-  const userId = localStorage.getItem("userId");
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return !!localStorage.getItem('userId') && !!localStorage.getItem('username');
   });
-
-  useEffect(()=>{
-    if(!userId) return;
-    const checkReminders = () => {
-      NotificationService.checkLocalReminders(userId);
-    };
-    checkReminders();
-
-    const intervalId = setInterval(checkReminders, 60 * 1000);
-
-    return () => clearInterval(intervalId);
-
-  },[userId])
 
   if (!isAuthenticated) {
     return (<NewUserFlow onLoginSuccess={()=>setIsAuthenticated(true)} />)

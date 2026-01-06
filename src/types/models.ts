@@ -62,31 +62,35 @@ export interface User {
     isDirty?: boolean;
 }
 
-export type GroupRole = 'owner' | 'moderator' | 'member' | 'guest';
+
+export interface INotificationPreferences {
+  ASSIGNMENT: boolean;
+  MENTION: boolean;
+  GROUP: boolean;
+  REMINDER: boolean;
+  POLL: boolean;
+}
 
 export interface GroupMember {
-    userId: string;
-    username: string;
-    role: GroupRole;
+  userId: string;
+  username?: string;
+  role: 'owner' | 'moderator' | 'member';
+  joinedAt: Date;
+  isPinned: boolean; 
+  notificationPreferences: INotificationPreferences;
 }
 
 export interface Group {
-    _id: string;
     name: string;
     description?: string;
     authorId: string;
-    members: GroupMember[];
-    isDirty: boolean;
-    isDeleted: boolean;
-    createdAt: string;
-    updatedAt?: string;
-    clientId: string | null;
-    listCount?: number;
-    noteCount?: number;
-    pollCount?: number;
     icon: string;
     color: string;
-    isPinned: boolean;
+    members: GroupMember[];
+    createdAt: Date;
+    updatedAt: Date;
+    isDirty: boolean;
+    isDeleted: boolean;
 }
 
 export interface NoteComment {

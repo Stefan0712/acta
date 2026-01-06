@@ -1,24 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Notifications.module.css';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../../db';
-import { type Notification } from '../../types/models';
+import { type Notification as INotification} from '../../types/models';
 import { formatRelativeTime } from '../../helpers/dateFormat';
+import { getNotifications } from '../../helpers/NotificationService';
+import { useNotifications } from '../../Notification/NotificationContext';
+import { useNavigate } from 'react-router-dom';
 
 const Notifications = () => {
 
+    const {showNotification} = useNotifications();
+
     const [selectedGroup, setSelectedGroup] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
-    const userId = localStorage.getItem('userId');
+    const [notifications, setNotifications] = useState<INotification[]>([])
 
 
-    const notifications = useLiveQuery(async ()=>{
-        if(!userId) return [];
+    const fetchNotifications = async () => {
+        try {
+            const apiResponse = await getNotifications();
+                setNotifications(apiResponse);
+                console.log(apiResponse)
+        } catch (error) {
+            console.error(error);
+            showNotification('Failed to fetch new notifications.', "error")
+        }
+    };
 
-        const items = await db.notifications.where({recipientId: userId}).toArray();
-        return items.sort((a, b)=> b.createdAt.getTime() - a.createdAt.getTime());
-
-    }, [userId]);
+    useEffect(()=> {
+        fetchNotifications();
+    },[]);
 
  
     return (
@@ -49,13 +59,15 @@ const Notifications = () => {
 
 export default Notifications;
 
-const Notification = ({data} : {data: Notification}) =>{
+const Notification = ({data} : {data: INotification}) =>{
+
+    const navigate = useNavigate();
 
     return (
-        <div className={styles.notification}>
+        <div className={styles.notification} key={data._id} onClick={()=>data.groupId ? navigate(`/group/${data.groupId}`) : null}>
             <div className={styles.color} />
             <div className={styles.content}>
-                <b>Notification Type</b>
+                <b>{data.category ? `${data.category} update` : ''}</b>
                 <p className={styles.message}>{data.message}</p>
             </div>
             <p className={styles.timestamp}>{formatRelativeTime(data.createdAt ?? new Date())}</p>

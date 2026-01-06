@@ -13,16 +13,16 @@ const Navigation = () => {
         <div className={styles.navigation}>
             {showMenu ? <Menu close={()=>setShowMenu(false)} /> : null}
             <Link to={'/lists'} onClick={()=>setShowMenu(false)}>
-                <IconsLibrary.Dashboard />
-                <p>Home</p>
-            </Link>
-            <Link to={'/lists'} onClick={()=>setShowMenu(false)}>
                 <IconsLibrary.Lists />
                 <p>Lists</p>
             </Link>
             <Link to={'/groups'} onClick={()=>setShowMenu(false)}>
                 <IconsLibrary.Group />
                 <p>Groups</p>
+            </Link>
+            <Link to={'/notifications'} onClick={()=>setShowMenu(false)}>
+                <IconsLibrary.Bell />
+                <p>Notifications</p>
             </Link>
             <button onClick={()=>setShowMenu(prev=>!prev)}>
                 <IconsLibrary.Menu />
