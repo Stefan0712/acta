@@ -219,3 +219,12 @@ export interface InviteLookupData {
     };
     userIsAuthenticated: boolean;
 }
+
+
+
+
+export interface Changelog {
+    date: string;
+    description: string;
+    listItems: string[];
+}

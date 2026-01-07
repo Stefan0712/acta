@@ -39,6 +39,10 @@ const Menu = ({close}: {close:()=>void}) => {
                     <IconsLibrary.Settings />
                     <p>Settings</p>
                 </Link>
+                <Link className={styles.fullWidthButton} to={'/changelogs'} onClick={closea}>
+                    <IconsLibrary.List2 />
+                    <p>Changelogs</p>
+                </Link>
                 <Link className={styles.fullWidthButton} to={'/about'} onClick={close}>
                     <HelpCircleIcon />
                     <p>About</p>

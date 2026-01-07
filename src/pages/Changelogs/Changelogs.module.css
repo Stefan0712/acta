@@ -1,0 +1,38 @@
+.changelogs {
+    padding: 10px;
+    display: grid;
+    grid-template-rows: 50px 1fr;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+}
+.changelogsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.changelog {
+    width: 100%;
+    background-color: var(--item-bg);
+    border: 1px solid var(--white-10);
+    color: var(--text-color);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.changelog h1 {
+    font-size: 1.1rem;
+    color: var(--white-50);
+}
+.changelog ul {
+    display: flex;
+    flex-direction: column;
+    color: var(--white-50);
+}
+.changelog ul li {
+    list-style-position: inside;
+    padding-left: 0;
+    color: var(--white-50);
+}

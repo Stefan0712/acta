@@ -23,6 +23,7 @@ import Import from './pages/Import/Import.tsx';
 import Welcome from './pages/NewUserFlow/Welcome/Welcome.tsx';
 import About from './pages/About/About.tsx';
 import Auth from './pages/Auth/Auth.tsx';
+import Changelogs from './pages/Changelogs/Changelogs.tsx';
 
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
               <Route path="/import" element={<Import />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/about" element={<About />} />
+              <Route path="/changelogs" element={<Changelogs />} />
             </Routes>
           </main>
           <Navigation />

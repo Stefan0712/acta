@@ -68,7 +68,6 @@ const Lists = () => {
                     }
                 )
                 )
-                console.log(updatedLists)
                 setLists(updatedLists);
             } else {
                 setLists([]);
