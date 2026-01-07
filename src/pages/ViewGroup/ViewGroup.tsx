@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 import styles from './ViewGroup.module.css';
 import { IconsLibrary } from '../../assets/icons';
 import { useEffect, useState } from 'react';
@@ -15,9 +15,7 @@ const ViewGroup = () => {
     const {groupId} = useParams();
     const userToken = localStorage.getItem('jwt-token');
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const isGroupRoot = location.pathname === `/group/${groupId}`;
 
     const [groupData, setGroupData] = useState<Group | null>();
     const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +54,6 @@ const ViewGroup = () => {
                 {showMenu ? <Menu close={()=>setShowMenu(false)} showEdit={()=>setShowEdit(true)} groupId={groupId} /> : null}
                 {showEdit ? <EditGroup groupId={groupId} close={()=>setShowEdit(false)} handleLocalUpdate={(newData)=>setGroupData(newData)}/> : null}    
                 <Header 
-                    prevUrl={isGroupRoot ? '/groups' : `/group/${groupData._id}`}
                     title={groupData.name ?? 'View Group'}
                     Button={<button onClick={()=>setShowMenu(prev=>!prev)}><IconsLibrary.Settings /></button>}
                 />
