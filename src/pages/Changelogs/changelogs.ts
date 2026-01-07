@@ -3,7 +3,7 @@ import type { Changelog } from "../../types/models";
 export const CHANGELOGS_ITEMS: Changelog[] = [
     {
         date: '7 Jan 2026',
-        description: 'Minor fixes.',
+        description: 'This update focuses on fixing front-end issues and small improvements',
         listItems: [
             'Change default list color from white to a darker one', 
             'Increate Poll title length from 50 to 140 characters',
@@ -19,7 +19,11 @@ export const CHANGELOGS_ITEMS: Changelog[] = [
             'Updated New poll the same way as Edit Poll',
             'Created endPoll function in pollService file. Added a confirmation modal for ending the poll',
             'Fixed completed items counter not being updated for group lists',
-            
+            'Remove the bottom border of app header',
+            'Removed the number of items from Summaries',
+            'Moved buttons for managing a group to Manage Group page. Replaced Group settings button from the header with Activity button',
+            'Shrunk button height from app menu',
+
         ]
     }
 ]

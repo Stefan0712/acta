@@ -1,4 +1,4 @@
-import type { Group, Invite, InviteLookupData, ActivityLog } from '../types/models.ts';
+import type { Group, Invite, InviteLookupData, ActivityLog, GroupMember } from '../types/models.ts';
 import API from './apiService.ts';
 import axios from 'axios';
 
@@ -171,6 +171,40 @@ export async function leaveGroup(groupId: string): Promise<string> {
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             throw new Error(error.response.data.message || 'Server error deleting group.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+// Kick user from group
+export async function kickUser(groupId: string, targetUserId: string): Promise<string> {
+    try {
+        const response = await API.post(`/groups/${groupId}/kick`,{ targetUserId});
+
+        if (response.status === 200) {
+            return response.data.message;
+        }
+        throw new Error(response.data.message || 'Failed to kick the user from the group.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error kicking user from the group.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+// Change member role
+export async function changeRole(groupId: string, targetUserId: string, newRole: string): Promise<GroupMember> {
+    try {
+        const response = await API.put(`/groups/${groupId}/role`, {targetUserId, newRole});
+
+        if (response.status === 200) {
+            return response.data;
+        }
+        throw new Error(response.data.message || 'Failed to update role.');
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error updating the role of this user.');
         }
         throw new Error('Network error or unknown issue.');
     }

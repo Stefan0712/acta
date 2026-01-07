@@ -5,6 +5,18 @@
     gap: 20px;
     color: var(--text-color);
 }
+.membersHeader {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+}
+.membersHeader button {
+    background-color: transparent;
+    border: none;
+    color: var(--accent);
+}
 .membersContainer {
     width: 100%;
     display: flex;
@@ -24,7 +36,7 @@
 .member:last-child {
     border-bottom: none;
 }
-.manage button {
+.dangerZone button {
     width: 100%;
     height: 50px;
     border-radius: 5px;

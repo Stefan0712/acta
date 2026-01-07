@@ -84,14 +84,18 @@ const Manage = () => {
                 {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} title='Delete this group?' content='Are you sure you want to delete this group and all items related to it? This cannot be undone'/>  : null}
                 {showLeave ? <ConfirmationModal cancel={()=>setShowLeave(false)} confirm={handleLeaveGroup} title='Leave this group?' content='Are you sure you want to leave this group? If you want to rejoin, you must receive another invitation from a group member.'/>  : null}
                 {showInviteModal && groupId ? <InviteModal groupId={groupId}  close={()=>setShowInviteModal(false)} /> : null}
-                <h4>Members</h4>
+                <div className={styles.membersHeader}>
+                    <h4>Members</h4>
+                    <button className={styles.inviteButton} onClick={()=>setShowInviteModal(true)}>Invite members</button>
+                </div>
                 <div className={styles.membersContainer}>
                     {groupData.members?.length > 0 ? groupData.members.map(member=><div className={styles.member} key={member.userId}><p>{member.username}</p><b>{member.role}</b></div>) : <p>No members</p>}
                 </div>
-                <button className={styles.inviteButton} onClick={()=>setShowInviteModal(true)}>Invite members</button>
-                <button className={styles.menuButton} onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /><p>Edit Group</p></button>
-                <button className={styles.menuButton} onClick={()=>setShowDelete(true)} style={{color: 'red'}}><IconsLibrary.Delete /><p>Delete Group</p></button>
-                <button className={styles.menuButton} onClick={()=>setShowLeave(true)}><IconsLibrary.Logout /><p>Leave Group</p></button>
+                <div className={styles.dangerZone}>
+                    <button className={styles.menuButton} onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /><p>Edit Group</p></button>
+                    <button className={styles.menuButton} onClick={()=>setShowDelete(true)} style={{color: 'red'}}><IconsLibrary.Delete /><p>Delete Group</p></button>
+                    <button className={styles.menuButton} onClick={()=>setShowLeave(true)}><IconsLibrary.Logout /><p>Leave Group</p></button>
+                </div>
             </div>
         );
     }

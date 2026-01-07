@@ -25,8 +25,8 @@ const Navigation = () => {
                 <p>Notifications</p>
             </Link>
             <button onClick={()=>setShowMenu(prev=>!prev)}>
-                <IconsLibrary.Menu />
-                <p>Menu</p>
+                {showMenu ? <IconsLibrary.Close /> : <IconsLibrary.Menu />}
+                <p>{showMenu ? 'Close' : 'Menu'}</p>
             </button>
         </div>
     );
