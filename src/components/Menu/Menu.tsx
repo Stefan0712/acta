@@ -39,7 +39,7 @@ const Menu = ({close}: {close:()=>void}) => {
                     <IconsLibrary.Settings />
                     <p>Settings</p>
                 </Link>
-                <Link className={styles.fullWidthButton} to={'/changelogs'} onClick={closea}>
+                <Link className={styles.fullWidthButton} to={'/changelogs'} onClick={close}>
                     <IconsLibrary.List2 />
                     <p>Changelogs</p>
                 </Link>
@@ -54,7 +54,7 @@ const Menu = ({close}: {close:()=>void}) => {
                             onClick={()=>setExpandUserInfo(prev=>!prev)}
                         />
                         <b onClick={()=>setExpandUserInfo(prev=>!prev)}>{isLoggedIn ? localStorage.getItem('username') : 'Local Account'}</b>
-                        {isLoggedIn ? <button onClick={logout}><IconsLibrary.Logout /> <p>Logout</p></button> : <Link to={'/auth'}><IconsLibrary.Login /> <p>Login</p></Link>}
+                        {isLoggedIn ? <button className={styles.logoutButton} onClick={logout}><IconsLibrary.Logout /> <p>Logout</p></button> : <Link to={'/auth'}><IconsLibrary.Login /> <p>Login</p></Link>}
                     </div>
                     {expandUserInfo ? <div className={styles.userInfo}>
                         <fieldset>

@@ -10,7 +10,6 @@ import { getDateAndHour } from '../../helpers/dateFormat.ts';
 import EditList from '../../components/EditList/EditList.tsx';
 import ListItem from '../../components/ListItem/ListItem.tsx';
 import Loading from '../../components/LoadingSpinner/Loading.tsx';
-import Categories from '../../components/Categories/Categories.tsx';
 import Header from '../../components/Header/Header.tsx';
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal.tsx';
 import Summaries from '../../components/Summaries/Summaries.tsx';
@@ -23,7 +22,6 @@ const List = () => {
     const navigate = useNavigate();
     const { showNotification } = useNotifications();
 
-    const [showPageMenu, setShowPageMenu] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState('all');
@@ -116,15 +114,17 @@ const List = () => {
     } else if(listData && listData._id) {
         return ( 
             <div className={styles.List}>
-                {showPageMenu ? <PageMenu close={()=>setShowPageMenu(false)} edit={()=>setShowEdit(true)} handleDelete={()=>setShowDeleteModal(true)} isDeleted={listData.isDeleted} handleRestore={restoreList}/> : null}
                 {showEdit ? <EditList close={()=>setShowEdit(false)} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
                 {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)}  confirm={deleteList} title='Delete this list?' content='Are you sure you want to delete this list? You can restore it later' /> : null}
                 <Header 
                     prevUrl={'/lists'} 
                     title={listData.name} 
-                    Button={<button onClick={()=>setShowPageMenu(prev=>!prev)}><IconsLibrary.Dots /></button>}
                 />
                 <div className={styles.listInfo}>
+                    <Summaries 
+                        totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
+                        completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
+                    />
                     {showMore ? <>
                     <div className={styles.listMeta}>
                         <div className={styles.listTimestamps}>
@@ -133,13 +133,23 @@ const List = () => {
                         </div>
                         <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
                     </div>
-                    <Summaries 
-                        totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
-                        completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
-                    /></> : null}
-                    <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}><IconsLibrary.Arrow style={showMore ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'} } />{showMore ? 'Show less' : 'Show more'}</button>
+                    <div className={styles.listButtons}>
+                        {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
+                        {listData.isDeleted ? null : <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /> Delete List</button>}
+                        {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
+                    </div>
+                    </> : null}
                 </div>
-                <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','deleted']} />
+                <div className={styles.listFilters}>
+                    <select className='category-selector' value={selectedCategory} onChange={(e)=>setSelectedCategory(e.target.value)}>
+                        <option value={'all'}>All</option>
+                        <option value={'pinned'}>Pinned</option>
+                        <option value={'deleted'}>Deleted</option>
+                    </select>
+                    <div className={styles.buttons}>
+                        <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}><IconsLibrary.Arrow style={showMore ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'} } />{showMore ? 'Show less' : 'Show more'}</button>
+                    </div>
+                </div>
                 <div className={styles.listItemsContainer}>
                     {filteredItems && filteredItems.length > 0 ? 
                         <>
@@ -160,26 +170,3 @@ const List = () => {
 }
  
 export default List;
-
-interface PageMenuProps {
-    close: () => void;
-    edit: () => void;
-    handleDelete: () => void;
-    handleRestore: () => void;
-    isDeleted: boolean;
-}
-
-const PageMenu: React.FC<PageMenuProps> = ({close, edit, handleDelete, isDeleted, handleRestore}) => {
-
-    const showEditModal = () => {
-        edit();
-        close();
-    }
-    return (
-        <div className={styles.pageMenu}>
-            <button onClick={showEditModal}>Edit List</button>
-            {isDeleted ? <button style={{color: 'var(--text-color)'}} onClick={handleRestore}>Restore List</button> : <button onClick={handleDelete}>Delete List</button>}
-            <button onClick={close}>Cancel</button>
-        </div>
-    )
-}

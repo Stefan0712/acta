@@ -65,19 +65,7 @@ const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
             }
         }
     };
-    const handleDeleteList = async () =>{
-        if(listData._id) {
-            try {
-                await updateList(listData._id,{isDeleted: true});
-                showNotification("Shopping list deleted", "success");
-                navigate(`/group/${listData.groupId}`)
-                close();
-            } catch (error) {
-                console.error(error);
-                showNotification("Failed to delete list.", "error");
-            }
-        }
-    }
+
     // Fill in data received from the shopping list
     useEffect(()=>{
         if(listData){
@@ -123,7 +111,7 @@ const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
                     </fieldset>
                 </div>
                 <div className={styles.bottomButtons}>
-                    <button className={styles.deleteButton} onClick={handleDeleteList}>Delete</button>
+                    <button className={styles.closeButton} onClick={close}>close</button>
                     <button className={styles.saveButton} onClick={handleSaveList}>Save</button>
                 </div>
             </div>

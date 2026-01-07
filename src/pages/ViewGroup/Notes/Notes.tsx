@@ -9,7 +9,6 @@ import { createComment, deleteComment, deleteNote, getNoteComments, getNotesByGr
 import NewNote from './NewNote';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
 import EditNote from './EditNote';
-import Categories from '../../../components/Categories/Categories';
 
 // TODO: Add a delete confirmation modal
 // TODO: Write a function to remove the local copy of a freshly deleted note from the API
@@ -81,7 +80,11 @@ const Notes = () => {
                         <button><IconsLibrary.Bell /></button>
                     </div> 
                 : null}
-                <Categories setCategory={setSelectedFilter} category={selectedFilter} categories={['active', 'pinned', 'deleted']} />
+                <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
+                    <option value={'active'}>Active</option>
+                    <option value={'pinned'}>Pinned</option>
+                    <option value={'deleted'}>Deleted</option>
+                </select>
                 <div className={styles.notesContainer}>
                     {showNewNote && groupId ? <NewNote close={()=>setShowNewNote(false)} addNote={(newNote)=>setNotes(prev=>[...prev, newNote])} groupId={groupId} /> : null}
                     {showNewNote ? null : <button onClick={()=>setShowNewNote(true)} className={styles.newNoteButton}>

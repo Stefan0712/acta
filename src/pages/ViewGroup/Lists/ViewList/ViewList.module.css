@@ -27,7 +27,6 @@
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 10px;
     flex-direction: row-reverse;
 }
 .viewList .listButtons button {
@@ -38,7 +37,7 @@
     background-color: transparent;
     border: none;
     color: var(--text-color);
-    padding: 0 10px;
+    padding: 0 5px;
     gap: 5px;
 }
 .listButtons button svg {
@@ -48,21 +47,16 @@
 .listName {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 30px;
+    grid-template-columns: 1fr auto;
+    padding: 0 10px;
     gap: 10px;
     align-items: center;
     font-size: 0.8rem;
 }
-.listName button {
-    height: 30px;
-    width: 30px;
-    background-color: transparent;
-    border: 1px solid transparent;
-}
-.listName button svg {
-    height: 70%;
-    width: 70%;
-    color: var(--text-color);
+.listName p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 .listItemsContainer {
     display: flex;
@@ -71,7 +65,6 @@
     overflow-y: auto;
     height: 100%;
     padding-bottom: 70px;
-    padding-right: 15px;
 }
 .listItemsContainer h3 {
     font-size: 1rem;
@@ -143,4 +136,17 @@
 .listMeta .description {
     color: var(--white-50);
     width: 100%;
+}
+.listFilters {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+.listFilters .buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--white-50);
 }

@@ -10,10 +10,9 @@ import GroupListItem from '../GroupListItem/GroupListItem.tsx'
 import {  getList, updateList } from '../../../../services/listService.ts';
 import { getListItems } from '../../../../services/itemService.ts';
 import Loading from '../../../../components/LoadingSpinner/Loading.tsx';
-import Categories from '../../../../components/Categories/Categories.tsx';
 import { IconsLibrary } from '../../../../assets/icons.ts';
-import Summaries from '../../../../components/Summaries/Summaries.tsx';
 import UserSelector from '../../../../components/UserSelector/UserSelector.tsx';
+import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal.tsx';
 
 interface IListOutletContext {
   members: GroupMember[]; 
@@ -39,6 +38,7 @@ const ViewList = () => {
 
     const [showAssignUser, setShowAssignUser] = useState<null | string>(null);
     const [showMore, setShowMore] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Filter items based on the current category
     const filteredItems = useMemo(() => {
@@ -124,11 +124,29 @@ const ViewList = () => {
         }
        }
     }
+    const handleDeleteList = async () =>{
+        if(listData && listData._id) {
+            try {
+                await updateList(listData._id,{isDeleted: true});
+                showNotification("Shopping list deleted", "success");
+                navigate(`/group/${listData.groupId}`)
+                close();
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to delete list.", "error");
+            }
+        }
+    }
     // Optimistically update item list
     const updateItem = (updatedItem: ItemType) => {
         const updatedList = listItems.map(item=>item._id===updatedItem._id ? updatedItem : item)
         setListItems(updatedList); // Updates the list of all items with the updated one
     };
+    const totalItems = listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0
+    const checkedItems = listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0
+    const percentage = (checkedItems/totalItems)*100 || 0;
+
+
     if (!localStorage.getItem('jwt-token')){
         navigate('/auth');
     }else if (isPageLoading) {
@@ -138,12 +156,28 @@ const ViewList = () => {
             <div className={styles.viewList}>
                 {showEdit ? <EditList close={()=>setShowEdit(false)} online={true} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
                 {showAssignUser && listData.groupId ? <UserSelector close={()=>setShowAssignUser(null)} itemId={showAssignUser} groupId={listData.groupId} selectUser={(userId)=>handleUpdateAssigned(showAssignUser, userId)}/> : null}
+                {showDeleteModal ? <ConfirmationModal 
+                            title='Delete list?' 
+                            content='Are you sure you want to delete this list? You can restore it later' 
+                            cancel={()=>setShowDeleteModal(false)}
+                            confirm={handleDeleteList}
+                        />
+                    : null
+                }
                 <div className={styles.listInfo}>
-                    {showMore ? <>
                     <div className={styles.listName}>
                         <h2>{listData.name}</h2>
-                        {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /></button> : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /></button>}
                     </div>
+                    <div className='progress'>
+                        <div className='progressText'>
+                            <p></p>
+                            <b>{percentage.toFixed(2) || 0}%</b>
+                        </div>
+                        <div className='progressBar'>
+                            <div className='progressLine' style={{width: `${percentage}%`}} />
+                        </div>
+                    </div>
+                    {showMore ? <>
                     <div className={styles.listMeta}>
                         <div className={styles.listTimestamps}>
                             <p className={styles.createdAt}><IconsLibrary.Calendar />{getDateAndHour(listData.createdAt)}</p>
@@ -151,13 +185,24 @@ const ViewList = () => {
                         </div>
                         <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
                     </div>
-                    <Summaries 
-                        totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
-                        completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
-                    /></> : null}
-                    <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}><IconsLibrary.Arrow style={showMore ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'} } />{showMore ? 'Show less' : 'Show more'}</button>
+                    <div className={styles.listButtons}>
+                        {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
+                        {listData.isDeleted ? null : <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /> Delete List</button>}
+                        {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
+                    </div>
+                    </> : null}
                 </div>
-                <Categories category={selectedCategory} setCategory={(newCat)=>setSelectedCategory(newCat)} categories={['all','pinned','mine', 'deleted']} />
+                <div className={styles.listFilters}>
+                    <select className='category-selector' value={selectedCategory} onChange={(e)=>setSelectedCategory(e.target.value)}>
+                        <option value={'all'}>All</option>
+                        <option value={'pinned'}>Pinned</option>
+                        <option value={'mine'}>Mine</option>
+                        <option value={'deleted'}>Deleted</option>
+                    </select>
+                    <div className={styles.buttons}>
+                        <button className={styles.showMoreButton} onClick={()=>setShowMore(prev=>!prev)}>{showMore ? 'Show less' : 'Show more'}<IconsLibrary.Arrow style={showMore ? {transform: 'rotateZ(90deg)'} : {transform: 'rotateZ(-90deg)'} } /></button>
+                    </div>
+                </div>
                 <div className={styles.listItemsContainer}>
                     { filteredItems && filteredItems.length > 0 ? 
                         <>

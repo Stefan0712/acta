@@ -12,7 +12,17 @@ const Summaries: React.FC<SummariesProps> = ({totalItems, completedItems}) =>{
     const percentage = (completedItems/totalItems)*100;
     return (
         <div className={styles.summaries}>
-            <div className={styles.collumns}>
+            
+            <div className={styles.progress}>
+                <div className={styles.progressText}>
+                    <p>TOTAL PROGRESS</p>
+                    <b>{percentage.toFixed(2) || 0}%</b>
+                </div>
+                <div className={styles.progressBar}>
+                    <div className={styles.progressLine} style={{width: `${percentage}%`}} />
+                </div>
+            </div>
+            {/* <div className={styles.collumns}>
                 <div className={styles.collumn}>
                     <b>{totalItems ?? 0}</b>
                     <p>TOTAL</p>
@@ -25,16 +35,7 @@ const Summaries: React.FC<SummariesProps> = ({totalItems, completedItems}) =>{
                     <b>{completedItems || 0}</b>
                     <p>COMPLETED</p>
                 </div>
-            </div>
-            <div className={styles.progress}>
-                <div className={styles.progressText}>
-                    <p>TOTAL PROGRESS</p>
-                    <b>{percentage.toFixed(2) || 0}%</b>
-                </div>
-                <div className={styles.progressBar}>
-                    <div className={styles.progressLine} style={{width: `${percentage}%`}} />
-                </div>
-            </div>
+            </div> */}
         </div>
     )  
 }

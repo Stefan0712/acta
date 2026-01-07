@@ -25,7 +25,7 @@ const NewList: React.FC<IProps> = ({close, groupId, addListToState}) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
-    const [color, setColor] = useState('#FFFFFF');
+    const [color, setColor] = useState('var(--modal-bg)');
     const [error, setError] = useState('');
     const [icon, setIcon] = useState('default-icon');
 

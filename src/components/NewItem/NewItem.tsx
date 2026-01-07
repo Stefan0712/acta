@@ -41,6 +41,15 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
 
     const [error, setError] = useState('');
 
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        console.log("Key was registered", e.key)
+        if (e.key === 'Enter') {
+            addNewItem();
+        }
+    };
+
+
     const addNewItem = async () =>{
         if(!userId) return;
         const currentDate = new Date();
@@ -72,7 +81,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
             const localDateTime = new Date(`${dueDate}T${timeString}`);
             newItem.deadline = localDateTime.toISOString();
         }
-        if (name && name.length > 0 && name.length < 50) {
+        if (name && name.length > 0 && name.length < 100) {
             if( online ) {
                 const onlineItem = await createItem(newItem);
                 addItemToList(onlineItem);
@@ -83,7 +92,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
             clearInputs();
             setShowMoreInputs(false);
         } else {
-            setError('Name is invalid. It should be between one and 50 characters.');
+            setError('Name is invalid. It should be between one and 100 characters.');
         }
 
     }
@@ -131,7 +140,17 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
                 <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
                     {showMoreInputs ? <IconsLibrary.Close /> : <Maximize />}
                 </button>
-                <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
+                <input 
+                    autoComplete="off" 
+                    type="text" 
+                    name="name"
+                    onKeyDown={handleKeyDown}
+                    onChange={(e)=>handleNameInput(e.target.value)} 
+                    value={name} 
+                    placeholder='Name...' 
+                    required 
+                    minLength={0} 
+                />
                 <button className={styles.addButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
             </div>
             
@@ -140,7 +159,15 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
                 <div className={styles.secondRow}>
                     <div className={styles.rowSection}>
                         <label>Qty</label>
-                        <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
+                        <input 
+                            autoComplete="off" 
+                            type="number" 
+                            name="qty" 
+                            onChange={(e)=>setQty(parseInt(e.target.value))} 
+                            value={qty} 
+                            placeholder='0' 
+                            required
+                            min={0} />
                     </div>
                     <div className={styles.rowSection}>
                         <label>Unit</label>

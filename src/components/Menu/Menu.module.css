@@ -131,3 +131,10 @@
 .authButton .userInfo {
     padding-bottom: 10px;
 }
+.authButton .logoutButton {
+    display: flex;
+    flex-direction: row;
+}
+.authButton .logoutButton svg {
+    height: 0.9rem;
+}

@@ -58,6 +58,28 @@
     justify-content: center;
     gap: 10px;
 }
+.List .listButtons {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+}
+.List .listButtons button {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    color: var(--text-color);
+    padding: 0 5px;
+    gap: 5px;
+}
+.listButtons button svg {
+    height: 16px;
+    width: 16px;
+}
 .newItemButton {
     width: 50px;
     height: 50px;
@@ -150,22 +172,17 @@
     font-size: 0.9rem;
     color: var(--white-50);
 }
-.categoryButtons {
+
+.listFilters {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+.listFilters .buttons {
     display: flex;
     align-items: center;
     gap: 10px;
-    height: 40px;
-    overflow-x: auto;
+    color: var(--white-50);
 }
-.categoryButtons button {
-    height: 40px;
-    padding: 0 10px;
-    border-radius: 5px;
-    border: 1px solid var(--item-bg);
-    background-color: transparent;
-    color: var(--text-color);
-}
-.categoryButtons button.selectedCategory {
-    border-color: var(--accent)
-}
-

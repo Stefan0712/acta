@@ -32,8 +32,8 @@ const NewPoll = ({handleAddPoll, close}: {handleAddPoll: (newPoll: Poll)=>void, 
     }
 
     const handleAdd = async () =>{
-        if(!title || title.length < 1 || title.length > 30){
-            setTitleError("Title invalid. Must be between 1 and 30 characters");
+        if(!title || title.length < 1 || title.length > 140){
+            setTitleError("Title invalid. Must be between 1 and 140 characters");
         }else if(options.length < 2){
             setOptionsError("A poll MUST have at least two options.")
         } else if (groupId) {
@@ -132,7 +132,7 @@ const NewOption: React.FC<NewOptionProps> = ({addOption, totalOptions}) => {
 
 
     const handleAdd = () => {
-        if(!text || text.length < 1 || text.length > 50) {
+        if(!text || text.length < 1 || text.length > 140) {
             setError("Option invalid. It should be between 1 and 50 characters.")
         }
         addOption(text);

@@ -9,7 +9,6 @@ import { deleteList, getGroupLists, updateList } from '../../../services/listSer
 import Loading from '../../../components/LoadingSpinner/Loading';
 import { db } from '../../../db';
 import { getIcon } from '../../../components/IconSelector/iconCollection';
-import Categories from '../../../components/Categories/Categories';
 import Header from '../../../components/Header/Header';
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal';
 import Summaries from '../../../components/Summaries/Summaries';
@@ -111,7 +110,11 @@ const Lists = () => {
                     <Header title='My Lists' />
                 : null}
                 <Summaries totalItems={lists.length} completedItems={lists.filter(list=>list.completedItemsCounter === list.totalItemsCounter && list.completedItemsCounter && list.completedItemsCounter > 0).length} />
-                <Categories category={selectedFilter} setCategory={(newCat)=>setSelectedFilter(newCat)} categories={['active','completed','deleted']} />
+                <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
+                    <option value={'active'}>Active</option>
+                    <option value={'completed'}>Completed</option>
+                    <option value={'deleted'}>Deleted</option>
+                </select>
                 <div className={styles.listsContainer}>
                     {showNewList ? <NewList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} groupId={groupId} /> : null}
                     {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
