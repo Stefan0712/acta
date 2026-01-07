@@ -14,7 +14,10 @@ export const CHANGELOGS_ITEMS: Changelog[] = [
             'Replaced Summaries component with a hardcoded and customized progress bar inside View List',
             'Moved Edit, Delete, and Restore button at the bottom of the List Info section render them conditionally',
             'Fixed Logout button having flex column as direction instead of row',
-            ''
+            'Fixed Item description not showing for Group list items',
+            'Fixed types in Edit poll. Removed unnecessary text and reordered elements a bit. Fixed wrong height of already addded options',
+            'Updated New poll the same way as Edit Poll',
+            
         ]
     }
 ]

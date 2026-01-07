@@ -89,42 +89,30 @@ const EditPoll = ({handleUpdatePoll, close, pollId}: {handleUpdatePoll: (updated
             <div className={styles.newPollBackground}>
                 <div className={styles.newPoll}>
                     <div className={styles.header}>
-                        <h1>New Poll</h1>
+                        <h1>Edit Poll</h1>
                         <button onClick={close}><IconsLibrary.Close /></button>
                     </div>
                     <div className={styles.inputs}>
-                        <fieldset>
-                            <label>Title</label>
-                            <input type='text' name='title' value={title} onChange={(e)=>handleTitleInput(e.target.value)} placeholder='What is this poll about?'></input>
-                            {titleError ? <p className='error-message'>{titleError}</p> : null}
-                        </fieldset>
-                        <fieldset>
-                            <label>Description</label>
-                            <input type='text' name='description' value={description} onChange={(e)=>setDescription(e.target.value)} placeholder='Add some context (optional)'></input>
-                        </fieldset>
-                        <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-                            <label>Allow custom optinos?</label>
-                            <SwitchButton isActivated={allowCustomOptions} onPress={()=>setAllowCustomOptions(prev=>!prev)} />
-                        </div>
-                        <b>ENDS AT</b>
+                        <input type='text' name='title' value={title} onChange={(e)=>handleTitleInput(e.target.value)} placeholder='Poll title...'></input>
+                        {titleError ? <p className='error-message'>{titleError}</p> : null}
+                        <input type='text' name='description' value={description} onChange={(e)=>setDescription(e.target.value)} placeholder='Poll description...'></input>
+                        <b>Ends at</b>
                         <div className={styles.due}>
-                            <fieldset>
-                                <label>Date</label>
-                                <input type='date' name='date' value={endDate} onChange={(e)=>setEndDate(e.target.value)}></input>
-                            </fieldset>
-                            <fieldset>
-                                <label>Time</label>
-                                <input type='time' name='hour' value={endHour} onChange={(e)=>setEndHour(e.target.value)}></input>
-                            </fieldset>
+                            <input type='date' name='date' value={endDate} onChange={(e)=>setEndDate(e.target.value)} />
+                            <input type='time' name='hour' value={endHour} onChange={(e)=>setEndHour(e.target.value)} />
                         </div>
                         <b>OPTIONS</b>
+                        <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
+                            <label>Allow custom options?</label>
+                            <SwitchButton isActivated={allowCustomOptions} onPress={()=>setAllowCustomOptions(prev=>!prev)} />
+                        </div>
                         {optionsError ? <p className='error-message'>{optionsError}</p> : null}
                         <div className={styles.options}>
                             {options?.map((option,index)=><Option key={option._id} data={option} handleRemove={handleRemoveOption} index={index} />)}
                             <NewOption pollId={pollId} addOption={(newOption)=>setOptions(prev=>[...prev, newOption])} totalOptions={options.length}/>
                         </div>
                     </div>
-                <button className={styles.startPollButton} onClick={handleAdd}>Start Poll</button>
+                <button className={styles.startPollButton} onClick={handleAdd}>Save</button>
                 </div>
             </div>
         )

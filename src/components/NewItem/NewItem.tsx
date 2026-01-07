@@ -43,7 +43,6 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
 
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        console.log("Key was registered", e.key)
         if (e.key === 'Enter') {
             addNewItem();
         }
