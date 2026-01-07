@@ -28,7 +28,6 @@ const Groups = () => {
             try {
                 const apiResponse = await getMyGroups();
                 setGroups(apiResponse);
-                console.log(apiResponse);
                 setIsLoading(false);
             } catch (error) {
                 console.error(error);

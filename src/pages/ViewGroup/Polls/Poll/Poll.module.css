@@ -52,7 +52,7 @@
     background-color: transparent;
     border: none;
     display: grid;
-    grid-template-columns: 20px 1fr;
+    grid-template-columns: 20px 1fr auto;
     gap: 10px;
     color: var(--white-50);
     text-align: start;

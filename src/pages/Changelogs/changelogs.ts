@@ -2,7 +2,7 @@ import type { Changelog } from "../../types/models";
 
 export const CHANGELOGS_ITEMS: Changelog[] = [
     {
-        date: '7 Jan 10:55',
+        date: '7 Jan 2026',
         description: 'Minor fixes.',
         listItems: [
             'Change default list color from white to a darker one', 
@@ -17,6 +17,8 @@ export const CHANGELOGS_ITEMS: Changelog[] = [
             'Fixed Item description not showing for Group list items',
             'Fixed types in Edit poll. Removed unnecessary text and reordered elements a bit. Fixed wrong height of already addded options',
             'Updated New poll the same way as Edit Poll',
+            'Created endPoll function in pollService file. Added a confirmation modal for ending the poll',
+            'Fixed completed items counter not being updated for group lists',
             
         ]
     }

@@ -5,14 +5,14 @@ import { formatRelativeTime } from '../../helpers/dateFormat';
 import { getNotifications } from '../../helpers/NotificationService';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { useNavigate } from 'react-router-dom';
+import Header from '../../components/Header/Header';
 
 const Notifications = () => {
 
     const {showNotification} = useNotifications();
 
     const [selectedGroup, setSelectedGroup] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('all');
-    const [notifications, setNotifications] = useState<INotification[]>([])
+    const [notifications, setNotifications] = useState<INotification[]>([]);
 
 
     const fetchNotifications = async () => {
@@ -33,16 +33,9 @@ const Notifications = () => {
  
     return (
         <div className={styles.notifications}>
-            <div className={styles.header}>
-                <h3>Notifications</h3>
-            </div>
+            <Header title='Notifications' />
             <div className={styles.filters}>
-                <div className={styles.buttons}>
-                    <button className={selectedCategory === 'all' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('all')}>All</button>
-                    <button className={selectedCategory === 'unread' ? styles.selectedCategory : ''} onClick={()=>setSelectedCategory('unread')}>Unread</button>
-                </div>
                 <fieldset>
-                    <label>Group</label>
                     <select value={selectedGroup} onChange={(e)=>setSelectedGroup(e.target.value)}>
                         <option>Group 1</option>
                         <option>Group 2</option>

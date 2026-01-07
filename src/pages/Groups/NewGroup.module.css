@@ -104,7 +104,7 @@ fieldset input {
   height: 50px;
   border-radius: 5px;
   border: none;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 .saveButton {
   color: var(--text-on-accent);

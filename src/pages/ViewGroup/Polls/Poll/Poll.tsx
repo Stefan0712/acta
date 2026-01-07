@@ -3,7 +3,7 @@ import { IconsLibrary } from '../../../../assets/icons';
 import { formatRelativeTime } from '../../../../helpers/dateFormat';
 import type { Poll, PollOption } from '../../../../types/models';
 import styles from './Poll.module.css';
-import { addPollOption, deletePoll, submitVote } from '../../../../services/pollService';
+import { addPollOption, deletePoll, endPoll, submitVote } from '../../../../services/pollService';
 import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
 import EditPoll from '../EditPoll/EditPoll';
 import Loading from '../../../../components/LoadingSpinner/Loading';
@@ -15,9 +15,12 @@ interface PollProps {
 const Poll: React.FC<PollProps> = ({data, remove}) => {
     const userId = localStorage.getItem('userId');
     const [options, setOptions] = useState([...data.options]);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [pollData, setPollData] = useState<Poll | null>(data ?? null);
+    
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEndPollModal, setShowEndPollModal] = useState(false);
+
 
     const handleVote = async (optionId: string) => {
         try {
@@ -41,6 +44,17 @@ const Poll: React.FC<PollProps> = ({data, remove}) => {
         setPollData(updatedPoll);
         setOptions(updatedPoll.options);
     }
+    const handleEndPoll = async () => {
+        try {
+            const apiResponse = await endPoll(data._id);
+            if(apiResponse) {
+                setPollData(apiResponse);
+                setShowEndPollModal(false);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
     const totalAnswers = pollData ? pollData?.options?.reduce((sum, opt) => sum + (opt?.votes?.length ?? 0), 0) : 0;
 
     if(!pollData){
@@ -49,6 +63,7 @@ const Poll: React.FC<PollProps> = ({data, remove}) => {
         return (
             <div className={styles.poll}>
                 {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)} confirm={()=>handleDelete()}/> : null}
+                {showEndPollModal ? <ConfirmationModal cancel={()=>setShowEndPollModal(false)} confirm={()=>handleEndPoll()} content='Users will not be able to submit more answers if you end this poll. Continue?'/> : null}
                 {showEdit ? <EditPoll pollId={pollData._id} close={()=>setShowEdit(false)} handleUpdatePoll={handleUpdatePoll} /> : null}
                 <div className={styles.header}>
                     <h1>{pollData.title}</h1>
@@ -64,7 +79,7 @@ const Poll: React.FC<PollProps> = ({data, remove}) => {
                 </div>
                 {pollData.authorId === userId ? 
                     <div className={styles.managePoll}>
-                        <button>End Poll</button>
+                        <button onClick={()=>setShowEndPollModal(true)}>End Poll</button>
                         <button onClick={()=>setShowEdit(true)}>Edit</button>
                         <button onClick={()=>setShowDeleteModal(true)}>Delete</button>
                     </div> : null
@@ -92,6 +107,7 @@ const Option: React.FC<OptionProps> = ({option, totalAnswers, isEnded, handleVot
         <button onClick={()=>option._id ? handleVote(option._id) : null} key={option._id} className={`${styles.option} ${isOptionVoted ? styles.selectedOption : ''}`} style={isEnded ? {background: `linear-gradient(to right, rgba(59, 130, 246, 0.5) ${percentage}%, transparent ${percentage}%)`} : {}}>
             <div className={`${styles.optionCircle}`} />
             <h3>{option.text}</h3>
+            {isEnded ? <p>{totalAnswers}</p> : null}
         </button>
     )
 }

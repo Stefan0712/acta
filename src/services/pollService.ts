@@ -82,6 +82,15 @@ export async function addPollOption(pollId: string, text: string): Promise<PollO
         throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to add option');
     }
 }
+// End a poll
+export async function endPoll(pollId: string): Promise<Poll> {
+    try {
+        const response = await API.patch(`/polls/${pollId}/end`);
+        return response.data;
+    } catch (error) {
+        throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to add option');
+    }
+}
 
 // Deletes a poll
 // DELETE /api/polls/:id

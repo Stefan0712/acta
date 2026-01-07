@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { type ActivityLog, type Group } from '../../../types/models';
 import { getGroup, getGroupActivity } from '../../../services/groupService';
 import Loading from '../../../components/LoadingSpinner/Loading';
-import { formatRelativeTime, getDateAndHour } from '../../../helpers/dateFormat';
+import { formatRelativeTime } from '../../../helpers/dateFormat';
 
 const GroupDashboard = () => {
 
@@ -19,7 +19,6 @@ const GroupDashboard = () => {
             try {
                 const apiResponse = await getGroup(groupId);
                 setGroupData(apiResponse);
-                console.log(apiResponse)
             } catch (error) {
                 console.error(error);
             }
@@ -27,13 +26,11 @@ const GroupDashboard = () => {
     }
     
     const getLogs = async () =>{
-        console.log(groupId)
         if(groupId){
             try {
                 const activity = await getGroupActivity(groupId);
                 if(activity && activity.length > 0){
                     setLogs(activity.filter(item=>item.category === "CONTENT"))
-                    console.log(activity.filter(item=>item.category === "CONTENT"))
                 }
             } catch (error) {
                 console.error(error);
@@ -84,14 +81,14 @@ const GroupDashboard = () => {
                         </div>
                         <p>{groupData.pollCount ?? 0} Ongoing</p>
                     </Link>
-                    <Link to={'activity'}>
+                    <Link to={'manage'}>
                         <div className={styles.buttonName}>
                             <div className={styles.navigationIcon}>
-                                <IconsLibrary.Activity />
+                                <IconsLibrary.Settings />
                             </div>
-                            <b>Activity</b>
+                            <b>Manage</b>
                         </div>
-                        <p>5 New</p>
+                        <p>Group settings</p>
                     </Link>
                 </div>
                 <div className={styles.activity}>

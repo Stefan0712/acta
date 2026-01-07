@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import styles from './NewGroup.module.css';
 import type { Group } from '../../types/models';
-import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { getGroup, updateGroup } from '../../services/groupService';
 import Loading from '../../components/LoadingSpinner/Loading';
 
 
 // TODO: Input validation
-const EditGroup = ({close, groupId, handleLocalUpdate}: {close: ()=>void, groupId: string, handleLocalUpdate: (newGroup: Group) => void}) => {
+const EditGroup = ({close, groupId, finishGroupEdit}: {close: ()=>void, groupId: string, finishGroupEdit: () => void}) => {
 
     const { showNotification } = useNotifications();
 
@@ -25,14 +24,14 @@ const EditGroup = ({close, groupId, handleLocalUpdate}: {close: ()=>void, groupI
             const newGroup = {
                 name: name,
                 description,
-                updatedAt: new Date().toISOString(),
+                updatedAt: new Date(),
             }
             setIsCreating(true);
             try {
                 const groupResponse = await updateGroup({...newGroup, _id: groupData._id});
                 if(groupResponse){
-                    handleLocalUpdate(groupResponse)
-                    showNotification("Group created successfully", "success");
+                    showNotification("Group updated successfully", "success");
+                    finishGroupEdit()
                     close();
                 }
             } catch (error) {
@@ -82,7 +81,7 @@ const EditGroup = ({close, groupId, handleLocalUpdate}: {close: ()=>void, groupI
                         <label>Description</label>
                         <input type='text' name='description' onChange={(e)=>setDescription(e.target.value)} value={description} minLength={0} placeholder='Write something about your group here...' />
                     </fieldset>
-                    <div className={styles.buttons}>
+                    <div className={styles.bottomButtons}>
                         <button onClick={close}>Close</button>
                         <button onClick={handleEditGroup} disabled={isCreating}>{isCreating ? 'Saving...' : 'Save'}</button>
                     </div>
