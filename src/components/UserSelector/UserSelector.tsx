@@ -27,7 +27,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({groupId, selectUser, close, 
             return users.filter(item => item.userId !== userId);
         }
         return users.filter(item => 
-            item.username.toLowerCase().includes(searchQuery.toLowerCase()) && 
+            item.username?.toLowerCase().includes(searchQuery.toLowerCase()) && 
             item.userId !== userId
         );
     },[searchQuery, users, userId]);

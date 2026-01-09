@@ -198,7 +198,8 @@ export async function changeRole(groupId: string, targetUserId: string, newRole:
         const response = await API.put(`/groups/${groupId}/role`, {targetUserId, newRole});
 
         if (response.status === 200) {
-            return response.data;
+            console.log(response.data)
+            return response.data.updatedMember;
         }
         throw new Error(response.data.message || 'Failed to update role.');
 

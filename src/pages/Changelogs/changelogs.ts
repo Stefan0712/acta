@@ -2,6 +2,17 @@ import type { Changelog } from "../../types/models";
 
 export const CHANGELOGS_ITEMS: Changelog[] = [
     {
+        date: '8 Jan 2026',
+        description: "Reworked Manage Group page",
+        listItems: [
+            'Added group info at the top of this page',
+            'Moved the edit button near the group name',
+            'Moved the Invite Members button right before the Members section',
+            'Added a search bar for finding users by their username',
+            'Conditionally renders Leave Group button or Kick User button based on who opened the Manage User component',
+        ]
+    },
+    {
         date: '7 Jan 2026',
         description: 'This update focuses on fixing front-end issues and small improvements',
         listItems: [
@@ -23,7 +34,10 @@ export const CHANGELOGS_ITEMS: Changelog[] = [
             'Removed the number of items from Summaries',
             'Moved buttons for managing a group to Manage Group page. Replaced Group settings button from the header with Activity button',
             'Shrunk button height from app menu',
-
+            'Reworked the entire permission checking system in the API',
+            'Fixed multiple smaller bugs in the API',
+            'Created functions for kicking and promoting users',
+            'Improved Manage Group page'
         ]
     }
 ]
