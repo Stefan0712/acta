@@ -1,4 +1,3 @@
-import { useNotifications } from '../Notification/NotificationContext';
 import type { User } from '../types/models';
 import API from './apiService';
 import axios from 'axios';
@@ -20,7 +19,8 @@ export interface AuthResponse {
 // Check API status
 export async function checkApi(): Promise<boolean> {
     try {
-        await API.get('/');
+        const response = await API.get('/');
+        console.log(response);
         return true;
     } catch (error) {
         console.error(error)

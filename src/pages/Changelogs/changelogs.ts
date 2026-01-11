@@ -1,6 +1,16 @@
 import type { Changelog } from "../../types/models";
 
 export const CHANGELOGS_ITEMS: Changelog[] = [
+        {
+        date: '11 Jan 2026',
+        description: "API work",
+        listItems: [
+            'Moved API to Vercel',
+            'Reworked "protect" function from the API',
+            'Created and update vercel config file.',
+            'Switched to a MongoDb cluster and updated connection code'
+        ]
+    },
     {
         date: '8 Jan 2026',
         description: "Reworked Manage Group page",
