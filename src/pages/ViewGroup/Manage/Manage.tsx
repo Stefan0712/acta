@@ -212,7 +212,7 @@ const ManageUser: React.FC<IManageUser> = ({close, member, groupId, updateMember
                     <button className={`${styles.roleButton} ${member.role === 'admin' ? styles.selectedRole : ''}`} onClick={()=>handleSetRole('admin')}> <p>Admin</p>  {member.role === 'admin' ? <IconsLibrary.Checkmark /> : null}</button>
                     <button className={`${styles.roleButton} ${member.role === 'owner' ? styles.selectedRole : ''}`}> <p>Owner</p>  {member.role === 'owner' ? <IconsLibrary.Checkmark /> : null}</button>
                 </div>
-                {member.userId !== currentUserId ? <button className={styles.kickButton} onClick={handleKick}>Kick</button> : null}
+                {member.userId !== currentUserId && member.role !== 'owner' ? <button className={styles.kickButton} onClick={handleKick}>Kick</button> : null}
                 <button className={styles.closeButton} onClick={close}>Close</button>
             </div>
         </div>

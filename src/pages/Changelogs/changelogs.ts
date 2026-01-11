@@ -9,7 +9,7 @@ export const CHANGELOGS_ITEMS: Changelog[] = [
             'Moved the edit button near the group name',
             'Moved the Invite Members button right before the Members section',
             'Added a search bar for finding users by their username',
-            'Conditionally renders Leave Group button or Kick User button based on who opened the Manage User component',
+            'Added a "Kick user" button inside Manage User',
         ]
     },
     {

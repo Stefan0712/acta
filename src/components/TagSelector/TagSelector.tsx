@@ -76,7 +76,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({close, tags, addTag, removeTag
             </div>
             <div className={styles.newTag}>
                 <div className={styles.toggle}>
-                    <label>Save tag?</label>
+                    <label>Save tag</label>
                     <SwitchButton isActivated={saveTag} onPress={()=>setSaveTag(prev=>!prev)} />
                 </div>
                 <div className={styles.inputs}>
