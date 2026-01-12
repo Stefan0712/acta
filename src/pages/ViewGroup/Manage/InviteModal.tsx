@@ -41,6 +41,7 @@ const InviteModal = ( {groupId}: {groupId: string}) => {
                 const sendInviteResponse = await inviteUser(groupId, username);
                 console.log(sendInviteResponse)
                 showNotification("Invite sent!", "success");
+                setUsername('');
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to send invite. Try again!", "error")
