@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import styles from './Notifications.module.css';
-import { type Notification as INotification} from '../../types/models';
+import {type GroupInvitation, type Notification as INotification} from '../../types/models';
 import { formatRelativeTime } from '../../helpers/dateFormat';
 import { getNotifications } from '../../helpers/NotificationService';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
+import { getInvites } from '../../services/groupService';
 
 const Notifications = () => {
 
@@ -13,6 +14,8 @@ const Notifications = () => {
 
     const [selectedGroup, setSelectedGroup] = useState('');
     const [notifications, setNotifications] = useState<INotification[]>([]);
+
+    const [invites, setInvites] = useState<GroupInvitation[]>([]);
 
 
     const fetchNotifications = async () => {
@@ -22,12 +25,21 @@ const Notifications = () => {
                 console.log(apiResponse)
         } catch (error) {
             console.error(error);
-            showNotification('Failed to fetch new notifications.', "error")
+            showNotification('Failed to fetch new notifications.', "error");
         }
     };
-
+    const fetchInvites = async () => {
+        try {
+            const invitesResponse = await getInvites();
+            console.log(invitesResponse)
+            setInvites(invitesResponse);
+        } catch (error) {
+            console.error(error)
+        }
+    }
     useEffect(()=> {
         fetchNotifications();
+        fetchInvites();
     },[]);
 
  

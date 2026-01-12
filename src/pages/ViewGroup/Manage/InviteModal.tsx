@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { IconsLibrary } from '../../../assets/icons';
 import styles from './Manage.module.css';
-import { generateInviteToken } from '../../../services/groupService';
+import { generateInviteToken, inviteUser } from '../../../services/groupService';
 import { useNotifications } from '../../../Notification/NotificationContext';
 import { Send } from 'lucide-react';
 
@@ -36,7 +36,16 @@ const InviteModal = ( {groupId}: {groupId: string}) => {
     };
 
     const handleSendInvite = async () => {
-        showNotification("Notification sent!", "success");
+        if (username.length > 0){
+            try {
+                const sendInviteResponse = await inviteUser(groupId, username);
+                console.log(sendInviteResponse)
+                showNotification("Invite sent!", "success");
+            } catch (error) {
+                console.error(error);
+                showNotification("Failed to send invite. Try again!", "error")
+            }
+        }
     }
     return (
         <div className={styles.inviteModal}>
