@@ -240,8 +240,13 @@ export async function getInvites(): Promise<GroupInvitation[]> {
         throw new Error('Network error or unknown issue.');
     }
 }
+
+interface InviteResponse {
+    groupId: string;
+    message: string;
+}
 // Respond to invite
-export async function respondToInvite(inviteId: string, action: string): Promise<string> {
+export async function respondToInvite(inviteId: string, action: string): Promise<InviteResponse> {
     try {
         const response = await API.put(`/invites/${inviteId}/respond`,{action});
         return response.data.message;

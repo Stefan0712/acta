@@ -7,6 +7,8 @@ import { useNotifications } from '../../Notification/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import { getInvites } from '../../services/groupService';
+import Invite from './Invite';
+import Loading from '../../components/LoadingSpinner/Loading';
 
 const Notifications = () => {
 
@@ -14,6 +16,7 @@ const Notifications = () => {
 
     const [selectedGroup, setSelectedGroup] = useState('');
     const [notifications, setNotifications] = useState<INotification[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [invites, setInvites] = useState<GroupInvitation[]>([]);
 
@@ -22,7 +25,8 @@ const Notifications = () => {
         try {
             const apiResponse = await getNotifications();
                 setNotifications(apiResponse);
-                console.log(apiResponse)
+                console.log(apiResponse);
+                setIsLoading(false);
         } catch (error) {
             console.error(error);
             showNotification('Failed to fetch new notifications.', "error");
@@ -42,7 +46,7 @@ const Notifications = () => {
         fetchInvites();
     },[]);
 
- 
+    if (isLoading) return (<Loading />)
     return (
         <div className={styles.notifications}>
             <Header title='Notifications' />
@@ -54,8 +58,11 @@ const Notifications = () => {
                     </select>
                 </fieldset>
             </div>
+            <div className={styles.invitesContainer}>
+                {invites && invites.length > 0 ? invites.map(item=><Invite key={item._id} data={item} />) : null}
+            </div>
             <div className={styles.notificationsContainer}>
-                {notifications  && notifications.length > 0 ? notifications.map(item=><Notification data={item} />) : <p>No notifications</p>}
+                {notifications  && notifications.length > 0 ? notifications.map(item=><Notification data={item} />) : <p className='no-items-text'>No notifications</p>}
             </div>
         </div>
     )
