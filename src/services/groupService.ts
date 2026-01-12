@@ -1,4 +1,4 @@
-import type { Group, Invite, InviteLookupData, ActivityLog, GroupMember } from '../types/models.ts';
+import type { Group, Invite, InviteLookupData, ActivityLog, GroupMember, GroupInvitation } from '../types/models.ts';
 import API from './apiService.ts';
 import axios from 'axios';
 
@@ -7,17 +7,19 @@ interface GroupCreateData {
     description?: string;
 }
 
+// TODO: Clean all service functions by removing all those reductand if response === 200 or 201 and the threw new error inside the try block
 export async function createGroup(data: GroupCreateData): Promise<Group> {
     try {
         const response = await API.post('/groups', data);
         
-        if (response.status === 201) {
+        if (response.status === 201) { // No need to use that
             return response.data; 
         }
 
-        throw new Error(response.data.message || 'Failed to create group.');
+        throw new Error(response.data.message || 'Failed to create group.'); // Delete this
 
     } catch (error) {
+        // Maybe keep this
         if (axios.isAxiosError(error) && error.response) {
             throw new Error(error.response.data.message || 'Server error creating group.');
         }
@@ -31,7 +33,7 @@ export async function getMyGroups(): Promise<Group[]> {
         const response = await API.get('/groups');
 
         if (response.status === 200) {
-            return response.data.map(group=>({...group, isDirty: false})); // Array of group objects
+            return response.data.map((group: Group)=>({...group, isDirty: false})); // Array of group objects
         }
         
         throw new Error(response.data.message || 'Failed to fetch groups.');
@@ -47,7 +49,7 @@ export async function getMyGroups(): Promise<Group[]> {
 // Create invite link
 export async function generateInviteToken(groupId: string): Promise<Invite> {
     try {
-        const response = await API.post<Invite>(`/groups/${groupId}/invite/generate`);
+        const response = await API.post<Invite>(`/${groupId}/invites/generate`);
         return response.data; 
         
     } catch (error) {
@@ -62,7 +64,7 @@ export async function generateInviteToken(groupId: string): Promise<Invite> {
 // Fetch invite information
 export async function lookupInvite(token: string): Promise<InviteLookupData> {
     try {
-        const response = await API.get<InviteLookupData>(`/groups/invite/lookup?token=${token}`);
+        const response = await API.get<InviteLookupData>(`/invites/lookup?token=${token}`);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -81,7 +83,7 @@ interface AcceptResponse {
 export async function acceptInviteToken(token: string): Promise<AcceptResponse> {
     try {
         // Sends the token in the request body
-        const response = await API.post<AcceptResponse>('/groups/invite/accept', { token });
+        const response = await API.post<AcceptResponse>('/invites/accept', { token });
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -206,6 +208,47 @@ export async function changeRole(groupId: string, targetUserId: string, newRole:
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             throw new Error(error.response.data.message || 'Server error updating the role of this user.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+
+
+// Send an invite to an user by username
+export async function inviteUser(groupId: string, username: string): Promise<string> {
+    try {
+        const response = await API.post(`/invites/${groupId}`,{ username});
+        return response.data.message;
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error inviting user to the group.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+// Get user's invites
+export async function getInvites(): Promise<GroupInvitation[]> {
+    try {
+        const response = await API.get(`/invites/`);
+        return response.data;
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error getting your invitations.');
+        }
+        throw new Error('Network error or unknown issue.');
+    }
+}
+// Respond to invite
+export async function respondToInvite(inviteId: string, action: string): Promise<string> {
+    try {
+        const response = await API.put(`/invites/${inviteId}/respond`,{action});
+        return response.data.message;
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Server error responding to an invitation.');
         }
         throw new Error('Network error or unknown issue.');
     }

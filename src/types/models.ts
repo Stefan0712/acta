@@ -228,3 +228,23 @@ export interface Changelog {
     description: string;
     listItems: string[];
 }
+
+export interface GroupInvitation {
+  _id: string;
+  senderId: {
+    _id: string;
+    username: string;
+    avatar?: string;
+  };
+  groupId: {
+    _id: string;
+    name: string;
+    icon?: string;
+    color?: string;
+  };
+
+  recipientId: string; 
+  status: 'pending' | 'accepted' | 'declined';
+  createdAt: string;
+  updatedAt: string;
+}

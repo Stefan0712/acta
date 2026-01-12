@@ -97,7 +97,15 @@ export async function getMe(): Promise<User> {
 }
 
 // User Logout
-export function logout(): void {
+export function logout(): boolean {
     // We only need to clear the token locally, as the token is stateless on the server
     localStorage.removeItem('jwt-token'); 
+    localStorage.removeItem('userId');
+    const token = localStorage.getItem('jwt-token')
+    const id = localStorage.getItem('userId')
+    if(token || id) {
+        return false;
+    } else {
+        return true;
+    }
 }

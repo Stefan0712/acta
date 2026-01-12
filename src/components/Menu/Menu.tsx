@@ -4,14 +4,26 @@ import { IconsLibrary } from '../../assets/icons';
 import { logout } from '../../services/authService';
 import { useState } from 'react';
 import { HelpCircleIcon } from 'lucide-react';
+import { useNotifications } from '../../Notification/NotificationContext';
 
 
 const Menu = ({close}: {close:()=>void}) => {
+
+    const {showNotification} = useNotifications();
 
     const isLoggedIn = localStorage.getItem('jwt-token');
     const [expandUserInfo, setExpandUserInfo] = useState(false);
 
 
+    const handleLogout = () => {
+        const isLoggedOut = logout();
+
+        if (isLoggedOut) {
+            showNotification("Logged out successfully",'success');
+        } else {
+            showNotification("Failed to log out",'error');
+        }
+    }
     return ( 
         <div className={styles.menuBg}>
             <div className={styles.menu}>
@@ -54,7 +66,7 @@ const Menu = ({close}: {close:()=>void}) => {
                             onClick={()=>setExpandUserInfo(prev=>!prev)}
                         />
                         <b onClick={()=>setExpandUserInfo(prev=>!prev)}>{isLoggedIn ? localStorage.getItem('username') : 'Local Account'}</b>
-                        {isLoggedIn ? <button className={styles.logoutButton} onClick={logout}><IconsLibrary.Logout /> <p>Logout</p></button> : <Link to={'/auth'}><IconsLibrary.Login /> <p>Login</p></Link>}
+                        {isLoggedIn ? <button className={styles.logoutButton} onClick={handleLogout}><IconsLibrary.Logout /> <p>Logout</p></button> : <Link to={'/auth'}><IconsLibrary.Login /> <p>Login</p></Link>}
                     </div>
                     {expandUserInfo ? <div className={styles.userInfo}>
                         <fieldset>

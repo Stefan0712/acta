@@ -108,7 +108,6 @@ const Manage = () => {
                 {showEdit && groupId ? <EditGroup close={()=>setShowEdit(false)} groupId={groupId} finishGroupEdit={()=>window.location.reload()} /> : null}
                 {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} title='Delete this group?' content='Are you sure you want to delete this group and all items related to it? This cannot be undone'/>  : null}
                 {showLeave ? <ConfirmationModal cancel={()=>setShowLeave(false)} confirm={handleLeaveGroup} title='Leave this group?' content='Are you sure you want to leave this group? If you want to rejoin, you must receive another invitation from a group member.'/>  : null}
-                {showInviteModal && groupId ? <InviteModal groupId={groupId}  close={()=>setShowInviteModal(false)} /> : null}
                 {manageUser && groupId ? <ManageUser close={()=>setManageUser(null)} member={manageUser} groupId={groupId} updateMember={handleUpdateMemberLocally}  /> : null}
 
                 <div className={styles.groupInfo}>
@@ -129,7 +128,10 @@ const Manage = () => {
                     </div>
                 </div>
 
-                <button className={styles.inviteButton} onClick={()=>setShowInviteModal(true)}><UserPlus /> Invite members</button>
+                <button className={styles.inviteButton} onClick={()=>setShowInviteModal(prev=>!prev)}>
+                    {showInviteModal ? <><IconsLibrary.Close /> Close</> : <><UserPlus /> Invite members </>}
+                </button>
+                {showInviteModal && groupId ? <InviteModal groupId={groupId} /> : null}
                 <input type='text' value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} placeholder='Search user' />
                 <div className={styles.membersHeader}>
                     <h4>Members</h4>
