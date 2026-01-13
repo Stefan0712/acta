@@ -14,6 +14,7 @@ export interface List {
     totalItemsCounter?: number;
     completedItemsCounter?: number;
     icon?: string;
+    lastSyncedAt?: Date;
 }
 
 export interface ListItem {

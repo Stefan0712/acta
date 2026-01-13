@@ -106,6 +106,24 @@ const List = () => {
         const updatedList = listItems.map(item=>item._id===updatedItem._id ? updatedItem : item);
         setListItems(updatedList);
     };
+    const handleCopyList = async () => {
+        try {
+            if(listData){
+                const listToSave = {...listData, lastSyncedAt: new Date()};
+                const itemsToSave = [...listItems];
+                await db.transaction('rw', db.lists, db.listItems, async () => {
+                    await db.lists.put(listToSave);
+                    await db.listItems.where({listId: listToSave._id}).delete();
+                    await db.listItems.bulkPut(itemsToSave);
+                })
+                showNotification("List updated!", "success");
+            }
+        } catch (error) {
+            console.error(error);
+            showNotification("Failed to update list", "error");
+        }
+
+    }
 
     if(!listData) {
         return (
@@ -132,11 +150,13 @@ const List = () => {
                             <p className={styles.updatedAt}><IconsLibrary.Sync /> {listData.updatedAt ? getDateAndHour(listData.updatedAt) : getDateAndHour(listData.createdAt)}</p>
                         </div>
                         <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
+                        {listData.lastSyncedAt ? <p style={{color: 'var(--white-25)', fontSize: '0.8rem'}}>Last updated at {getDateAndHour(listData.lastSyncedAt)}</p> : null}
                     </div>
                     <div className={styles.listButtons}>
+                        {listData.isDeleted ? null : <button onClick={handleCopyList}>{listData.lastSyncedAt ? <><IconsLibrary.Sync /> Update</> : <> <IconsLibrary.Copy /> Copy List</>}</button>}
+                        {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
                         {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
                         {listData.isDeleted ? null : <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /> Delete List</button>}
-                        {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
                     </div>
                     </> : null}
                 </div>

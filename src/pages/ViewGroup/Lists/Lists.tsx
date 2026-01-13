@@ -81,13 +81,9 @@ const Lists = () => {
         if (!lists) return [];
 
         return lists.filter(list => {
-            const isListCompleted = list.completedItemsCounter === list.totalItemsCounter && list.completedItemsCounter && list.completedItemsCounter > 0;
             switch (selectedFilter) {
                 case 'active':
-                    return !list.isDeleted && !isListCompleted;
-                case 'completed':
-                    return !list.isDeleted && isListCompleted;
-
+                    return !list.isDeleted;
                 case 'deleted':
                     return list.isDeleted === true;
                 default:
@@ -113,7 +109,6 @@ const Lists = () => {
                 <Summaries totalItems={lists.length} completedItems={lists.filter(list=>list.completedItemsCounter === list.totalItemsCounter && list.completedItemsCounter && list.completedItemsCounter > 0).length} />
                 <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
                     <option value={'active'}>Active</option>
-                    <option value={'completed'}>Completed</option>
                     <option value={'deleted'}>Deleted</option>
                 </select>
                 <div className={styles.listsContainer}>

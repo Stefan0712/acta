@@ -13,6 +13,7 @@ import Loading from '../../../../components/LoadingSpinner/Loading.tsx';
 import { IconsLibrary } from '../../../../assets/icons.ts';
 import UserSelector from '../../../../components/UserSelector/UserSelector.tsx';
 import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal.tsx';
+import { db } from '../../../../db.ts';
 
 interface IListOutletContext {
   members: GroupMember[]; 
@@ -136,6 +137,25 @@ const ViewList = () => {
                 showNotification("Failed to delete list.", "error");
             }
         }
+    }   
+
+    const handleCopyList = async () => {
+        try {
+            if(listData){
+                const listToSave = {...listData, lastSyncedAt: new Date()};
+                const itemsToSave = [...listItems];
+                await db.transaction('rw', db.lists, db.listItems, async () => {
+                    await db.lists.put(listToSave);
+                    await db.listItems.where({listId: listToSave._id}).delete();
+                    await db.listItems.bulkPut(itemsToSave);
+                })
+                showNotification("List copied locally!", "success");
+            }
+        } catch (error) {
+            console.error(error);
+            showNotification("Failed to copy list locally", "error");
+        }
+
     }
     // Optimistically update item list
     const updateItem = (updatedItem: ItemType) => {
@@ -186,10 +206,10 @@ const ViewList = () => {
                         <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
                     </div>
                     <div className={styles.listButtons}>
-                        
+                        {listData.isDeleted ? null : <button onClick={handleCopyList}>{listData.lastSyncedAt ? <><IconsLibrary.Sync /> Update</> : <> <IconsLibrary.Copy /> Copy List</>}</button>}
+                        {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
                         {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
                         {listData.isDeleted ? null : <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /> Delete List</button>}
-                        {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
                     </div>
                     </> : null}
                 </div>
