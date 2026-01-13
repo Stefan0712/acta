@@ -186,6 +186,7 @@ const ViewList = () => {
                         <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
                     </div>
                     <div className={styles.listButtons}>
+                        
                         {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
                         {listData.isDeleted ? null : <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /> Delete List</button>}
                         {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}

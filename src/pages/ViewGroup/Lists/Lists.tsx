@@ -35,6 +35,7 @@ const Lists = () => {
         if (groupId){
             try {
                 const apiResponse = await getGroupLists(groupId);
+                console.log(apiResponse)
                 setLists(apiResponse); 
             } catch (apiError) {
                 console.error("API pull failed:", apiError);

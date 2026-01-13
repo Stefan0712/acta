@@ -2,6 +2,18 @@ import type { Changelog } from "../../types/models";
 
 export const CHANGELOGS_ITEMS: Changelog[] = [
         {
+        date: '12 Jan 2026',
+        description: "Worked on a system for inviting users by their username",
+        listItems: [
+            'Created controllers and routes for sending an invite to a user by its username',
+            'Created controllers and routes for accepting or declining a group invite',
+            'Moved the invite modal inside the Manage Group page. Made it smaller and now it is a collapsible section instead of a separate modal',
+            'Created service functions for getting, sending, and answering a group invite',
+            'Added group invites to Notifications page',
+            'Created new Group Invite components'
+        ]
+    },
+        {
         date: '11 Jan 2026',
         description: "API work",
         listItems: [
