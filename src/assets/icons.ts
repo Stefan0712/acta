@@ -46,8 +46,14 @@ import Poll2 from './poll2.svg?react';
 import Search from './search.svg?react';
 import Bell from './bell.svg?react';
 import Home from './home.svg?react';
+import Low from './low.svg?react';
+import Normal from './normal.svg?react';
+import High from './high.svg?react';
 
 export const IconsLibrary = {
+  Low,
+  Normal,
+  High,
   Home,
   Bell,
   Activity,

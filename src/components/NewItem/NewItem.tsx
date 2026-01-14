@@ -6,7 +6,7 @@ import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
 import { createItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
-import { Maximize } from 'lucide-react';
+import { ChevronDown, ChevronUp, Hand } from 'lucide-react';
 
 interface NewListItemProps {
     listId: string;
@@ -46,6 +46,16 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
         if (e.key === 'Enter') {
             addNewItem();
         }
+    };
+    const handleChangePriority = () => {
+        setPriority(prev => {
+            const nextStep: Record<Priority, Priority> = {
+                'low': 'normal',
+                'normal': 'high',
+                'high': 'low'
+            };
+            return nextStep[prev] || 'normal'; 
+        });
     };
 
 
@@ -127,36 +137,39 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
         { value: 24, label: "1 Day Before" },
     ];
     return ( 
-        <div className={styles.newItem}>
+        <div className={`${styles.newItem} ${showMoreInputs ? styles.expanded : ''}`}>
+            {showMoreInputs ? <div className={styles.header}>
+                <h2>New Item</h2>
+                <button onClick={()=>setShowMoreInputs(false)}>
+                    <IconsLibrary.Close />
+                </button>
+            </div> : null}
             {showTagSelector ? <TagSelector 
                 removeTag={(id)=>setTags(prev=>[...prev.filter(item=>item._id !== id)])}
                 close={()=>setShowTagSelector(false)} 
                 addTag={(newTag)=>setTags(prev=>[...prev, newTag])} 
                 tags={tags}  
             /> : null}
-            {showMoreInputs ? <h1>New Item</h1> : null}
             <div className={styles.basicInputs}>
-                <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
-                    {showMoreInputs ? <IconsLibrary.Close /> : <Maximize />}
-                </button>
-                <input 
-                    autoComplete="off" 
-                    type="text" 
-                    name="name"
-                    onKeyDown={handleKeyDown}
-                    onChange={(e)=>handleNameInput(e.target.value)} 
-                    value={name} 
-                    placeholder='Name...' 
-                    required 
-                    minLength={0} 
-                />
-                <button className={styles.addButton} onClick={addNewItem}><IconsLibrary.Plus /></button>
-            </div>
-            
-            {error ? <p className='error-message'>{error}</p> : null}
-            {showMoreInputs ? <div className={`${styles.moreInputs} ${showMoreInputs ? styles.show : ''}`} ref={moreInputsRef}>
-                <div className={styles.secondRow}>
-                    <div className={styles.rowSection}>
+                {showMoreInputs ? null : <button className={styles.expandButton} onClick={()=>setShowMoreInputs(prev=>!prev)}>
+                    {showMoreInputs ? <ChevronDown /> : <ChevronUp />}
+                </button>}
+                <fieldset>
+                    <label>Item Name</label>
+                    <input 
+                        autoComplete="off" 
+                        type="text" 
+                        name="name"
+                        onKeyDown={handleKeyDown}
+                        onChange={(e)=>handleNameInput(e.target.value)} 
+                        value={name} 
+                        placeholder='New Item...' 
+                        required 
+                        minLength={0} 
+                    />
+                </fieldset>
+               {showMoreInputs ?  <div className={styles.qty}>
+                    <fieldset>
                         <label>Qty</label>
                         <input 
                             autoComplete="off" 
@@ -167,28 +180,23 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
                             placeholder='0' 
                             required
                             min={0} />
-                    </div>
-                    <div className={styles.rowSection}>
+                    </fieldset>
+                    <fieldset>
                         <label>Unit</label>
                         <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
-                    </div>
-                    <div className={styles.rowSection}>
-                        <label>Priority</label>
-                        <select onChange={(e)=>setPriority(e.target.value as Priority)} value={priority}>
-                            <option value={'low'}>Low</option>
-                            <option value={'normal'}>Normal</option>
-                            <option value={'high'}>High</option>
-                        </select>
-                    </div>
-                </div>
-                <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
+                    </fieldset>
+                </div> : null}
+                {showMoreInputs ? null : <button className={styles.addButton} onClick={addNewItem}><IconsLibrary.Plus /></button>}
+            </div>
+            {error ? <p className='error-message'>{error}</p> : null}
+            {showMoreInputs ? <div className={styles.moreInputs} ref={moreInputsRef}>
                 <div className={styles.deadline}>
                     <fieldset>
-                        <label>Due date</label>
+                        <label>Due Date</label>
                         <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={styles.dateInput} min={new Date().toISOString().split("T")[0]}  />
                     </fieldset>
                     <fieldset>
-                        <label>Due hour</label>
+                        <label>Due Hour</label>
                         <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
                     </fieldset>
                     <fieldset>
@@ -201,24 +209,35 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
                         </select>
                     </fieldset>
                 </div>
-                {online ? <div className={styles.claimButtons}>
-                    <button 
-                        onClick={handleClaimItem} 
-                        className={styles.assignButton}
-                        style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
-                    >
-                        {claimedBy ? 'Claimed' : 'Claim item'}
+                <fieldset>
+                    <label>Description</label>
+                    <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
+                </fieldset>
+                <div className={styles.bottomButtons}>
+                    {online ? <button 
+                                onClick={handleClaimItem} 
+                                className={styles.claimButton}
+                                style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
+                            >
+                            <Hand />
+                            <p>{claimedBy ? 'Claimed' : 'Claim'}</p>
+                            </button> 
+                    : null}
+                    <button className={styles.manageTagsButton} onClick={()=>setShowTagSelector(true)}>   
+                        <IconsLibrary.Tag />
+                        <p>Tags</p>
                     </button>
-                </div> : null}
-                <button 
-                    className={styles.manageTagsButton} 
-                    onClick={()=>setShowTagSelector(true)}
-                >   
-                    <IconsLibrary.Tag />
-                    <p>Manage tags ({tags.length})</p>
-                    
-                </button>
-                <button onClick={addNewItem} className={styles.bigNewItemButton}>Add Item</button>
+                    <button onClick={handleChangePriority} className={styles.priorityButton}>
+                        {
+                            priority === 'high' ? <IconsLibrary.High /> : 
+                            priority === 'normal' ? <IconsLibrary.Normal /> :
+                            priority === 'low' ? <IconsLibrary.Low /> :
+                            <IconsLibrary.Normal />
+                        }
+                        <p>Priority</p>
+                    </button>
+                    <button onClick={addNewItem} className={styles.saveItemButton}>Add Item</button>
+                </div>
             </div> : null}
         </div>
      );

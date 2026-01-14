@@ -5,7 +5,6 @@
     display: grid;
     grid-template-rows: auto 50px 1fr auto;
     color: var(--text-color);
-    padding: 10px;
     padding-top: 0;
     position: relative;
     overflow: hidden;
@@ -64,6 +63,7 @@
     gap: 10px;
     overflow-y: auto;
     height: 100%;
+    padding: 10px;
     padding-bottom: 70px;
 }
 .listItemsContainer h3 {
@@ -112,6 +112,7 @@
 .listInfo {
     display: flex;
     flex-direction: column;
+    padding: 0 10px;
 }
 .listMeta {
     padding: 10px;
@@ -143,6 +144,7 @@
     gap: 10px;
     align-items: center;
     width: 100%;
+    padding: 0 10px;
 }
 .listFilters .buttons {
     display: flex;

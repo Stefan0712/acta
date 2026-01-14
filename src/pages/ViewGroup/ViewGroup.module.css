@@ -1,6 +1,6 @@
 .viewGroup {
-    width: 100vw;
-    height: var(--page-height);
+    width: 100dvw;
+    height: calc(100dvh - var(--navigation-height));
     display: grid;
     grid-template-rows: var(--page-header-height) 1fr;
     gap: 10px;

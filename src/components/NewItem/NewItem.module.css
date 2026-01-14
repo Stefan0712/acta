@@ -1,12 +1,28 @@
 .newItem {
-    padding-top: 10px;
     width: 100%;
-    background-color: var(--new-item-bg);
+    background-color: var(--input-bg);
     display: flex;
     flex-direction: column;
     flex-shrink: 0 !important;
     border-top: 1px solid var(--white-10);
     transition: all 0.1s;
+}
+.newItem .header {
+    width: 100%;
+    height: 50px;
+    display: grid;
+    grid-template-columns: 1fr 40px;
+    align-items: center;
+    gap: 10px;
+    padding-left: 20px;
+}
+.newItem h2 {
+    font-size: 1rem;
+}
+.newItem .header button {
+    background-color: transparent;
+    border: none;
+    color: var(--text-color);
 }
 .expandButton {
     width: 100%;
@@ -17,14 +33,7 @@
     align-items: center;
     justify-content: center;
 }
-.newItem h1 {
-    font-size: 1rem;
-    color: var(--white-50);
-    height: 40px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-}
+
 .expandButton svg {
     transition: all 0.1s;
     color: var(--text-color);
@@ -38,38 +47,40 @@
     align-items: center;
     justify-content: center;
 }
-.iconButton svg {
-    height: 80%;
-    width: 80%;
-    color: var(--text-color);
-}
-.claimButtons {
-    width: 100%;
-    align-items: center;
-    display: flex;
-    gap: 10px;
-    height: 50px;
-}
-.claimButtons button {
-    flex: 1;
-    width: auto;
-    border-radius: 10px;
-    border: 1px solid var(--white-10);
-}
 .basicInputs {
     display: grid;
     grid-template-columns: 40px 1fr 40px;
-    gap: 20px;
-    background-color: var(--input-bg);
+    gap: 10px;
     align-items: center;
     width: 100%;
-    height: 50px;
+    height: 70px;
     border-radius: 10px;
+    padding-right: 10px;
     overflow: hidden;
 }
-
+.expanded .basicInputs {
+    grid-template-columns: 1fr auto;
+    padding: 0 20px;
+    height: auto;
+    margin-bottom: 10px;
+}
+.basicInputs fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.expanded .basicInputs input {
+    border: 1px solid var(--white-10);
+    border-radius: 10px;
+}
+.basicInputs .qty {
+    display: grid;
+    grid-template-columns: 60px 60px;
+    gap: 10px;
+    align-items: center;
+}
 .basicInputs input {
-    height: 40px;
+    height: 50px;
     width: 100%;
     background-color: transparent;
     border: 1px solid transparent;
@@ -80,10 +91,9 @@
 .basicInputs .addButton {
     width: 40px;
     height: 40px;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border-radius: 10px;
-    border: transparent;
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
 }
 .descriptionInput {
     height: 40px;
@@ -98,9 +108,7 @@
     flex-direction: column;
     gap: 10px;
     overflow: hidden;
-    height: 0;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding: 0 20px;
 }
 .moreInputs input,
 .moreInputs select,
@@ -113,77 +121,10 @@
     border-radius: 10px;
     transition: all 0.1s;
 }
-.moreInputs.show {
-    height: auto;
-    animation: expandMoreInputs 0.2s;
-}
-.secondRow label {
-    width: 100%;
-}
-.secondRow {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 2fr;
-    overflow: hidden;
-    gap: 10px;
-    box-sizing: border-box;    
-}
-.secondRow .rowSection label
-.secondRow .rowSection input {
-    width: 100%;
-    min-width: 0 !important;
-}
-.secondRow .rowSection {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex-shrink: 0;
-    box-sizing: border-box;
-    min-width: 0 !important;
-}
-
-.showMoreButton {
-    height: 30px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    background-color: transparent;
-    border: none;
-    color: var(--text-color);
-}
-.assignButton {
-    height: 50px;
-    width: 100%;
-    background-color: transparent;
-    border: 1px solid var(--accent);
-    border-radius: 5px;
-    color: var(--text-color);
-}
-.manageTagsButton, 
-.bigNewItemButton {
-    width: 100%;
-    height: 50px;
-    border-radius: 10px;
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border: 1px solid var(--white-10);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1rem;
-    gap: 5px;
-}
-.manageTagsButton {
-    background-color: transparent;
-    color: var(--text-color);
-}
 .deadline {
     width: 100%;
     display: grid;
-    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-columns: 30% 30% 40%;
     gap: 10px;
     align-items: center;
 }
@@ -196,9 +137,9 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 10px;
     min-width: 0;
+    overflow: hidden;
 }
 .deadline input {
     width: 100%;
@@ -209,4 +150,43 @@
     padding-left: 10px;
     border-radius: 10px;
     transition: all 0.1s;
+    min-width: 0;
+}
+
+.bottomButtons {
+    display: grid;
+    grid-template-columns: 50px 50px 50px 1fr;
+    gap: 10px;
+    align-items: center;
+    height: 70px;
+    padding: 10px 0;
+}
+.manageTagsButton,
+.claimButton,
+.priorityButton {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--white-19);
+    border-radius: 10px;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+}
+.manageTagsButton p,
+.claimButton p,
+.priorityButton p {
+    font-size: 0.7rem;
+}
+.saveItemButton {
+    height: 40px;
+    width: fit-content;
+    padding: 0 15px;
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 5px;
+    margin-left: auto;
 }

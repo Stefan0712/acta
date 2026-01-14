@@ -1,7 +1,17 @@
 import type { Changelog } from "../../types/models";
 
 export const CHANGELOGS_ITEMS: Changelog[] = [
-        {
+    {
+        date: '13 Jan 2026',
+        description: 'This is the start of the offline-first "engine".',
+        listItems: [
+            'Added a button and a function to copy a list from a group to the local database',
+            'Added a button to "refresh" the cloned list with the lastest data from the original',
+            'Added a text showing when the list was updated last time that appears only for clones lists',
+            'Combined uncompleted and completed lists to be shown at the same time'
+        ]
+    },
+    {
         date: '12 Jan 2026',
         description: "Worked on a system for inviting users by their username",
         listItems: [
