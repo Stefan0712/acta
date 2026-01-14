@@ -155,7 +155,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
                     {showMoreInputs ? <ChevronDown /> : <ChevronUp />}
                 </button>}
                 <fieldset>
-                    <label>Item Name</label>
+                    {showMoreInputs ? <label>Item Name</label> : null}
                     <input 
                         autoComplete="off" 
                         type="text" 
