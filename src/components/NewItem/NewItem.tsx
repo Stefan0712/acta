@@ -213,7 +213,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
                     <label>Description</label>
                     <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
                 </fieldset>
-                <div className={styles.bottomButtons}>
+                <div className={styles.bottomButtons} style={!online ? {gridTemplateColumns: '50px 50px 1fr'} : {}}>
                     {online ? <button 
                                 onClick={handleClaimItem} 
                                 className={styles.claimButton}
