@@ -2,6 +2,18 @@ import type { Changelog } from "../../types/models";
 
 export const CHANGELOGS_ITEMS: Changelog[] = [
     {
+        date: '14 Jan 2026',
+        description: 'Reworked New Item component',
+        listItems: [
+            'Reordered buttons and inputs',
+            'Added more labels to make it easier to understand what that input does',
+            'Moved Claim, Tags, and Priority buttons at the bottom',
+            'Replaced Priority Dropdown with a button circling through priorities',
+            'Changed the entire background and made it cover the entire width of the viewport',
+            'Moved qty and unit on the same row with Item Name when New Item is expanded'
+        ]
+    },
+    {
         date: '13 Jan 2026',
         description: 'This is the start of the offline-first "engine".',
         listItems: [
