@@ -1,12 +1,11 @@
 import { useRef, useState } from 'react';
 import styles from './NewItem.module.css';
-import { type ListItem, type Tag } from '../../types/models';
-import { ObjectId } from 'bson';
+import { type Tag } from '../../types/models';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
-import { createItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
 import { ChevronDown, ChevronUp, Hand } from 'lucide-react';
+import { offlineCreate } from '../../services/offlineManager.ts';
 
 interface NewListItemProps {
     listId: string;
@@ -58,50 +57,74 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, online}) => {
     };
 
 
-    const addNewItem = async () =>{
-        if(!userId) return;
-        const currentDate = new Date();
-        const itemId = new ObjectId().toString();
-        const newItem: ListItem = {
-            _id: itemId,
-            createdAt: currentDate,
-            name,
-            unit,
-            qty,
-            isChecked: false,
-            listId,
-            description,
-            isPinned,
-            isDeleted: false,
-            tags,
-            priority,
-            authorId: userId,
-            isReminderSent: false,
-            reminder,
-            isDirty: true,
-            clientId: itemId
-        };
-        if(claimedBy) {
-            newItem.claimedBy = claimedBy;
+    const addNewItem = async () => {
+        // Name validation
+        if (!name || name.length === 0 || name.length > 100) {
+            setError('Name is invalid. It should be between 1 and 100 characters.');
+            return;
         }
-        if(dueDate) {
-            const timeString = dueTime || "23:59";
-            const localDateTime = new Date(`${dueDate}T${timeString}`);
-            newItem.deadline = localDateTime.toISOString();
-        }
-        if (name && name.length > 0 && name.length < 100) {
-            if( online ) {
-                await createItem(newItem);
-            } else {
-                await db.listItems.add(newItem);
+        if (!userId) return;
+
+        try {
+            // Fetch Parent List to know its type
+            const parentList = await db.lists.get(listId);
+            if (!parentList) {
+                setError("List not found!");
+                return;
             }
+
+            // Prepare data
+            const newItemData: any = {
+                name,
+                unit,
+                qty,
+                isChecked: false,
+                listId,
+                description,
+                isPinned,
+                isDeleted: false,
+                tags,
+                priority,
+                authorId: userId,
+                isReminderSent: false,
+                reminder,
+                createdAt: new Date(),
+            };
+
+            if (claimedBy) newItemData.claimedBy = claimedBy;
+            
+            if (dueDate) {
+                const timeString = dueTime || "23:59";
+                newItemData.deadline = new Date(`${dueDate}T${timeString}`).toISOString();
+            }
+
+            const isLocalList = !parentList.syncStatus; // If undefined, it's a device-only list
+
+            if (isLocalList) {
+                // Local only
+                // Bypass the OfflineManager and write directly to Dexie
+                // Generate the id manually here since offlineCreate isn't doing it
+                await db.listItems.add({
+                    ...newItemData,
+                    _id: crypto.randomUUID(), // Native browser UUID
+                    // No syncStatus means local
+                });
+            } else {
+                // Synced / pending
+                // Use offlineManager. It saves to Dexie and queues the job.
+                // It automatically generates the UUID and sets syncStatus: 'pending'
+                await offlineCreate(db.listItems, newItemData, 'CREATE_ITEM');
+            }
+
+            // Cleanup UI
             clearInputs();
             setShowMoreInputs(false);
-        } else {
-            setError('Name is invalid. It should be between one and 100 characters.');
-        }
 
-    }
+        } catch (error) {
+            console.error("Failed to add item:", error);
+            setError("Could not add item.");
+        }
+    };
     const clearInputs = () => {
         setName('');
         setUnit('');
@@ -237,7 +260,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, online}) => {
                 </div>
             </div> : null}
         </div>
-     );
+    );
 }
  
 export default NewListItem;

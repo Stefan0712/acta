@@ -1,6 +1,6 @@
 import { db, type SyncAction } from '../db';
-import { v4 as uuidv4 } from 'uuid';
 import { type Table } from 'dexie';
+import { ObjectId } from 'bson';
 
 export async function offlineCreate<T>(
   table: Table<T, any>,
@@ -8,7 +8,7 @@ export async function offlineCreate<T>(
   actionType: SyncAction['type']
 ) {
   // Generate a temporary id (UUID)
-  const tempId = uuidv4();
+  const tempId = new ObjectId().toHexString();
 
   // Prepare the object for local UI (Optimistic)
   // Cast as T because we know we are fulfilling the shape
@@ -21,7 +21,7 @@ export async function offlineCreate<T>(
   // Prepare the Action for the Queue
   const queueItem: SyncAction = {
     type: actionType,
-    payload: data,
+    payload: {...data, _id: tempId},
     tempId: tempId,      //Keep the UUID separate here to find the item later
     createdAt: Date.now(),
     status: 'pending',

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import styles from './EditItem.module.css';
+import styles from '../NewItem/NewItem.module.css';
 import { type GroupMember, type ListItem, type Tag } from '../../types/models';
 import {IconsLibrary} from '../../assets/icons.ts';
 import { db } from '../../db';
 import { loadItem } from '../../helpers/deadlineFormatter.ts';
 import { handleUpdateItem } from '../../services/itemService.ts';
 import TagSelector from '../TagSelector/TagSelector.tsx';
+import { Hand } from 'lucide-react';
 
 interface NewListItemProps {
     itemData: ListItem;
@@ -16,7 +17,7 @@ interface NewListItemProps {
 
 type Priority = "low" | "normal" | "high";
 
-const EditItem: React.FC<NewListItemProps> = ({itemData, close, online, members}) => {
+const EditItem: React.FC<NewListItemProps> = ({itemData, close, online}) => {
 
 
     const userId = localStorage.getItem('userId');
@@ -33,6 +34,8 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, close, online, members}
     const [dueTime, setDueTime] = useState(itemData.deadline ? loadItem(itemData.deadline).slice(11,16) : '');
     const [reminder, setReminder] = useState(itemData.reminder ?? 0);
     const [error, setError] = useState<null | string>(null);
+
+    const showMoreInputs = true;
 
 
     const [showTagSelector, setShowTagSelector] = useState(false);
@@ -65,9 +68,8 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, close, online, members}
         if (name && name.length > 0 && name.length < 51) {
             if (online) {
                 await handleUpdateItem(itemData._id, updatedItem);
-            } else {
-                await db.listItems.update(itemData._id, updatedItem);
             }
+            await db.listItems.update(itemData._id, updatedItem);
             close();
         } else {
             setError('Name is invalid. It should be between one and 50 characters.');
@@ -89,64 +91,75 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, close, online, members}
         { value: 12, label: "12 Hours Before" },
         { value: 24, label: "1 Day Before" },
     ];
+
+    const handleChangePriority = () => {
+        setPriority(prev => {
+            const nextStep: Record<Priority, Priority> = {
+                'low': 'normal',
+                'normal': 'high',
+                'high': 'low'
+            };
+            return nextStep[prev] || 'normal'; 
+        });
+    };
+
+
     return ( 
-         <div className={styles.newItem}>
-            <div className={styles.header}>
-                <h1>Edit Item</h1>
+        <div className={`${styles.editItem} ${showMoreInputs ? styles.expanded : ''}`}>
+            {showMoreInputs ? <div className={styles.header}>
+                <h2>Edit Item</h2>
                 <button onClick={close}>
                     <IconsLibrary.Close />
                 </button>
-            </div>
+            </div> : null}
             {showTagSelector ? <TagSelector 
                 removeTag={(id)=>setTags(prev=>[...prev.filter(item=>item._id !== id)])}
                 close={()=>setShowTagSelector(false)} 
                 addTag={(newTag)=>setTags(prev=>[...prev, newTag])} 
                 tags={tags}  
             /> : null}
-            <fieldset className={styles.name}>
-                <label>Item name</label>
-                <input autoComplete="off" type="text" name="name" onChange={(e)=>handleNameInput(e.target.value)} value={name} placeholder='Name...' required minLength={0} />
-            </fieldset>
-            {error ? <p className='error-message'>{error}</p> : null}
-            <fieldset className={styles.description}>
-                <label>Description</label>
-                <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
-            </fieldset>
-            <div className={`${styles.moreInputs} ${styles.show }`}>
-                <div className={styles.secondRow}>
-                    <div className={styles.rowSection}>
+            <div className={styles.basicInputs}>
+                <fieldset>
+                    {showMoreInputs ? <label>Item Name</label> : null}
+                    <input 
+                        autoComplete="off" 
+                        type="text" 
+                        name="name"
+                        onChange={(e)=>handleNameInput(e.target.value)} 
+                        value={name} 
+                        placeholder='New Item...' 
+                        required 
+                        minLength={0} 
+                    />
+                </fieldset>
+               {showMoreInputs ?  <div className={styles.qty}>
+                    <fieldset>
                         <label>Qty</label>
-                        <input autoComplete="off" type="number" name="qty" onChange={(e)=>setQty(parseInt(e.target.value))} value={qty} placeholder='0' required min={0} />
-                    </div>
-                    <div className={styles.rowSection}>
+                        <input 
+                            autoComplete="off" 
+                            type="number" 
+                            name="qty" 
+                            onChange={(e)=>setQty(parseInt(e.target.value))} 
+                            value={qty} 
+                            placeholder='0' 
+                            required
+                            min={0} />
+                    </fieldset>
+                    <fieldset>
                         <label>Unit</label>
                         <input autoComplete="off" id={styles.unitInput} type="text" name="unit" onChange={(e)=>setUnit(e.target.value)} value={unit} placeholder='Unit' required minLength={0} />
-                    </div>
-                    <div className={styles.rowSection}>
-                        <label>Priority</label>
-                        <select onChange={(e)=>setPriority(e.target.value as Priority)} value={priority}>
-                            <option value={'low'}>Low</option>
-                            <option value={'normal'}>Normal</option>
-                            <option value={'high'}>High</option>
-                        </select>
-                    </div>
-                </div>
-                {online ? <div className={styles.claimButtons}>
-                    <button 
-                        onClick={handleClaimItem} 
-                        className={styles.assignButton}
-                        style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
-                    >
-                        {claimedBy ? `Claimed by ${members ? members.find(member=>member.userId===claimedBy)?.username : 'other user'}` : 'Claim item'}
-                    </button>
+                    </fieldset>
                 </div> : null}
+            </div>
+            {error ? <p className='error-message'>{error}</p> : null}
+            {showMoreInputs ? <div className={styles.moreInputs}>
                 <div className={styles.deadline}>
                     <fieldset>
-                        <label>Due date</label>
+                        <label>Due Date</label>
                         <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={styles.dateInput} min={new Date().toISOString().split("T")[0]}  />
                     </fieldset>
                     <fieldset>
-                        <label>Due hour</label>
+                        <label>Due Hour</label>
                         <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} className={styles.timeInput} />
                     </fieldset>
                     <fieldset>
@@ -159,18 +172,38 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, close, online, members}
                         </select>
                     </fieldset>
                 </div>
-                <button 
-                    className={styles.manageTagsButton} 
-                    onClick={()=>setShowTagSelector(true)}
-                >   
-                    <IconsLibrary.Tag />
-                    <p>Manage tags ({tags.length})</p>
-                    
-                </button>
-                <button className={styles.saveButton} onClick={updateItem}>Save Item</button>
-            </div>
+                <fieldset>
+                    <label>Description</label>
+                    <input autoComplete="off" className={styles.descriptionInput} type="text" name="description" onChange={(e)=>setDescription(e.target.value)} value={description} placeholder='Description...' required minLength={0} />
+                </fieldset>
+                <div className={styles.bottomButtons} style={!online ? {gridTemplateColumns: '50px 50px 1fr'} : {}}>
+                    {online ? <button 
+                                onClick={handleClaimItem} 
+                                className={styles.claimButton}
+                                style={claimedBy ? {backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)'} : {}}
+                            >
+                            <Hand />
+                            <p>{claimedBy ? 'Claimed' : 'Claim'}</p>
+                            </button> 
+                    : null}
+                    <button className={styles.manageTagsButton} onClick={()=>setShowTagSelector(true)}>   
+                        <IconsLibrary.Tag />
+                        <p>Tags</p>
+                    </button>
+                    <button onClick={handleChangePriority} className={styles.priorityButton}>
+                        {
+                            priority === 'high' ? <IconsLibrary.High /> : 
+                            priority === 'normal' ? <IconsLibrary.Normal /> :
+                            priority === 'low' ? <IconsLibrary.Low /> :
+                            <IconsLibrary.Normal />
+                        }
+                        <p>Priority</p>
+                    </button>
+                    <button onClick={updateItem} className={styles.saveItemButton}>Update Item</button>
+                </div>
+            </div> : null}
         </div>
-     );
+    );
 }
  
 export default EditItem;

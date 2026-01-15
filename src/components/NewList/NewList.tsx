@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import styles from './NewList.module.css';
-import type { List } from '../../types/models';
-import { ObjectId } from 'bson';
 import SwitchButton from '../SwitchButton/SwitchButton';
 import { db } from '../../db';
 import { useNotifications } from '../../Notification/NotificationContext';
-import { createList } from '../../services/listService';
 import { useNavigate } from 'react-router-dom';
 import IconSelector from '../IconSelector/IconSelector';
 import { getIcon } from '../IconSelector/iconCollection';
 import ColorSelector from '../ColorSelector/ColorSelector';
+import { offlineCreate } from '../../services/offlineManager';
 
 interface IProps {
     close: ()=>void;
@@ -31,41 +29,42 @@ const NewList: React.FC<IProps> = ({close, groupId}) => {
     const [showIconSelector, setShowIconSelector] = useState(false);
     const [showColorSelector, setShowColorSelector] = useState(false);
 
-    const handleSaveList = async () => {
-        const currentDate = new Date();
-        const newList: List = {
+const handleSaveList = async () => {
+    if (!name || name.length < 3 || name.length > 20) {
+        setError("Invalid list name. It should be between 3 and 20 characters!");
+        return;
+    }
+
+    try {
+        const listData = {
             name,
             description,
             color,
             isPinned,
-            authorId: localStorage.getItem('userId') ?? 'local-user-id',
-            createdAt: currentDate,
+            authorId: localStorage.getItem('userId') ?? 'local-user',
+            groupId: groupId || null, 
+            createdAt: new Date(),
             isDeleted: false,
-            isDirty: true,
             icon
         };
+
+        const newList = await offlineCreate(db.lists, listData, 'CREATE_LIST');
+
+        showNotification("List created successfully", "success");
+
         if (groupId) {
-            newList.groupId = groupId;
-        };
-        if (!groupId) {
-            const localId = new ObjectId().toString();
-            newList._id = localId;
-            newList.clientId = localId;
-        }
-        if(!name || (name.length < 3 && name.length > 20)){
-            setError("Invalid group name. It should be between 3 and 20 characters!");
+            navigate(`/group/${groupId}/lists/${newList._id}`);
         } else {
-            if( groupId ) {
-                const apiResponse = await createList(newList);
-                navigate(`/group/${groupId}/lists/${apiResponse._id}`);
-            }else {
-                await db.lists.add(newList);
-                
-            }
-            showNotification("List created successfully", "success");
-            close();
+            navigate(`/lists/${newList._id}`);
         }
-    };
+
+        close();
+
+    } catch (error) {
+        console.error("Failed to create list:", error);
+        setError("Something went wrong while saving.");
+    }
+};
     const SelectedIcon = getIcon(icon);
     return ( 
         <div className={styles.componentContainer}>

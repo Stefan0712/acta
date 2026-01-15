@@ -95,6 +95,7 @@ const ViewList = () => {
         if(list && list._id) {
             try {
                 await updateList(list._id,{isDeleted: true});
+                await db.lists.update(list._id, {isDeleted: true})
                 showNotification("List deleted", "success");
                 navigate(`/group/${list.groupId}`);
                 close();
@@ -136,7 +137,7 @@ const ViewList = () => {
     } else if(list) {
         return ( 
             <div className={styles.viewList}>
-                {showEdit ? <EditList close={()=>setShowEdit(false)} online={true} listData={list}/> : null}
+                {showEdit ? <EditList close={()=>setShowEdit(false)} listData={list}/> : null}
                 {showAssignUser && list.groupId ? <UserSelector close={()=>setShowAssignUser(null)} itemId={showAssignUser} groupId={list.groupId} /> : null}
                 {showDeleteModal ? <ConfirmationModal 
                             title='Delete list?' 

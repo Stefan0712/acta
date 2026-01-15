@@ -13,10 +13,9 @@ import { IconsLibrary } from '../../assets/icons';
 interface IProps {
     close: ()=>void;
     listData: List;
-    online?: boolean;
 }
 
-const EditList: React.FC<IProps> = ({close, listData, online}) => {
+const EditList: React.FC<IProps> = ({close, listData}) => {
 
     const { showNotification } = useNotifications();
 
@@ -31,35 +30,86 @@ const EditList: React.FC<IProps> = ({close, listData, online}) => {
     const [showColorSelector, setShowColorSelector] = useState(false);
 
 
-    const handleSaveList = async () => {
-        const currentDate = new Date();
-        const updatedList: List = {
-            ...listData,
-            name,
-            description,
-            color,
-            icon,
-            isPinned,
-            isDeleted: false,
-            updatedAt: currentDate,
-        };
-        if(!name || (name.length < 3 && name.length > 20)){
-            setError("Invalid group name. It should be between 3 and 20 characters!");
-        } else {
-            try {
-                if(online && listData._id){
-                    await updateList(listData._id, updatedList)
-                } else {
-                    await db.lists.update(listData._id, updatedList);
-                }
-                showNotification("List updated successfully", "success");
-                close();
-            } catch (error) {
-                console.error(error)
-                showNotification("Failed to update list", "error")
+
+const handleSaveList = async () => {
+    if (name.length < 1 && name.length > 50){
+        setError("Name should be between 0 and 50 characters");
+        return;
+    }
+    
+    const isLocalOnly = !listData.syncStatus; // undefined or null
+    const isPendingSync = listData.syncStatus === 'pending' || listData.syncStatus === 'pending_update';
+    const isSynced = listData.syncStatus === 'synced';
+
+    // Local only
+    if (isLocalOnly) {
+        try {
+            await db.lists.update(listData._id, {
+                name, description, color, isPinned
+            });
+            showNotification("List updated locally", "success");
+            close();
+        } catch (error) {
+            console.error(error);
+            showNotification("Failed to update local list", "error");
+        }
+        return;
+    }
+
+    // Pending lists / ghost sync
+    if (isPendingSync) {
+        try {
+            // Update locally because the server doesn't know this ID yet (pending)
+            await db.lists.update(listData._id, {
+                name, description, color, isPinned,
+                // Ensure it stays 'pending_update' or 'pending' so worker picks it up
+                syncStatus: listData.syncStatus === 'pending' ? 'pending' : 'pending_update'
+            });
+            
+            // If it was already pending, the existing queue item will pick up these changes 
+            // when it runs because it reads the latest data from the DB.
+            
+            showNotification("List updated (waiting for sync)", "success");
+            close();
+        } catch (error) {
+            console.error(error);
+        }
+        return;
+    }
+
+    // Synced / Cloud list
+    if (isSynced) {
+        // Online Check
+        if (!navigator.onLine) {
+            showNotification("You must be online to edit cloud lists.", "error");
+            return;
+        }
+
+        // API Call
+        try {
+            const apiResponse = await updateList(listData._id, {
+                name, description, color, isPinned
+            });
+
+            // Update Local with server response
+            await db.lists.update(listData._id, {
+                ...apiResponse,
+                syncStatus: 'synced' // Re-confirm it matches server
+            });
+
+            showNotification("List updated successfully", "success");
+            close();
+
+        } catch (error: any) {
+            console.error("Save failed", error);
+            if (error.response?.status === 404) {
+                showNotification("This list no longer exists on the server.", "error");
+            } else {
+                showNotification("Failed to save changes.", "error");
             }
         }
-    };
+    }
+};
 
     // Fill in data received from the shopping list
     useEffect(()=>{

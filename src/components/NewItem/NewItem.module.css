@@ -1,4 +1,5 @@
-.newItem {
+.newItem,
+.editItem {
     width: 100%;
     background-color: var(--input-bg);
     display: flex;
@@ -7,7 +8,15 @@
     border-top: 1px solid var(--white-10);
     transition: all 0.1s;
 }
-.newItem .header {
+.editItem {
+    width: 100dvw;
+    position: fixed;
+    left: 0;
+    z-index: 999;
+    bottom: var(--navigation-height);
+}
+.newItem .header,
+.editItem .header{
     width: 100%;
     height: 50px;
     display: grid;
@@ -16,10 +25,12 @@
     gap: 10px;
     padding-left: 20px;
 }
-.newItem h2 {
+.newItem h2,
+.editItem h2 {
     font-size: 1rem;
 }
-.newItem .header button {
+.newItem .header button,
+.editItem .header button {
     background-color: transparent;
     border: none;
     color: var(--text-color);

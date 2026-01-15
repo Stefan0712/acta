@@ -7,8 +7,7 @@ export interface List {
     color?: string;
     isPinned: boolean;
     isDeleted: boolean;
-    groupId?: string;
-    isDirty: boolean;
+    groupId: string | null;
     authorId: string;
     clientId?: string | null;
     totalItemsCounter?: number;

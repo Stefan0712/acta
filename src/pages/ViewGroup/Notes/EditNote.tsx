@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
-import type { Note } from '../../../types/models';
 import styles from './Notes.module.css';
 import SwitchButton from '../../../components/SwitchButton/SwitchButton';
 import { getNote, updateNote } from '../../../services/notesServices';
 
 interface EditNoteProps {
     close: ()=>void;
-    editNote: (noteId: string, newNote: Note) => void;
     noteId: string;
 }
-const EditNote: React.FC<EditNoteProps> = ({close, editNote, noteId}) => {
+const EditNote: React.FC<EditNoteProps> = ({close, noteId}) => {
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -47,7 +45,6 @@ const EditNote: React.FC<EditNoteProps> = ({close, editNote, noteId}) => {
             try {
                 const apiResponse = await updateNote(noteId, updates);
                 if(apiResponse) {
-                    editNote(noteId, apiResponse);
                     close();
                 }
             } catch (error){

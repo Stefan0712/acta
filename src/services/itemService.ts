@@ -52,7 +52,7 @@ export async function fetchItemsForSync(listId: string, lastSyncDate?: string): 
 // PUT /api/items/:id
 export async function handleUpdateItem(itemId: string, data: Partial<ListItem>): Promise<ListItem> {
     try {
-        const response = await API.put(`/items/${itemId}`, data); 
+        const response = await API.patch(`/items/${itemId}`, data); 
         console.log(data, response)
         if (response.status === 200) {
             return response.data;

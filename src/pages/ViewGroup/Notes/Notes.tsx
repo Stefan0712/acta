@@ -1,14 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './Notes.module.css';
 import type { Note, NoteComment } from '../../../types/models';
 import { IconsLibrary } from '../../../assets/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../Notification/NotificationContext';
 import Loading from '../../../components/LoadingSpinner/Loading';
-import { createComment, deleteComment, deleteNote, getNoteComments, getNotesByGroup, updateNote } from '../../../services/notesServices';
+import { createComment, deleteComment, deleteNote, getNoteComments, updateNote } from '../../../services/notesServices';
 import NewNote from './NewNote';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
 import EditNote from './EditNote';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../../../db';
 
 // TODO: Add a delete confirmation modal
 // TODO: Write a function to remove the local copy of a freshly deleted note from the API
@@ -17,32 +19,15 @@ import EditNote from './EditNote';
 const Notes = () => {
     const { groupId } = useParams();
 
-    const {showNotification} = useNotifications();
     const navigate = useNavigate();
 
 
     const [showNewNote, setShowNewNote] = useState(false);
-    const [notes, setNotes] = useState<Note[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [selectedFilter, setSelectedFilter] = useState('active');
-    
-    useEffect(()=>{
-        getNotes();
-    },[]);
 
-    const getNotes = async () => {
-        if (groupId){
-            try {
-                const apiResponse = await getNotesByGroup(groupId);
-                setNotes(apiResponse); 
-            } catch (apiError) {
-                console.error("API pull failed:", apiError);
-                showNotification("Offline or server issue.", "error");
-            } finally {
-                setIsLoading(false); 
-            }
-        }
-    };
+    const notes = useLiveQuery(async () => {
+        return await db.notes.where({groupId}).toArray()
+    }, [groupId])
 
     const filteredNotes = useMemo(() => {
         if (!notes) return [];
@@ -61,14 +46,10 @@ const Notes = () => {
         });
     }, [notes, selectedFilter]);
 
-    const handleEditNote = (noteId: string, updates: Partial<Note>) => {
-        setNotes((prev)=>
-            prev.map(note => note._id === noteId ? { ...note, ...updates } : note)
-        )
-    }
+
     if (!localStorage.getItem('jwt-token') && groupId) {
         navigate('/auth')
-    } else if(isLoading) {
+    } else if(!notes) {
         return ( <Loading /> )
     } else if (notes) {
         return ( 
@@ -86,11 +67,11 @@ const Notes = () => {
                     <option value={'deleted'}>Deleted</option>
                 </select>
                 <div className={styles.notesContainer}>
-                    {showNewNote && groupId ? <NewNote close={()=>setShowNewNote(false)} addNote={(newNote)=>setNotes(prev=>[...prev, newNote])} groupId={groupId} /> : null}
+                    {showNewNote && groupId ? <NewNote close={()=>setShowNewNote(false)}  groupId={groupId} /> : null}
                     {showNewNote ? null : <button onClick={()=>setShowNewNote(true)} className={styles.newNoteButton}>
                         <IconsLibrary.Plus />
                     </button>}
-                    {filteredNotes?.length > 0 ? filteredNotes.map((note, index)=><Note handleEditNote={handleEditNote} data={note} key={index} />) : <p className='no-items-text'>There are no notes.</p>}
+                    {filteredNotes?.length > 0 ? filteredNotes.map((note: Note, index: number)=><Note data={note} key={index} />) : <p className='no-items-text'>There are no notes.</p>}
                 </div>
             </div>
         );
@@ -103,10 +84,9 @@ export default Notes;
 
 interface NoteProps {
     data: Note;
-    handleEditNote: (noteId: string, note: Partial<Note>) => void;
 }
 
-const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
+const Note: React.FC<NoteProps> = ({data}) => {
 
     const [showComments, setShowComments] = useState(false);
     const [comments, setComments] = useState<NoteComment[]>([]);
@@ -140,7 +120,6 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
         <div className={styles.note}>
             {showPostMenu && isAuthor ? <PostMenu 
                 close={()=>setShowPostMenu(false)}
-                handleEditNote={handleEditNote}
                 noteId={data._id}
                 isDeleted={data.isDeleted}
             /> : null}
@@ -174,13 +153,12 @@ const Note: React.FC<NoteProps> = ({data, handleEditNote}) => {
 }
 
 interface PostMenuProps {
-    handleEditNote: (noteId: string, note: Partial<Note>) => void;
     noteId: string;
     isDeleted: boolean;
     close: ()=> void;
 }
 
-const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, close}) => {
+const PostMenu: React.FC<PostMenuProps> = ({noteId, isDeleted, close}) => {
 
 
     const {showNotification} = useNotifications();
@@ -190,7 +168,6 @@ const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, c
         if(noteId) {
             try {
                 await updateNote(noteId, {isDeleted: false});
-                handleEditNote(noteId, {isDeleted: false});
                 showNotification("Note restored", "success");
                 close();
             } catch (error) {
@@ -204,7 +181,6 @@ const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, c
         if(noteId) {
             try {
                 await deleteNote(noteId);
-                handleEditNote(noteId, {isDeleted: true});
                 showNotification("Note deleted permanently", "success");
                 close();
             } catch (error) {
@@ -219,7 +195,6 @@ const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, c
         if(noteId) {
             try {
                 await updateNote(noteId, {isDeleted: true});
-                handleEditNote(noteId, {isDeleted: true});
                 showNotification("Note deleted", "success");
                 close();
             } catch (error) {
@@ -232,7 +207,7 @@ const PostMenu: React.FC<PostMenuProps> = ({handleEditNote, noteId, isDeleted, c
     return (
         <div className={styles.postMenu}>
 
-            {showEdit ? <EditNote noteId={noteId} close={()=>setShowEdit(false)} editNote={handleEditNote}  /> : null}
+            {showEdit ? <EditNote noteId={noteId} close={()=>setShowEdit(false)} /> : null}
 
             <button onClick={()=>setShowEdit(true)}>Edit</button>
             {isDeleted ? <button style={{color: 'red'}} onClick={permanentlyDelete}>Permamently Delete</button> : null}

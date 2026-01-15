@@ -119,26 +119,52 @@ const List: React.FC<ListProps> = ({data}) => {
             }
         }
     }
-    const permanentlyDelete = async () =>{
-        if(data._id) {
-            if (data.groupId) {
-                try {
-                    await deleteList(data._id);
-                    showNotification("Online list was permanently deleted", "success");
-                    setShowDeleteModal(false);
-                } catch (error) {
-                    console.error(error);
-                    showNotification("Failed to permamently remove online list.", "error");
-                }
+    const permanentlyDelete = async () => {
+        if (!data || !data._id) return;
+        console.log(data)
+        // Check if the server knows about this list
+        // If syncStatus is 'pending', it means we haven't successfully created it on the server yet.
+        const isServerAware = data.syncStatus === 'synced' || data.syncStatus === 'pending_update';
+
+        // Allow deletion only if online
+        if (isServerAware && !navigator.onLine) {
+            showNotification("You must be online to delete a synced list.", "error");
+            return;
+        }
+
+        try {
+            // Server Delete
+            if (isServerAware) {
+                await deleteList(data._id); 
+            }
+
+            // Local Cleanup
+            await db.transaction('rw', db.lists, db.listItems, db.syncQueue, async () => {
+                // Delete the list
+                await db.lists.delete(data._id);
+
+                // Delete the items
+                await db.listItems.where({ listId: data._id }).delete();
+
+                // If this list was waiting to be created (pending), remove that 
+                // action from the queue. Otherwise, the worker will create it later
+                // Search for any queue items where the payload has this ID.
+                await db.syncQueue
+                    .filter(action => action.payload && (action.payload.id === data._id || action.payload._id === data._id))
+                    .delete();
+            });
+
+            showNotification("List deleted", "success");
+        } catch (error) {
+            console.error("Delete failed:", error);
+            
+            // If server gives 404, it implies it's already deleted
+            if (isServerAware && error.response && error.response.status === 404) {
+                // Try again treating it as local-only
+                showNotification("List was already deleted on server. Cleaning up local copy...", "info");
+                await db.lists.delete(data._id); // Force local cleanup
             } else {
-                try {
-                    await db.lists.delete(data._id);
-                    showNotification("Local list deleted permanently", "success");
-                    setShowDeleteModal(false);
-                } catch (error) {
-                    console.error(error);
-                    showNotification("Failed to delete local list.", "error");
-                }
+                showNotification("Failed to delete list.", "error");
             }
         }
     }

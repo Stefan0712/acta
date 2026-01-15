@@ -62,20 +62,20 @@ const ListItem: React.FC<ListItemProps> = ({data, groupId, online, members, show
             showNotification("Failed to pin item", "error")
         }
     };
+
     const handleDelete = async () =>{
         try {
             const newValue = !data.isDeleted;
-            if(online){
-                await handleUpdateItem(data._id, {isDeleted: newValue});
-            } else {
-                await db.listItems.update(data._id, {isDeleted: newValue});
-            }
+            await handleUpdateItem(data._id, {isDeleted: newValue});
+            await db.listItems.update(data._id, {isDeleted: newValue});
             showNotification(newValue ? "Item deleted succesfully." : "Item restored succesfully.", "success");
         } catch (error) {
             console.error(error);
             showNotification("Failed to delete item", "error")
         }
     };
+
+
 
     if(data){
         return ( 

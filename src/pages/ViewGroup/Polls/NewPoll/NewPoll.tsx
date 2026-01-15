@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { IconsLibrary } from '../../../../assets/icons';
 import styles from './NewPoll.module.css';
-import type { Poll } from '../../../../types/models';
 import SwitchButton from '../../../../components/SwitchButton/SwitchButton';
 import { createPoll } from '../../../../services/pollService';
 import { useParams } from 'react-router-dom';
 
 
-const NewPoll = ({handleAddPoll, close}: {handleAddPoll: (newPoll: Poll)=>void, close: ()=>void}) => {
+const NewPoll = ({close}: {close: ()=>void}) => {
 
     const {groupId} = useParams();
 
@@ -46,8 +45,7 @@ const NewPoll = ({handleAddPoll, close}: {handleAddPoll: (newPoll: Poll)=>void, 
                 expiresAt: new Date(`${endDate}T${endHour}`),
             }
             try {
-                const apiResponse: Poll = await createPoll(newPoll);
-                handleAddPoll(apiResponse);
+                await createPoll(newPoll);
                 close();
             } catch (error) {
                 console.error(error)

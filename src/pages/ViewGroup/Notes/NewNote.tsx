@@ -1,15 +1,13 @@
 import { useState } from 'react';
-import type { Note } from '../../../types/models';
 import styles from './Notes.module.css';
 import SwitchButton from '../../../components/SwitchButton/SwitchButton';
 import { createNote } from '../../../services/notesServices';
 
 interface NoteProps {
     close: ()=>void;
-    addNote: (newNote: Note) => void;
     groupId: string;
 }
-const NewNote: React.FC<NoteProps> = ({close, addNote, groupId}) => {
+const NewNote: React.FC<NoteProps> = ({close, groupId}) => {
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -32,7 +30,6 @@ const NewNote: React.FC<NoteProps> = ({close, addNote, groupId}) => {
             try {
                 const apiResponse = await createNote(newNote);
                 if(apiResponse) {
-                    addNote(apiResponse);
                     console.log(apiResponse)
                     close();
                 }

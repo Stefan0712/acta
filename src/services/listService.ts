@@ -7,6 +7,8 @@ interface ListCreateData {
     groupId?: string; 
     color?: string;
     isDeleted?: boolean;
+    description?: string;
+    isPinned?: boolean;
 }
 
 export async function createList(data: ListCreateData): Promise<List> {

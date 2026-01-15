@@ -10,9 +10,8 @@ import Loading from '../../../../components/LoadingSpinner/Loading';
 
 interface PollProps {
     data: Poll;
-    remove: (id: string) => void;
 }
-const Poll: React.FC<PollProps> = ({data, remove}) => {
+const Poll: React.FC<PollProps> = ({data}) => {
     const userId = localStorage.getItem('userId');
     const [options, setOptions] = useState([...data.options]);
     const [showEdit, setShowEdit] = useState(false);
@@ -35,7 +34,6 @@ const Poll: React.FC<PollProps> = ({data, remove}) => {
     const handleDelete = async () => {
         try {
             await deletePoll(data._id);
-            remove(data._id)
         } catch (error) {
             console.error(error);
         }
