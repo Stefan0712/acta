@@ -4,7 +4,7 @@ import Navigation from './components/Navigation/Navigation.tsx';
 import LocalList from './pages/LocalList/LocalList.tsx';
 import Settings from './pages/Settings/Settings.tsx';
 import { NotificationDisplay } from './Notification/NotificationDisplay.tsx';
-import {  useState } from 'react';
+import {  useEffect, useState } from 'react';
 import Groups from './pages/Groups/Groups.tsx';
 import ViewGroup from './pages/ViewGroup/ViewGroup.tsx';
 import { UserProvider } from './contexts/UserContext.tsx';
@@ -24,6 +24,8 @@ import Welcome from './pages/NewUserFlow/Welcome/Welcome.tsx';
 import About from './pages/About/About.tsx';
 import Auth from './pages/Auth/Auth.tsx';
 import Changelogs from './pages/Changelogs/Changelogs.tsx';
+import { syncAllUserData } from './services/syncService.ts';
+import { processSyncQueue } from './services/syncWorker.ts';
 
 
 function App() {
@@ -31,6 +33,36 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return !!localStorage.getItem('userId') && !!localStorage.getItem('username');
   });
+
+
+  useEffect(()=>{
+    // Fetch latest data
+    if (navigator.onLine) {
+      syncAllUserData();
+      processSyncQueue()
+    }
+
+    // Try to upload pending actions every 15 seconds
+    const interval = setInterval(()=> {
+      if (navigator.onLine) {
+        processSyncQueue();
+      }
+    }, 15000);
+
+    //Trigger immediately when internet comes back
+    const handleOnline = () => {
+      console.log("Network restored")
+      syncAllUserData();
+      processSyncQueue();
+    };
+
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('online', handleOnline)
+    }
+  },[]);
 
   if (!isAuthenticated) {
     return (<NewUserFlow onLoginSuccess={()=>setIsAuthenticated(true)} />)

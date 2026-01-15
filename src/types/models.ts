@@ -15,6 +15,7 @@ export interface List {
     completedItemsCounter?: number;
     icon?: string;
     lastSyncedAt?: Date;
+    syncStatus?: string;
 }
 
 export interface ListItem {
@@ -51,6 +52,7 @@ export interface ListItem {
     isDirty: boolean;
     clientId: string | null;
     icon?: string;
+    syncStatus?: string;
 }
 
 export interface User {
@@ -104,6 +106,7 @@ export interface NoteComment {
     isDirty: boolean;
     clientId: string | null;
     noteId: string;
+    syncStatus: string;
 }
 
 export interface Note {
@@ -119,6 +122,7 @@ export interface Note {
     isPinned: boolean;
     commentCount?: number;
     authorUsername: string;
+    syncStatus?: string;
 }
 export interface PollOption {
   _id?: string;
@@ -141,6 +145,7 @@ export interface Poll {
   isDirty?: boolean;
   clientId?: string | null;
   isClosed?: boolean;
+  syncStatus?: string;
 }
 export type NotificationCategory = 
   | 'ASSIGNMENT'
