@@ -7,11 +7,10 @@ import { useNotifications } from '../../Notification/NotificationContext';
 
 interface UserSelectorProps {
     groupId: string;
-    selectUser: (userId: string) => void;
     close: ()=>void;
     itemId: string;
 }
-const UserSelector: React.FC<UserSelectorProps> = ({groupId, selectUser, close, itemId}) => {
+const UserSelector: React.FC<UserSelectorProps> = ({groupId, close, itemId}) => {
 
     const {showNotification} = useNotifications();
     const userId = localStorage.getItem('userId');
@@ -51,7 +50,6 @@ const UserSelector: React.FC<UserSelectorProps> = ({groupId, selectUser, close, 
             try {
                 const apiResponse = await handleAssignItem(itemId,{assignedTo: selectedUserId});
                 if (apiResponse) {
-                    selectUser(apiResponse);
                     showNotification('User assigned successfully!', "success");
                     close();
                 }

@@ -10,13 +10,12 @@ import { ChevronDown, ChevronUp, Hand } from 'lucide-react';
 
 interface NewListItemProps {
     listId: string;
-    addItemToList: (item: ListItem) => void;
     online?: boolean;
 }
 
 type Priority = "low" | "normal" | "high";
 
-const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}) => {
+const NewListItem: React.FC<NewListItemProps> = ({listId, online}) => {
     const userId = localStorage.getItem('userId');
 
     const [name, setName] = useState('');
@@ -92,11 +91,9 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, addItemToList, online}
         }
         if (name && name.length > 0 && name.length < 100) {
             if( online ) {
-                const onlineItem = await createItem(newItem);
-                addItemToList(onlineItem);
+                await createItem(newItem);
             } else {
                 await db.listItems.add(newItem);
-                addItemToList(newItem);
             }
             clearInputs();
             setShowMoreInputs(false);

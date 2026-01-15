@@ -65,7 +65,7 @@ export async function getGroupLists(groupId: string): Promise<List[]> {
 // PUT /api/lists/:id
 export async function updateList(listId: string, data: Partial<ListCreateData>): Promise<List> {
     try {
-        const response = await API.put(`/lists/${listId}`, data); 
+        const response = await API.patch(`/lists/${listId}`, data); 
 
         if (response.status === 200) {
             return response.data;

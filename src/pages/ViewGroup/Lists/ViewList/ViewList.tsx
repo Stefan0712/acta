@@ -1,19 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './ViewList.module.css';
-import { type ListItem as ItemType, type List as IList, type GroupMember } from '../../../../types/models';
+import { type GroupMember } from '../../../../types/models';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../../Notification/NotificationContext';
 import NewItem from '../../../../components/NewItem/NewItem';
 import { getDateAndHour } from '../../../../helpers/dateFormat.ts';
 import EditList from '../../../../components/EditList/EditList';
 import GroupListItem from '../GroupListItem/GroupListItem.tsx'
-import {  getList, updateList } from '../../../../services/listService.ts';
-import { getListItems } from '../../../../services/itemService.ts';
+import {  updateList } from '../../../../services/listService.ts';
 import Loading from '../../../../components/LoadingSpinner/Loading.tsx';
 import { IconsLibrary } from '../../../../assets/icons.ts';
 import UserSelector from '../../../../components/UserSelector/UserSelector.tsx';
 import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal.tsx';
 import { db } from '../../../../db.ts';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 interface IListOutletContext {
   members: GroupMember[]; 
@@ -29,32 +29,45 @@ const ViewList = () => {
     const { showNotification } = useNotifications();
 
 
-    const [isPageLoading, setIsPageLoading] = useState(true);
     const [showEdit, setShowEdit] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
-    const [listData, setListData] = useState<IList | null>(null);
-    const [listItems, setListItems] = useState<ItemType[]>([]);
 
 
     const [showAssignUser, setShowAssignUser] = useState<null | string>(null);
     const [showMore, setShowMore] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+
+    const data = useLiveQuery(async () => {
+        if (!listId) return null;
+
+        const [list, items] = await Promise.all([
+            db.lists.get(listId),
+            db.listItems.where('listId').equals(listId).toArray()
+        ]);
+        return { list, items };
+    }, [listId]);
+    
+
+    const { list, items } = data || { list: null, items: [] };
+
     // Filter items based on the current category
     const filteredItems = useMemo(() => {
+        if (!items) return [];
         if(selectedCategory === 'all'){
-            return listItems.filter(item=>!item.isDeleted);
+            return items.filter(item=>!item.isDeleted);
         }else if(selectedCategory === 'pinned') {
-            return listItems.filter(item=>item.isPinned && !item.isDeleted);
+            return items.filter(item=>item.isPinned && !item.isDeleted);
         }else if(selectedCategory === 'mine') {
-            return listItems.filter(item=>(item.assignedTo === userId || item.claimedBy === userId) && !item.isDeleted);
+            return items.filter(item=>(item.assignedTo === userId || item.claimedBy === userId) && !item.isDeleted);
         }else if(selectedCategory === 'deleted') {
-            return listItems.filter(item=>item.isDeleted);
+            return items.filter(item=>item.isDeleted);
         }
         return [];
-    }, [listItems, selectedCategory, userId]);
+    }, [items, selectedCategory, userId]);
 
+ 
     // Filter filtered items into completed and uncompleted
     const uncompletedItems = useMemo(()=> {
         return filteredItems.filter(item => !item.isChecked);
@@ -64,53 +77,6 @@ const ViewList = () => {
         return filteredItems.filter(item => item.isChecked);
     },[filteredItems]);
 
-
-    const fetchPageData = async () => {
-        if (listId) {
-            try {
-                const listDataPromise = await getList(listId);
-                const listItemsPromise = await getListItems(listId);
-                const [listDataResponse, listItemsResponse] = await Promise.all([
-                    listDataPromise,
-                    listItemsPromise
-                ]);
-                if (listDataResponse) {
-                    setListData(listDataResponse);
-                    if(listDataResponse) {
-                        setIsPageLoading(false)
-                    }
-                    setListItems(listItemsResponse);
-                } else {
-                    showNotification('No list data found', "error");
-                }
-            } catch (error) {
-                console.error("Failed to fetch page data:" , error);
-                showNotification("Error loading list", "error")
-            }
-        }
-    };
-
-    const handleUpdateAssigned = (itemId: string, assignedUserId: string) => {
-        setListItems(prev=>{
-            return prev.map(item=>item._id === itemId
-            ? (assignedUserId === userId 
-                ? { ...item, claimedBy: assignedUserId, assignedTo: null } 
-                : { ...item, claimedBy: null, assignedTo: assignedUserId }
-            )
-            : item)
-        });
-        setShowAssignUser(null);
-    }
-    
-
-    useEffect(()=>{
-        if (!listId){
-            showNotification("No id found", "error");
-            return;
-        }else {
-            fetchPageData();
-        }
-    },[listId, showNotification]);
 
     
     const restoreList = async () =>{
@@ -126,11 +92,11 @@ const ViewList = () => {
        }
     }
     const handleDeleteList = async () =>{
-        if(listData && listData._id) {
+        if(list && list._id) {
             try {
-                await updateList(listData._id,{isDeleted: true});
-                showNotification("Shopping list deleted", "success");
-                navigate(`/group/${listData.groupId}`)
+                await updateList(list._id,{isDeleted: true});
+                showNotification("List deleted", "success");
+                navigate(`/group/${list.groupId}`);
                 close();
             } catch (error) {
                 console.error(error);
@@ -141,9 +107,9 @@ const ViewList = () => {
 
     const handleCopyList = async () => {
         try {
-            if(listData){
-                const listToSave = {...listData, lastSyncedAt: new Date()};
-                const itemsToSave = [...listItems];
+            if(list){
+                const listToSave = {...list, lastSyncedAt: new Date()};
+                const itemsToSave = [...items];
                 await db.transaction('rw', db.lists, db.listItems, async () => {
                     await db.lists.put(listToSave);
                     await db.listItems.where({listId: listToSave._id}).delete();
@@ -157,25 +123,21 @@ const ViewList = () => {
         }
 
     }
-    // Optimistically update item list
-    const updateItem = (updatedItem: ItemType) => {
-        const updatedList = listItems.map(item=>item._id===updatedItem._id ? updatedItem : item)
-        setListItems(updatedList); // Updates the list of all items with the updated one
-    };
-    const totalItems = listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0
-    const checkedItems = listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0
+
+    const totalItems = items && items.length >= 0 ? items.filter(item=>!item.isDeleted).length : 0
+    const checkedItems = items && items.length >= 0 ? items.filter(item=>item.isChecked && !item.isDeleted).length : 0
     const percentage = (checkedItems/totalItems)*100 || 0;
 
 
     if (!localStorage.getItem('jwt-token')){
         navigate('/auth');
-    }else if (isPageLoading) {
+    }else if (!data) {
         return <Loading />
-    } else if(listData) {
+    } else if(list) {
         return ( 
             <div className={styles.viewList}>
-                {showEdit ? <EditList close={()=>setShowEdit(false)} online={true} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
-                {showAssignUser && listData.groupId ? <UserSelector close={()=>setShowAssignUser(null)} itemId={showAssignUser} groupId={listData.groupId} selectUser={(userId)=>handleUpdateAssigned(showAssignUser, userId)}/> : null}
+                {showEdit ? <EditList close={()=>setShowEdit(false)} online={true} listData={list}/> : null}
+                {showAssignUser && list.groupId ? <UserSelector close={()=>setShowAssignUser(null)} itemId={showAssignUser} groupId={list.groupId} /> : null}
                 {showDeleteModal ? <ConfirmationModal 
                             title='Delete list?' 
                             content='Are you sure you want to delete this list? You can restore it later' 
@@ -186,7 +148,7 @@ const ViewList = () => {
                 }
                 <div className={styles.listInfo}>
                     <div className={styles.listName}>
-                        <h2>{listData.name}</h2>
+                        <h2>{list.name}</h2>
                     </div>
                     <div className='progress'>
                         <div className='progressText'>
@@ -200,16 +162,16 @@ const ViewList = () => {
                     {showMore ? <>
                     <div className={styles.listMeta}>
                         <div className={styles.listTimestamps}>
-                            <p className={styles.createdAt}><IconsLibrary.Calendar />{getDateAndHour(listData.createdAt)}</p>
-                            <p className={styles.updatedAt}><IconsLibrary.Sync /> {listData.updatedAt ? getDateAndHour(listData.updatedAt) : getDateAndHour(listData.createdAt)}</p>
+                            <p className={styles.createdAt}><IconsLibrary.Calendar />{getDateAndHour(list.createdAt)}</p>
+                            <p className={styles.updatedAt}><IconsLibrary.Sync /> {list.updatedAt ? getDateAndHour(list.updatedAt) : getDateAndHour(list.createdAt)}</p>
                         </div>
-                        <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
+                        <p className={styles.description}>{list.description || "Description was not set for this list."}</p>
                     </div>
                     <div className={styles.listButtons}>
-                        {listData.isDeleted ? null : <button onClick={handleCopyList}>{listData.lastSyncedAt ? <><IconsLibrary.Sync /> Update</> : <> <IconsLibrary.Copy /> Copy List</>}</button>}
-                        {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
-                        {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
-                        {listData.isDeleted ? null : <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /> Delete List</button>}
+                        {list.isDeleted ? null : <button onClick={handleCopyList}>{list.lastSyncedAt ? <><IconsLibrary.Sync /> Update</> : <> <IconsLibrary.Copy /> Copy List</>}</button>}
+                        {list.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
+                        {list.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
+                        {list.isDeleted ? null : <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /> Delete List</button>}
                     </div>
                     </> : null}
                 </div>
@@ -229,14 +191,14 @@ const ViewList = () => {
                         <>
                             {uncompletedItems
                                 .sort((a, b) => Number(b.isPinned) - Number(a.isPinned))
-                                .map(item=><GroupListItem showAssignUser={()=>setShowAssignUser(item._id)} groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
+                                .map(item=><GroupListItem showAssignUser={()=>setShowAssignUser(item._id)} groupId={list.groupId} online={true} key={item._id} members={members} data={item} />)}
                             {completedItems.length > 0 ? <h3>Completed</h3> : null}
-                            {completedItems.map(item=><GroupListItem showAssignUser={()=>setShowAssignUser(item._id)} groupId={listData.groupId} online={true} updateItemLocally={updateItem} key={item._id} members={members} data={item} />)}
+                            {completedItems.map(item=><GroupListItem showAssignUser={()=>setShowAssignUser(item._id)} groupId={list.groupId} online={true} key={item._id} members={members} data={item} />)}
                         </>  : 
                             <p className='no-items-text'>No items yet</p>
                     }
                 </div>
-                {listData._id && members ? <NewItem listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} online={true} /> : null}
+                {list._id && members ? <NewItem listId={list._id} online={true} /> : null}
             </div>
         );
     }

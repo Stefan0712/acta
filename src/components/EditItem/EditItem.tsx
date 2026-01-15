@@ -9,7 +9,6 @@ import TagSelector from '../TagSelector/TagSelector.tsx';
 
 interface NewListItemProps {
     itemData: ListItem;
-    updateItemLocally: (item: ListItem) => void;
     close: () => void;
     online: boolean;
     members?: GroupMember[]
@@ -17,7 +16,7 @@ interface NewListItemProps {
 
 type Priority = "low" | "normal" | "high";
 
-const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, close, online, members}) => {
+const EditItem: React.FC<NewListItemProps> = ({itemData, close, online, members}) => {
 
 
     const userId = localStorage.getItem('userId');
@@ -65,11 +64,9 @@ const EditItem: React.FC<NewListItemProps> = ({itemData, updateItemLocally, clos
         }
         if (name && name.length > 0 && name.length < 51) {
             if (online) {
-                const onlineItem = await handleUpdateItem(itemData._id, updatedItem);
-                updateItemLocally(onlineItem);
+                await handleUpdateItem(itemData._id, updatedItem);
             } else {
                 await db.listItems.update(itemData._id, updatedItem);
-                updateItemLocally(updatedItem);
             }
             close();
         } else {

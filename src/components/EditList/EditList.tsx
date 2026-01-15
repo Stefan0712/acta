@@ -9,19 +9,16 @@ import IconSelector from '../IconSelector/IconSelector';
 import ColorSelector from '../ColorSelector/ColorSelector';
 import { getIcon } from '../IconSelector/iconCollection';
 import { IconsLibrary } from '../../assets/icons';
-import { useNavigate } from 'react-router-dom';
 
 interface IProps {
     close: ()=>void;
     listData: List;
-    updateData: (data: List) => void;
     online?: boolean;
 }
 
-const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
+const EditList: React.FC<IProps> = ({close, listData, online}) => {
 
     const { showNotification } = useNotifications();
-    const navigate = useNavigate();
 
     const [name, setName] = useState('')
     const [description, setDescription] = useState('');
@@ -51,11 +48,9 @@ const EditList: React.FC<IProps> = ({close, listData, updateData, online}) => {
         } else {
             try {
                 if(online && listData._id){
-                    const apiResponse = await updateList(listData._id, updatedList)
-                    updateData(apiResponse)
+                    await updateList(listData._id, updatedList)
                 } else {
                     await db.lists.update(listData._id, updatedList);
-                    updateData(updatedList)
                 }
                 showNotification("List updated successfully", "success");
                 close();

@@ -13,13 +13,12 @@ import { Pin, UserPlus } from 'lucide-react';
 
 interface ListItemProps {
     data: ItemInterface;
-    updateItemLocally: (item: ItemInterface) => void;
     online: boolean;
     groupId?: string;
     members?: GroupMember[];
     showAssignUser: ()=> void;
 }
-const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, online, members, showAssignUser}) => {
+const ListItem: React.FC<ListItemProps> = ({data, groupId, online, members, showAssignUser}) => {
 
     const {showNotification} = useNotifications();
     const metaRef = useRef<HTMLDivElement>(null);
@@ -40,11 +39,9 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
         try {
             const newValue = !data.isChecked;
             if(online){
-                const apiResponse = await handleToggleCheck(data._id);
-                updateItemLocally({...data, isChecked: apiResponse})
+                await handleToggleCheck(data._id);
             } else {
                 await db.listItems.update(data._id, {isChecked: newValue});
-                updateItemLocally({...data, isChecked: newValue});
             }
         } catch (error) {
             console.error(error);
@@ -55,11 +52,9 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
         try {
             const newValue = !data.isPinned;
             if(online){
-                const apiResponse = await handleTogglePin(data._id);
-                updateItemLocally({...data, isPinned: apiResponse})
+                await handleTogglePin(data._id);
             } else {
                 await db.listItems.update(data._id, {isPinned: newValue});
-                updateItemLocally({...data, isPinned: newValue});
             }
             showNotification(newValue ? "Item pinned!" : "Item unpinned", "success");
         } catch (error) {
@@ -71,11 +66,9 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
         try {
             const newValue = !data.isDeleted;
             if(online){
-                const onlineItem = await handleUpdateItem(data._id, {isDeleted: newValue});
-                updateItemLocally(onlineItem)
+                await handleUpdateItem(data._id, {isDeleted: newValue});
             } else {
                 await db.listItems.update(data._id, {isDeleted: newValue});
-                updateItemLocally({...data, isDeleted: newValue});
             }
             showNotification(newValue ? "Item deleted succesfully." : "Item restored succesfully.", "success");
         } catch (error) {
@@ -87,7 +80,7 @@ const ListItem: React.FC<ListItemProps> = ({data, updateItemLocally, groupId, on
     if(data){
         return ( 
             <div className={`${styles.item} ${expandItem ? styles.expandedItem : ''}`}>
-                {showEdit ? <EditItem groupId={groupId} online={online} itemData={data} updateItemLocally={updateItemLocally} close={()=>setShowEdit(false)} members={members} /> : null}
+                {showEdit ? <EditItem groupId={groupId} online={online} itemData={data} close={()=>setShowEdit(false)} members={members} /> : null}
                 <div className={styles.mainSection}>
                     <div className={styles.checkbox} onClick={toggleCheck}>
                         {data.isChecked ? <IconsLibrary.Checkmark /> : null}
