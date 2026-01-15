@@ -79,6 +79,20 @@ export class MyDatabase extends Dexie {
       tags: '_id, name',
       syncQueue: '++id, status, type, createdAt'
     });
+    // Added "syncStatus"
+    this.version(16).stores({
+      lists: '_id, authorId, groupId, isDirty, isPinned, syncStatus',
+      listItems: '_id, authorId, listId, isChecked, isDirty, isPinned, syncStatus',
+      groups:'_id, authorId, *members.userId, isDirty, syncStatus',
+      notes: '_id, groupId, authorId, isDirty, syncStatus',
+      noteComments: '_id, groupId, noteId, authorId, syncStatus',
+      polls: '_id, groupId, authorId, isDirty, syncStatus',
+      notifications: '_id, createdAt, recipientId, isRead, groupId, [groupId+category]',
+      activityLogs: '_id, createdAt, recipientId, groupId, [groupId+category], [groupId+createdAt]',
+      profile: '_id',
+      tags: '_id, name',
+      syncQueue: '++id, status, type, createdAt'
+    });
   }
 }
 export const db = new MyDatabase();

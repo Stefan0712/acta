@@ -27,7 +27,6 @@ export async function offlineCreate<T>(
     status: 'pending',
     retryCount: 0
   };
-
   // Save to DB and Queue simultaneously
   await db.transaction('rw', table, db.syncQueue, async () => {
     await table.add(optimisticData);

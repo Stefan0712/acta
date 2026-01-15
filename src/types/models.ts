@@ -1,5 +1,5 @@
 export interface List {
-    _id?: string;
+    _id: string;
     name: string;
     description?: string;
     createdAt: Date;
@@ -95,6 +95,9 @@ export interface Group {
     updatedAt: Date;
     isDirty: boolean;
     isDeleted: boolean;
+    listCount?: number;
+    notesCount?: number;
+    pollCount?: number;
 }
 
 export interface NoteComment {

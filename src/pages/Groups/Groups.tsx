@@ -1,48 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './Groups.module.css';
 import NewGroup from './NewGroup';
 import { type Group } from '../../types/models';
 import { useNotifications } from '../../Notification/NotificationContext';
 import { IconsLibrary } from '../../assets/icons';
-import { Link, useNavigate } from 'react-router-dom';
-import { getMyGroups } from '../../services/groupService';
+import { Link } from 'react-router-dom';
 import Loading from '../../components/LoadingSpinner/Loading';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 import Header from '../../components/Header/Header';
 import Auth from '../Auth/Auth';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../../db';
 
 
 const Groups = () => {
     
     const userToken = localStorage.getItem('jwt-token');
-    const { showNotification } = useNotifications();
 
     const [showNewGroup, setShowNewGroup] = useState(false);
-    const [groups, setGroups] = useState<Group[]>([]);
-
-    const [isLoading, setIsLoading] = useState(true);
 
 
-    const fetchAndSync = async () => {
-        if(userToken) {
-            try {
-                const apiResponse = await getMyGroups();
-                setGroups(apiResponse);
-                setIsLoading(false);
-            } catch (error) {
-                console.error(error);
-                showNotification("Something went wrong!", "error");
-            }
-        }
-    }
-    
-    useEffect(()=>{
-        fetchAndSync();
-    }, [userToken])
+    const groups = useLiveQuery( async ()=>{
+        return await db.groups.toArray()
+    })
+
 
     if(!userToken) {
         return (<Auth />)
-    }else if (isLoading) {
+    }else if (!groups) {
         return (<Loading />)
     } else {
         return ( 

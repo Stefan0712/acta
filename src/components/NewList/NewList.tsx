@@ -14,10 +14,9 @@ import ColorSelector from '../ColorSelector/ColorSelector';
 interface IProps {
     close: ()=>void;
     groupId?: string;
-    addListToState: (list: List) => void;
 }
 
-const NewList: React.FC<IProps> = ({close, groupId, addListToState}) => {
+const NewList: React.FC<IProps> = ({close, groupId}) => {
 
     const { showNotification } = useNotifications();
     const navigate = useNavigate();
@@ -62,7 +61,6 @@ const NewList: React.FC<IProps> = ({close, groupId, addListToState}) => {
             }else {
                 await db.lists.add(newList);
                 
-                addListToState(newList)
             }
             showNotification("List created successfully", "success");
             close();

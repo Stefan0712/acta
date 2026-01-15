@@ -4,6 +4,7 @@ import API from "./apiService";
 export async function processSyncQueue() {
     // Check if we are online
     if (!navigator.onLine) return;
+    console.log("You are online")
 
     // Get all pending actions, ordered by creation time
     const queue = await db.syncQueue
@@ -11,7 +12,6 @@ export async function processSyncQueue() {
         .sortBy('createdAt');
 
     if (queue.length === 0) return;
-
     console.log(`Processing ${queue.length} offline actions...`);
 
     // Process one by one
@@ -48,7 +48,7 @@ async function processAction(action: SyncAction) {
         case 'CREATE_COMMENT':
             await handleCreateNoteComment(action);
             break;
-            }
+        }
 }
 
 // Create the list and swap the local id with the real one
@@ -56,9 +56,11 @@ async function handleCreateList(action: SyncAction) {
     const localId = action.tempId!; // The UUID generated locally
     const payload = action.payload; // The data
 
+
     // Send to Server
     const { data: serverResponse } = await API.post('/lists', payload);
     const realServerId = serverResponse._id; // The new MongoDB id
+    console.log(`List created! API responded with the id ${realServerId}`);
 
     // Swap the temporary id with the new permanent one
     await db.transaction('rw', db.lists, db.listItems, db.syncQueue, async () => {
@@ -98,6 +100,7 @@ async function handleCreateItem(action: SyncAction) {
 
     const { data: serverResponse } = await API.post('/items', payload);
     const realServerId = serverResponse._id;
+    console.log(`Item created! API responded with the id ${realServerId}`);
 
     await db.transaction('rw', db.listItems, db.syncQueue, async () => {
         // Swap ids
@@ -120,7 +123,7 @@ async function handleCheckItem(action: SyncAction) {
 
     // Simply send the update
     await API.patch(`/items/${id}`, { isChecked });
-
+    console.log(`Item was checked/unchecked`)
     // Mark local item as synced
     await db.transaction('rw', db.listItems, db.syncQueue, async () => {
         await db.listItems.update(id, { syncStatus: 'synced' });
@@ -135,6 +138,7 @@ async function handleCreatePoll(action: SyncAction) {
     // Send to Server
     const { data: serverResponse } = await API.post('/polls', payload);
     const realServerId = serverResponse._id;
+    console.log(`Poll created! API responded with id ${realServerId}`);
 
     await db.transaction('rw', db.polls, db.syncQueue, async () => {
         const poll = await db.polls.get(localId);
@@ -158,7 +162,7 @@ async function handleVotePoll(action: SyncAction) {
 
     // Send vote to server
     await API.post(`/polls/${pollId}/vote`, { optionIndex });
-
+    console.log(`Vote added`);
     // Mark as synced locally
     await db.transaction('rw', db.polls, db.syncQueue, async () => {
         await db.polls.update(pollId, { syncStatus: 'synced' });
@@ -174,7 +178,7 @@ async function handleCreateNote(action: SyncAction) {
 
     const { data: serverResponse } = await API.post('/notes', payload);
     const realServerId = serverResponse._id;
-
+    console.log(`Note created! API responded with id ${realServerId}`);
     await db.transaction('rw', db.notes, db.noteComments, db.syncQueue, async () => {
         const note = await db.notes.get(localId);
         if (note) {
@@ -199,9 +203,6 @@ async function handleCreateNoteComment(action: SyncAction) {
     const localId = action.tempId!;
     const payload = action.payload; // Contains { content: "...", noteId: "..." }
 
-    // TRAP FIX: Check if the parent Note ID has changed (due to previous sync action)
-    // We look up the comment in our local DB because handleCreateNote (above) 
-    // might have just updated the 'noteId' field in the DB.
     const currentLocalComment = await db.noteComments.get(localId);
     
     if (currentLocalComment) {
@@ -212,7 +213,7 @@ async function handleCreateNoteComment(action: SyncAction) {
     // Now send to server
     const { data: serverResponse } = await API.post(`/notes/${payload.noteId}/comments`, payload);
     const realServerId = serverResponse._id;
-
+    console.log(`Note comment created! API responded with id ${realServerId}`);
     await db.transaction('rw', db.noteComments, db.syncQueue, async () => {
         const comment = await db.noteComments.get(localId);
         if (comment) {

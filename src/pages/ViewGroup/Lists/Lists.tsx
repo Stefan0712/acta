@@ -1,17 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './Lists.module.css';
-import type { List, ListItem } from '../../../types/models';
+import type { List } from '../../../types/models';
 import { IconsLibrary } from '../../../assets/icons';
 import NewList from '../../../components/NewList/NewList';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../../Notification/NotificationContext';
-import { deleteList, getGroupLists, updateList } from '../../../services/listService';
+import { deleteList, updateList } from '../../../services/listService';
 import Loading from '../../../components/LoadingSpinner/Loading';
 import { db } from '../../../db';
 import { getIcon } from '../../../components/IconSelector/iconCollection';
 import Header from '../../../components/Header/Header';
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal';
 import Summaries from '../../../components/Summaries/Summaries';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { useListStats } from '../../../helpers/useListStats';
 
 
 const Lists = () => {
@@ -19,64 +21,25 @@ const Lists = () => {
     const navigate = useNavigate();
     const { groupId } = useParams();
 
-    const {showNotification} = useNotifications();
-
-
-    const [showNewList, setShowNewList] = useState(false);
-    const [lists, setLists] = useState<List[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [selectedFilter, setSelectedFilter] = useState('active');
     
-    useEffect(()=>{
-        getLists();
-    },[]);
+    const [showNewList, setShowNewList] = useState(false);
+    const [selectedFilter, setSelectedFilter] = useState('active');
 
-    const getLists = async () => {
-        if (groupId){
-            try {
-                const apiResponse = await getGroupLists(groupId);
-                console.log(apiResponse)
-                setLists(apiResponse); 
-            } catch (apiError) {
-                console.error("API pull failed:", apiError);
-                showNotification("Offline or server issue.", "error");
-            } finally {
-                setIsLoading(false); 
-            }
+    
+    const lists = useLiveQuery( async () => {
+        if (groupId) {
+            return await db.lists
+                .where('groupId').equals(groupId)
+                .reverse()
+                .toArray();
         } else {
-            try {
-                const response = await db.lists.toArray();
-                if(response && response.length > 0){
-                    getAllItems(response);
-                }
-                setIsLoading(false)
-            } catch (error) {
-                console.error(error);
-                showNotification("Failed to get lists.", "error");
-            }
+            return await db.lists
+                .filter(list => !list.groupId)
+                .reverse()
+                .toArray()
         }
-    };
-    const getAllItems = async (fetchedLists: List[]) => {
-        try {
-            const response: ListItem[] = await db.listItems.toArray();
-            if(response){
-                const updatedLists: List[] = fetchedLists.map((list)=>(
-                    {
-                        ...list, 
-                        totalItemsCounter: response.filter(item=>item.listId === list._id && !item.isDeleted).length, 
-                        completedItemsCounter: response.filter(item=>item.listId === list._id && item.isChecked && !item.isDeleted).length
-                    }
-                )
-                )
-                setLists(updatedLists);
-            } else {
-                setLists([]);
-            }
-        } catch (error) {
-            console.error(error);
-            showNotification("Failed to get all items.", "error");
-        }
-    };
+    }, [groupId]);
+
     const filteredLists = useMemo(() => {
         if (!lists) return [];
 
@@ -92,13 +55,9 @@ const Lists = () => {
         });
     }, [lists, selectedFilter]);
 
-    const restoreListLocally = (id: string) => {
-        setLists(prev=>prev.map(item=>item._id === id ? {...item, isDeleted: false} : item))
-    }
-
     if (!localStorage.getItem('jwt-token') && groupId) {
         navigate('/auth;')
-    } else if(isLoading) {
+    } else if(!lists) {
         return ( <Loading /> )
     } else if (lists) {
         return ( 
@@ -112,13 +71,11 @@ const Lists = () => {
                     <option value={'deleted'}>Deleted</option>
                 </select>
                 <div className={styles.listsContainer}>
-                    {showNewList ? <NewList close={()=>setShowNewList(false)} addListToState={(newList)=>setLists(prev=>[...prev, newList])} groupId={groupId} /> : null}
+                    {showNewList ? <NewList close={()=>setShowNewList(false)} groupId={groupId} /> : null}
                     {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
                         <IconsLibrary.Plus />
                     </button>}
                     {filteredLists?.length > 0 ? filteredLists.map((list, index)=><List
-                        removeLocally={(id)=>setLists(prev=>[...prev.filter(item=>item._id!==id)])}
-                        restoreLocally={(id)=>restoreListLocally(id)} 
                         data={list} 
                         key={index} 
                     />) : <p className='no-items-text'>There are no lists.</p>}
@@ -132,14 +89,14 @@ export default Lists;
 
 interface ListProps {
     data: List;
-    restoreLocally: (id: string) => void;
-    removeLocally: (id: string) => void;
 }
 
-const List: React.FC<ListProps> = ({data, restoreLocally, removeLocally}) => {
+const List: React.FC<ListProps> = ({data}) => {
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const {showNotification} = useNotifications();
+
+    const {total, completed} = useListStats(data._id);
 
     const restoreList = async () =>{
         if(data._id) {
@@ -147,7 +104,6 @@ const List: React.FC<ListProps> = ({data, restoreLocally, removeLocally}) => {
                 try {
                     await updateList(data._id, {isDeleted: false});
                     showNotification("Online list was restored", "success");
-                    restoreLocally(data._id);
                 } catch (error) {
                     console.error(error);
                     showNotification("Failed to restore online list.", "error");
@@ -156,7 +112,6 @@ const List: React.FC<ListProps> = ({data, restoreLocally, removeLocally}) => {
                 try {
                     await db.lists.update(data._id, {isDeleted: false});
                     showNotification('Local list was restored!', "success");
-                    restoreLocally(data._id);
                 } catch (error) {
                     console.error(error);
                     showNotification("Failed to restore local list","error")
@@ -170,7 +125,6 @@ const List: React.FC<ListProps> = ({data, restoreLocally, removeLocally}) => {
                 try {
                     await deleteList(data._id);
                     showNotification("Online list was permanently deleted", "success");
-                    removeLocally(data._id);
                     setShowDeleteModal(false);
                 } catch (error) {
                     console.error(error);
@@ -189,7 +143,7 @@ const List: React.FC<ListProps> = ({data, restoreLocally, removeLocally}) => {
         }
     }
 
-    const percentage = data.completedItemsCounter && data.totalItemsCounter && data.completedItemsCounter > 0 && data.totalItemsCounter > 0 ?  ((data.completedItemsCounter ?? 0)/(data.totalItemsCounter ?? 0))*100 : 0;
+    const percentage = completed && total && completed > 0 && total > 0 ?  ((completed ?? 0)/(total ?? 0))*100 : 0;
     const Icon = getIcon(data.icon ?? 'default-list-icon')
     return (
         <div className={styles.list}>
@@ -202,12 +156,12 @@ const List: React.FC<ListProps> = ({data, restoreLocally, removeLocally}) => {
                     </div>
                     <div className={styles.listInfo}>
                         <h3>{data.name}</h3>
-                        <p>{data.totalItemsCounter} items</p>
+                        <p>{total} items</p>
                     </div>
                 </div>
                 <div className={styles.listProgress}>
                     <div className={styles.progressBarBackground}>
-                        <div className={styles.progressBar} style={{backgroundColor: data.color, width: data?.totalItemsCounter === 0 ? '0px' : `${percentage}%`}} />
+                        <div className={styles.progressBar} style={{backgroundColor: data.color, width: total === 0 ? '0px' : `${percentage}%`}} />
                     </div>
                     <p>{percentage.toFixed(0)}%</p>
                 </div>
