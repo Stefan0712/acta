@@ -2,6 +2,17 @@ import type { Changelog } from "../../types/models";
 
 export const CHANGELOGS_ITEMS: Changelog[] = [
     {
+        date: '18 Jan 2026',
+        description: 'Added background syncing and caching of API data',
+        listItems: [
+            'Created a new Dexie table for syncQueue, where sync actions are stored',
+            'Created a syncWorker that handles pushing data to the API when the user is connected to the internet',
+            'Created a syncService that pulls data from the API and caches it for faster loading times',
+            'Created an offlineManager that handles creating data while offline by optimistically saving locally and creating a sync action for syncing with the API',
+            'Reworked all online components to use the new functions for creating and viewing data'
+        ]
+    },
+    {
         date: '14 Jan 2026',
         description: 'Reworked New Item component',
         listItems: [

@@ -15,12 +15,10 @@ import { db } from '../../db';
 const Groups = () => {
     
     const userToken = localStorage.getItem('jwt-token');
-
     const [showNewGroup, setShowNewGroup] = useState(false);
 
-
-    const groups = useLiveQuery( async ()=>{
-        return await db.groups.toArray()
+    const groups = useLiveQuery(()=>{
+        return db.groups.toArray()
     })
 
 
@@ -34,7 +32,7 @@ const Groups = () => {
                 {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} /> : null}
                 <Header title='My Groups' Button={<button onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button>} />
                 <div className={styles.groupsContainer}>
-                    {groups?.length > 0 ? groups.map(item=><Group key={item._id} data={item} />) : <p className={styles.noGroupsText}>You have no groups. Create one or join one.</p>}
+                    {groups?.length > 0 ? groups.map(item=><Group key={item._id} data={item} />) : <p className={styles.noGroupsText}>No groups to show. Create one or join one.</p>}
                 </div>
             </div>
          );
