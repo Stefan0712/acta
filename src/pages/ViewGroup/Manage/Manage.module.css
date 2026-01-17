@@ -28,7 +28,15 @@
     overflow-y: auto;
     flex-grow: 1;
 }
-
+.searchUserInput {
+    height: 50px;
+    width: 100%;
+    padding-left: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--white-10);
+    background-color: var(--input-bg);
+    color: var(--white-25);
+}
 .member button {
     width: 20px;
     height: 100%;
@@ -169,7 +177,7 @@
     gap: 10px;
     align-items: center;
 }
-.groupName h3 {
+.groupName h1 {
     font-size: 1.1rem;
 }
 .groupName button {

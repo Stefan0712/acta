@@ -45,6 +45,9 @@ async function processAction(action: SyncAction) {
         case 'CREATE_NOTE':
             await handleCreateNote(action);
             break;
+        case 'CREATE_GROUP':
+            await handleCreateGroup(action);
+            break;
         case 'CREATE_COMMENT':
             await handleCreateNoteComment(action);
             break;
@@ -85,6 +88,20 @@ async function handleCreateList(action: SyncAction) {
         // Mark action as done
         await db.syncQueue.update(action.id!, { status: 'completed' });
     });
+}
+// Create the group
+async function handleCreateGroup(job: SyncAction) {
+    const groupData = job.payload; 
+    try {
+        // Send to Server 
+        await API.post('/groups', groupData);
+
+        // Update Local Status
+        await db.groups.update(groupData._id, { syncStatus: 'synced' });
+    } catch (error) {
+        console.error("Failed to sync group:", error);
+        throw error; 
+    }
 }
 
 // Create Item

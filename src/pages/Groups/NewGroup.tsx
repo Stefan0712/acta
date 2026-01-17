@@ -2,17 +2,17 @@ import { useState } from 'react';
 import styles from './NewGroup.module.css';
 import type { Group, GroupMember } from '../../types/models';
 import { useNotifications } from '../../Notification/NotificationContext';
-import { createGroup } from '../../services/groupService';
-import { useNavigate } from 'react-router-dom';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 import IconSelector from '../../components/IconSelector/IconSelector';
 import SwitchButton from '../../components/SwitchButton/SwitchButton';
 import ColorSelector from '../../components/ColorSelector/ColorSelector';
+import { ObjectId } from 'bson';
+import { offlineCreate } from '../../services/offlineManager';
+import { db } from '../../db';
 
-const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Group) => void}) => {
+const NewGroup = ({close}: {close: ()=>void}) => {
 
     const { showNotification } = useNotifications();
-    const navigate = useNavigate();
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -45,6 +45,7 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
                 }
             }
             const newGroup: Group = {
+                _id: new ObjectId().toHexString(),
                 authorId: userId,
                 name: name ?? "My group",
                 description,
@@ -58,11 +59,9 @@ const NewGroup = ({close, addGroup}: {close: ()=>void, addGroup: (newGroup: Grou
             }
             setIsCreating(true);
             try {
-                const groupResponse = await createGroup(newGroup);
+                const groupResponse = await offlineCreate(db.groups, newGroup, 'CREATE_GROUP')
                 if(groupResponse){
-                    addGroup(groupResponse);
                     showNotification("Group created successfully", "success");
-                    navigate(`/group/${groupResponse._id}`)
                     close();
                 }
             } catch (error) {

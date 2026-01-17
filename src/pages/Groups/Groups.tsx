@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styles from './Groups.module.css';
 import NewGroup from './NewGroup';
 import { type Group } from '../../types/models';
-import { useNotifications } from '../../Notification/NotificationContext';
 import { IconsLibrary } from '../../assets/icons';
 import { Link } from 'react-router-dom';
 import Loading from '../../components/LoadingSpinner/Loading';
@@ -32,7 +31,7 @@ const Groups = () => {
     } else {
         return ( 
             <div className={styles.groups}>
-                {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} addGroup={(newGroup)=>setGroups(prev=>[...prev, newGroup])} /> : null}
+                {showNewGroup ? <NewGroup close={()=>setShowNewGroup(false)} /> : null}
                 <Header title='My Groups' Button={<button onClick={()=>setShowNewGroup(true)}><IconsLibrary.Plus /></button>} />
                 <div className={styles.groupsContainer}>
                     {groups?.length > 0 ? groups.map(item=><Group key={item._id} data={item} />) : <p className={styles.noGroupsText}>You have no groups. Create one or join one.</p>}
@@ -60,7 +59,7 @@ const Group = ({data}: {data: Group}) => {
                     </div>
                     <div className={styles.metaItem}>
                         <IconsLibrary.Note />
-                        <b>{data.noteCount ?? 0}</b>
+                        <b>{data.notesCount ?? 0}</b>
                     </div>
                     <div className={styles.metaItem}>
                         <IconsLibrary.Poll />

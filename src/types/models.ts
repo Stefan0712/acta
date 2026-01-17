@@ -97,6 +97,7 @@ export interface Group {
     listCount?: number;
     notesCount?: number;
     pollCount?: number;
+    syncStatus: string;
 }
 
 export interface NoteComment {

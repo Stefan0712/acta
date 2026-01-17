@@ -1,16 +1,18 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from './Manage.module.css';
-import { useEffect, useMemo, useState } from 'react';
-import { type Group, type GroupMember } from '../../../types/models';
+import { useMemo, useState } from 'react';
+import { type GroupMember } from '../../../types/models';
 import InviteModal from './InviteModal';
 import Loading from '../../../components/LoadingSpinner/Loading';
-import { changeRole, deleteGroup, getGroup, kickUser, leaveGroup } from '../../../services/groupService';
+import { changeRole, deleteGroup, kickUser, leaveGroup } from '../../../services/groupService';
 import { useNotifications } from '../../../Notification/NotificationContext';
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal';
 import { IconsLibrary } from '../../../assets/icons';
 import EditGroup from '../../Groups/EditGroup';
 import { getDateAndHour } from '../../../helpers/dateFormat';
 import { UserPlus } from 'lucide-react';
+import { db } from '../../../db';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 const Manage = () => {
     const {groupId} = useParams();
@@ -22,13 +24,20 @@ const Manage = () => {
     const [showLeave, setShowLeave] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
 
-    const [groupData, setGroupData] = useState<Group | null>(null);
-    const [members, setMembers] = useState<GroupMember[]>([]);
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [manageUser, setManageUser] = useState<null | GroupMember>(null);
 
     const [searchQuery, setSearchQuery] = useState('');
     
+
+
+    const groupData = useLiveQuery(
+        () => db.groups.get(groupId),
+        [groupId]
+    )
+
+    const members: GroupMember[] = groupData?.members ?? [];
+
     const filteredUsers: GroupMember[] = useMemo(()=>{
 
         if (!members || members.length === 0) return [];
@@ -41,31 +50,13 @@ const Manage = () => {
         );
     },[searchQuery, members]);
 
-    const getGroupData = async () => {
-        if (groupId) {
-            try {
-                const response = await getGroup(groupId);
-                if(response){
-                    setGroupData(response);
-                    console.log(response)
-                    setMembers(response.members);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    };
-    useEffect(()=>{
-        if(groupId){
-            getGroupData();
-        };
-    }, [groupId]);
 
     const handleLeaveGroup = async () =>{
        if (groupId) {
             try {
                 const response = await leaveGroup(groupId);
                 if(response){
+                    await db.groups.delete(groupId);
                     showNotification(response, 'info');
                     navigate('/groups');
                 }
@@ -82,6 +73,7 @@ const Manage = () => {
             try {
                 const response = await deleteGroup(groupId);
                 if(response){
+                    await db.groups.delete(groupId);
                     navigate('/groups');
                     showNotification("Group deleted!", "success");
                 }
@@ -90,13 +82,6 @@ const Manage = () => {
                 showNotification("Failed to delete group", "error");
             }
         }
-    }
-    const handleUpdateMemberLocally = (newData: GroupMember) => {
-        setMembers(prev=>{
-            return prev.map(member=>
-                member.userId === newData.userId ? newData : member
-            )
-        })
     }
     if (!groupData) {
         return (
@@ -108,7 +93,7 @@ const Manage = () => {
                 {showEdit && groupId ? <EditGroup close={()=>setShowEdit(false)} groupId={groupId} finishGroupEdit={()=>window.location.reload()} /> : null}
                 {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} title='Delete this group?' content='Are you sure you want to delete this group and all items related to it? This cannot be undone'/>  : null}
                 {showLeave ? <ConfirmationModal cancel={()=>setShowLeave(false)} confirm={handleLeaveGroup} title='Leave this group?' content='Are you sure you want to leave this group? If you want to rejoin, you must receive another invitation from a group member.'/>  : null}
-                {manageUser && groupId ? <ManageUser close={()=>setManageUser(null)} member={manageUser} groupId={groupId} updateMember={handleUpdateMemberLocally}  /> : null}
+                {manageUser && groupId ? <ManageUser close={()=>setManageUser(null)} member={manageUser} groupId={groupId}  /> : null}
 
                 <div className={styles.groupInfo}>
                     <div className={styles.groupName}>
@@ -132,10 +117,10 @@ const Manage = () => {
                     {showInviteModal ? <><IconsLibrary.Close /> Close</> : <><UserPlus /> Invite members </>}
                 </button>
                 {showInviteModal && groupId ? <InviteModal groupId={groupId} /> : null}
-                <input type='text' value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} placeholder='Search user' />
                 <div className={styles.membersHeader}>
                     <h4>Members</h4>
                 </div>
+                <input type='text' className={styles.searchUserInput} value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} placeholder='Search user' />
                 <div className={styles.membersContainer}>
                     {filteredUsers?.length > 0 ? filteredUsers.map(member=>
                     <div className={styles.member} key={member.userId}>
@@ -168,9 +153,8 @@ interface IManageUser {
     close: ()=>void;
     member: GroupMember;
     groupId: string;
-    updateMember: (newData: GroupMember) => void;
 }
-const ManageUser: React.FC<IManageUser> = ({close, member, groupId, updateMember}) => {
+const ManageUser: React.FC<IManageUser> = ({close, member, groupId}) => {
 
     const currentUserId = localStorage.getItem('userId');
 
@@ -178,8 +162,7 @@ const ManageUser: React.FC<IManageUser> = ({close, member, groupId, updateMember
 
     const handleSetRole = async (role: string) => {
         try {
-            const apiResponse = await changeRole(groupId, member.userId, role);
-            updateMember({...apiResponse, username: member.username});
+            await changeRole(groupId, member.userId, role);
             showNotification(`${member.username}'s role was set to ${role}`, 'success');
             close();
         } catch (error) {

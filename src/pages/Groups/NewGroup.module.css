@@ -88,10 +88,11 @@ fieldset input {
   padding: 10px;
 }
 .newGroup input {
-    background-color: var(--input-bg);
-    padding-left: 10px;
-    height: 50px;
-    border-radius: 10px;
+  background-color: var(--input-bg);
+  padding-left: 10px;
+  height: 50px;
+  border-radius: 10px;
+  color: var(--text-color);
 }
 .bottomButtons {
   display: grid;
