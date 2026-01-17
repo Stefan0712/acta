@@ -35,7 +35,7 @@ export class MyDatabase extends Dexie {
   activityLogs!: Table<ActivityLog>;
   tags!: Table<Tag>;
   syncQueue!: Table<SyncAction>;
-  noteComments?: Table<NoteComment>;
+  noteComments!: Table<NoteComment>;
 
   constructor() {
     super('docket'); 

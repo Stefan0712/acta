@@ -7,15 +7,14 @@ export async function offlineCreate<T>(
   data: Omit<T, '_id' | 'syncStatus'>,
   actionType: SyncAction['type']
 ) {
-  // Generate a temporary id (UUID)
   const tempId = new ObjectId().toHexString();
 
   // Prepare the object for local UI (Optimistic)
-  // Cast as T because we know we are fulfilling the shape
+  // Cast as T because we know we are fulfilling the shapeq
   const optimisticData = {
     ...data,
-    _id: tempId,                  // Use ONLY _id
-    syncStatus: 'pending_upload'  // Flag for UI
+    _id: tempId,
+    syncStatus: 'pending_upload'
   } as T;
 
   // Prepare the Action for the Queue
