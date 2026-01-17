@@ -14,6 +14,7 @@ import UserSelector from '../../../../components/UserSelector/UserSelector.tsx';
 import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal.tsx';
 import { db } from '../../../../db.ts';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { ObjectId } from 'bson';
 
 interface IListOutletContext {
   members: GroupMember[]; 
@@ -82,9 +83,9 @@ const ViewList = () => {
     const restoreList = async () =>{
        if(listId) {
          try {
-            await updateList(listId, {isDeleted: false})
+            await updateList(listId, {isDeleted: false});
+            await db.lists.update(listId, {isDeleted: false});
             showNotification("List restored", "success");
-            navigate(-1);
         } catch (error) {
             console.error(error);
             showNotification("Failed to restore list.", "error");
@@ -109,7 +110,7 @@ const ViewList = () => {
     const handleCopyList = async () => {
         try {
             if(list){
-                const listToSave = {...list, lastSyncedAt: new Date()};
+                const listToSave = {...list, lastSyncedAt: new Date(), _id: new ObjectId().toHexString()};
                 const itemsToSave = [...items];
                 await db.transaction('rw', db.lists, db.listItems, async () => {
                     await db.lists.put(listToSave);

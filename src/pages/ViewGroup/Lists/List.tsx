@@ -46,7 +46,7 @@ const List: React.FC<ListProps> = ({data}) => {
         if (!data || !data._id) return;
         console.log(data)
         // Check if the server knows about this list
-        // If syncStatus is 'pending', it means we haven't successfully created it on the server yet.
+        // If syncStatus is 'pending', it means it hasn't successfully created it on the server yet.
         const isServerAware = data.syncStatus === 'synced' || data.syncStatus === 'pending_update';
 
         // Allow deletion only if online
@@ -69,8 +69,7 @@ const List: React.FC<ListProps> = ({data}) => {
                 // Delete the items
                 await db.listItems.where({ listId: data._id }).delete();
 
-                // If this list was waiting to be created (pending), remove that 
-                // action from the queue. Otherwise, the worker will create it later
+                // If this list was waiting to be created (pending), remove that action from the queue.
                 // Search for any queue items where the payload has this ID.
                 await db.syncQueue
                     .filter(action => action.payload && (action.payload.id === data._id || action.payload._id === data._id))
@@ -81,7 +80,7 @@ const List: React.FC<ListProps> = ({data}) => {
         } catch (error) {
             console.error("Delete failed:", error);
             
-            // If server gives 404, it implies it's already deleted
+            // If server gives 404, it is already deleted
             if (isServerAware && error.response && error.response.status === 404) {
                 // Try again treating it as local-only
                 showNotification("List was already deleted on server. Cleaning up local copy...", "info");

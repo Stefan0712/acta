@@ -1,11 +1,12 @@
 import { db, type SyncAction } from "../db";
 import API from "./apiService";
 
+
+
+
 export async function processSyncQueue() {
     // Check if we are online
     if (!navigator.onLine) return;
-    console.log("You are online")
-
     // Get all pending actions, ordered by creation time
     const queue = await db.syncQueue
         .where('status').equals('pending')
@@ -106,6 +107,7 @@ async function handleCreateGroup(job: SyncAction) {
 
 // Create Item
 async function handleCreateItem(action: SyncAction) {
+    console.log('action:',action)
     const localId = action.tempId!;
     const payload = action.payload;
 
@@ -115,7 +117,7 @@ async function handleCreateItem(action: SyncAction) {
         payload.listId = currentLocalItem.listId; // Ensure we send the latest id
     }
 
-    const { data: serverResponse } = await API.post('/items', payload);
+    const { data: serverResponse } = await API.post(`/items/${payload._id}`, payload);
     const realServerId = serverResponse._id;
     console.log(`Item created! API responded with the id ${realServerId}`);
 
@@ -136,7 +138,8 @@ async function handleCreateItem(action: SyncAction) {
 
 // Checking items
 async function handleCheckItem(action: SyncAction) {
-    const { id, isChecked } = action.payload;
+    const id = action.payload._id;
+    const isChecked = action.payload.isChecked;
 
     // Simply send the update
     await API.patch(`/items/${id}`, { isChecked });

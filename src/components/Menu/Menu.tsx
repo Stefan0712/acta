@@ -5,6 +5,7 @@ import { logout } from '../../services/authService';
 import { useState } from 'react';
 import { HelpCircleIcon } from 'lucide-react';
 import { useNotifications } from '../../Notification/NotificationContext';
+import { db } from '../../db';
 
 
 const Menu = ({close}: {close:()=>void}) => {
@@ -22,6 +23,16 @@ const Menu = ({close}: {close:()=>void}) => {
             showNotification("Logged out successfully",'success');
         } else {
             showNotification("Failed to log out",'error');
+        }
+    }
+
+    const handleResetQueue = async () => {
+        try {
+            await db.syncQueue.clear();
+            showNotification("Sync Queue reset!","success")
+        } catch (error) {
+            console.error(error);
+            showNotification("Failed to reset Sync Queue", "success")
         }
     }
     return ( 
@@ -59,6 +70,10 @@ const Menu = ({close}: {close:()=>void}) => {
                     <HelpCircleIcon />
                     <p>About</p>
                 </Link>
+                <div className={styles.fullWidthButton} onClick={handleResetQueue}>
+                    <HelpCircleIcon />
+                    <p>Reset Sync Queue</p>
+                </div>
                 <div className={styles.authButton}>
                     <div className={styles.buttonContent}>
                         <IconsLibrary.Arrow 

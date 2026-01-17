@@ -7,8 +7,9 @@ import { useEffect, useRef, useState } from 'react';
 import { getDateAndHour } from '../../../../helpers/dateFormat';
 import EditItem from '../../../../components/EditItem/EditItem';
 import { formatDeadline } from '../../../../helpers/deadlineFormatter';
-import { handleToggleCheck, handleTogglePin, handleUpdateItem } from '../../../../services/itemService';
+import { handleTogglePin, handleUpdateItem } from '../../../../services/itemService';
 import { Pin, UserPlus } from 'lucide-react';
+import { toggleItemCheck } from '../../../../services/offlineManager';
 
 
 interface ListItemProps {
@@ -37,12 +38,7 @@ const ListItem: React.FC<ListItemProps> = ({data, groupId, online, members, show
 
     const toggleCheck = async () =>{
         try {
-            const newValue = !data.isChecked;
-            if(online){
-                await handleToggleCheck(data._id);
-            } else {
-                await db.listItems.update(data._id, {isChecked: newValue});
-            }
+            toggleItemCheck(data._id, data.isChecked)
         } catch (error) {
             console.error(error);
             showNotification("Failed to check item", "error")

@@ -64,7 +64,8 @@ export const toggleItemCheck = async (itemId: string, currentStatus: boolean) =>
           createdAt: Date.now(),
           status: 'pending',
           retryCount: 0
-      };
+        };
+        console.log(queueItem)
       await db.syncQueue.add(queueItem);
     }
   });
