@@ -49,8 +49,10 @@ import Home from './home.svg?react';
 import Low from './low.svg?react';
 import Normal from './normal.svg?react';
 import High from './high.svg?react';
+import Spinner from './spinner.svg?react';
 
 export const IconsLibrary = {
+  Spinner,
   Low,
   Normal,
   High,

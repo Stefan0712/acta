@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import styles from './Notes.module.css';
-import SwitchButton from '../../../components/SwitchButton/SwitchButton';
-import { getNote, updateNote } from '../../../services/notesServices';
+import styles from './Note.module.css';
+import SwitchButton from '../../../../components/SwitchButton/SwitchButton';
+import { getNote, updateNote } from '../../../../services/notesServices';
 
 interface EditNoteProps {
     close: ()=>void;

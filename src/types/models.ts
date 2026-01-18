@@ -106,8 +106,6 @@ export interface NoteComment {
     username: string;
     content: string;
     createdAt: Date;
-    isDirty: boolean;
-    clientId: string | null;
     noteId: string;
     syncStatus: string;
 }
@@ -119,13 +117,13 @@ export interface Note {
     title: string;
     content: string;
     createdAt: Date;
-    isDirty: boolean;
     clientId: string | null;
     isDeleted: boolean;
     isPinned: boolean;
     commentCount?: number;
     authorUsername: string;
     syncStatus?: string;
+    comments?: NoteComment[];
 }
 export interface PollOption {
   _id?: string;

@@ -231,7 +231,7 @@ async function handleCreateNoteComment(action: SyncAction) {
     }
 
     // Now send to server
-    const { data: serverResponse } = await API.post(`/notes/${payload.noteId}/comments`, payload);
+    const { data: serverResponse } = await API.post(`/notes/${payload.noteId}/comment`, payload);
     const realServerId = serverResponse._id;
     console.log(`Note comment created! API responded with id ${realServerId}`);
     await db.transaction('rw', db.noteComments, db.syncQueue, async () => {

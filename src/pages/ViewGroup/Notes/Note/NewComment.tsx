@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { IconsLibrary } from '../../../assets/icons';
-import { createComment } from '../../../services/notesServices';
-import styles from './Notes.module.css';
-import type { NoteComment } from '../../../types/models';
+import { IconsLibrary } from '../../../../assets/icons';
+import styles from './Note.module.css';
+import { offlineCreate } from '../../../../services/offlineManager';
+import { db } from '../../../../db';
 
-const NewComment = ({noteId, addComment}: {noteId: string, addComment: (newComment: NoteComment) => void}) => {
+const NewComment = ({noteId}: {noteId: string}) => {
 
     const [comment, setComment] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -12,16 +12,17 @@ const NewComment = ({noteId, addComment}: {noteId: string, addComment: (newComme
     const handleNewComment = async () => {
         try {
             setIsLoading(true)
-            const newComment = {
-                username: localStorage.getItem('username') ?? "No username",
-                content: comment,
+            const username = localStorage.getItem('username') ?? "Unkown";
+            const commentData = {
+                content: comment, 
+                username,
+                createdAt: new Date(),
+                noteId,
+                authorId: localStorage.getItem('userId') ?? 'local-user'
             }
-            const apiResponse = await createComment(noteId, newComment);
-            if (apiResponse){
-                addComment(apiResponse);
-                setComment('');
-                setIsLoading(false);
-            }
+            await offlineCreate(db.noteComments, commentData, 'CREATE_COMMENT')
+            setComment('');
+            setIsLoading(false);
         } catch (error) {
             console.error(error);
             setIsLoading(false);

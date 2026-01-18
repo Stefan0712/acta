@@ -6,7 +6,8 @@ import Loading from '../../../components/LoadingSpinner/Loading';
 import NewNote from './NewNote';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
-import Note from './Note';
+import Note from './Note/Note';
+import type { Note as INote, NoteComment } from '../../../types/models';
 
 const Notes = () => {
     const { groupId } = useParams();
@@ -17,15 +18,47 @@ const Notes = () => {
     const [showNewNote, setShowNewNote] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState('active');
 
-    const notes = useLiveQuery(
-        () => db.notes.where({groupId}).toArray(), 
-        [groupId]
-    )
+    const notes = useLiveQuery(async () => {
+        if(groupId) {
+            // Fetch all notes for this group
+            const notes = await db.notes
+                .where('groupId').equals(groupId)
+                .toArray();
+
+            if (notes.length === 0) return [];
+
+            // Fetch all comments for these notes
+            const noteIds = notes.map(n => n._id);
+            const allComments = await db.noteComments
+                .where('noteId').anyOf(noteIds)
+                .toArray();
+
+            // Join them
+            const commentsMap = new Map<string, NoteComment[]>();
+            
+            allComments.forEach(c => {
+                const existing = commentsMap.get(c.noteId) || [];
+                existing.push(c);
+                commentsMap.set(c.noteId, existing);
+            });
+
+            // Return the combined structure
+            const combined = notes.map(note => ({
+                ...note,
+                comments: commentsMap.get(note._id) || []
+            }));
+
+            return combined;
+        } else {
+            return []
+        }
+    }, [groupId]);
+
 
     const filteredNotes = useMemo(() => {
         if (!notes) return [];
 
-        return notes.filter(note => {
+        return notes.filter((note: INote) => {
             switch (selectedFilter) {
                 case 'active':
                     return !note.isDeleted;
@@ -64,7 +97,7 @@ const Notes = () => {
                     {showNewNote ? null : <button onClick={()=>setShowNewNote(true)} className={styles.newNoteButton}>
                         <IconsLibrary.Plus />
                     </button>}
-                    {filteredNotes?.length > 0 ? filteredNotes.map((note, index)=><Note data={note} key={index} />) : <p className='no-items-text'>There are no notes.</p>}
+                    {filteredNotes?.length > 0 ? filteredNotes.map((note: INote, index: number)=><Note data={note} key={index} />) : <p className='no-items-text'>There are no notes.</p>}
                 </div>
             </div>
         );
