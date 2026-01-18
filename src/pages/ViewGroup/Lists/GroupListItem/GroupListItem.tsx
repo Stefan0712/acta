@@ -47,12 +47,10 @@ const ListItem: React.FC<ListItemProps> = ({data, groupId, online, members, show
     const togglePin = async () =>{
         try {
             const newValue = !data.isPinned;
-            if(online){
-                await handleTogglePin(data._id);
-            } else {
-                await db.listItems.update(data._id, {isPinned: newValue});
-            }
-            showNotification(newValue ? "Item pinned!" : "Item unpinned", "success");
+            await handleTogglePin(data._id);
+            await db.listItems.update(data._id, {isPinned: newValue});
+            
+            showNotification(newValue ? "Item pinned!" : "Item unpinned!", "success");
         } catch (error) {
             console.error(error);
             showNotification("Failed to pin item", "error")
