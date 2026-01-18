@@ -9,6 +9,7 @@ import NewComment from './NewComment';
 import Comment from './Comment';
 import EditNote from './EditNote';
 import { Flag } from 'lucide-react';
+import { db } from '../../../../db';
 
 interface NoteProps {
     data: INote;
@@ -20,34 +21,43 @@ const Note: React.FC<NoteProps> = ({data}) => {
     const [showComments, setShowComments] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
 
+    const [processingDeletion, setProcessingDeletion] = useState(false);
+    const [processingRestore, setProcessingRestore] = useState(false);
+
     const handleShowComments = () => {
         setShowComments(true);
     }
     const userId = localStorage.getItem('userId');
     const isAuthor = userId && userId === data.authorId;
 
-        const restoreNote = async () =>{
+    const restoreNote = async () =>{
         if(data._id) {
+            setProcessingRestore(true);
             try {
                 await updateNote(data._id, {isDeleted: false});
+                await db.notes.update(data._id, {isDeleted: false})
                 showNotification("Note restored", "success");
-                close();
+                setProcessingRestore(false);
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to restore note.", "error");
+                setProcessingRestore(false);
             }
         }
     }
 
     const permanentlyDelete = async () =>{
         if(data._id) {
+            setProcessingDeletion(true);
             try {
                 await deleteNote(data._id);
+                await db.notes.delete(data._id)
                 showNotification("Note deleted permanently", "success");
-                close();
+                setProcessingDeletion(false);
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to delete Note.", "error");
+                setProcessingDeletion(false);
             }
         }
     }
@@ -55,13 +65,16 @@ const Note: React.FC<NoteProps> = ({data}) => {
 
     const handleDeleteNote = async () => {
         if(data._id) {
+            setProcessingDeletion(true);
             try {
                 await updateNote(data._id, {isDeleted: true});
+                await db.notes.update(data._id, {isDeleted: true})
                 showNotification("Note deleted", "success");
-                close();
+                setProcessingDeletion(false);
             } catch (error) {
                 console.error(error);
                 showNotification("Failed to delete Note.", "error");
+                setProcessingDeletion(false);
             }
         }
     }
@@ -90,17 +103,23 @@ const Note: React.FC<NoteProps> = ({data}) => {
                 {showEdit ? <EditNote noteId={data._id} close={()=>setShowEdit(false)} /> : null}
                 {isAuthor ? <div className={styles.manageNote}>
                     {data.isDeleted ? <>
-                        <button onClick={permanentlyDelete}>
-                            <IconsLibrary.Close />
-                            <p>Delete Forever</p>
+                        <button onClick={permanentlyDelete} disabled={processingDeletion}>
+                            {processingDeletion ? <IconsLibrary.Spinner /> : <>
+                                <IconsLibrary.Close />
+                                <p>Delete Forever</p>
+                            </>}
                         </button>
-                        <button onClick={restoreNote}>
-                            <IconsLibrary.Sync />
-                            <p>Restore</p>
+                        <button onClick={restoreNote} disabled={processingRestore}>
+                            {processingRestore ? <IconsLibrary.Spinner /> : <>
+                                <IconsLibrary.Sync />
+                                <p>Restore</p>
+                            </>}
                         </button></> : <>
-                        <button onClick={handleDeleteNote}>
-                            <IconsLibrary.Delete />
-                            <p>Delete</p>
+                        <button onClick={handleDeleteNote} disabled={processingDeletion}>
+                            {processingDeletion ? <IconsLibrary.Spinner /> : <>
+                                <IconsLibrary.Delete />
+                                <p>Delete</p>
+                            </>}
                         </button>
                         <button onClick={()=>setShowEdit(true)}>
                             <IconsLibrary.Edit />
