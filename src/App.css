@@ -71,9 +71,13 @@ body {
   background-color: transparent;
   border: none;
   width: fit-content;
-  padding-right: 10px;
   color: var(--white-50);
   font-weight: bold;
+  padding: 0 10px;
+}
+.category-selector option {
+  background-color: var(--item-bg);
+  
 }
 .progress {
   display: flex;

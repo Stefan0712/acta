@@ -4,15 +4,16 @@ import SwitchButton from '../../../components/SwitchButton/SwitchButton';
 import { createNote } from '../../../services/notesServices';
 
 interface NoteProps {
-    close: ()=>void;
     groupId: string;
+    close: ()=>void;
 }
-const NewNote: React.FC<NoteProps> = ({close, groupId}) => {
+const NewNote: React.FC<NoteProps> = ({groupId, close}) => {
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isPinned, setIsPinned] = useState(false);
     const [contentError, setContentError] = useState<string | null>(null);
+
 
 
     const handleAddNote = async () => {
@@ -31,7 +32,6 @@ const NewNote: React.FC<NoteProps> = ({close, groupId}) => {
                 const apiResponse = await createNote(newNote);
                 if(apiResponse) {
                     console.log(apiResponse)
-                    close();
                 }
             } catch (error){
                 console.error(error)
@@ -40,24 +40,17 @@ const NewNote: React.FC<NoteProps> = ({close, groupId}) => {
     }
 
     return (
-        <div className={styles.newNote}>
-            <h2>New Note</h2>
-            <fieldset>
-                <label>Note Title</label>
-                <input type='text' name='title' value={title} onChange={(e)=>setTitle(e.target.value)} />
-            </fieldset>
-            <fieldset>
-                <label>Note Content</label>
-                <input type='text' name='content' value={content} onChange={(e)=>setContent(e.target.value)} />
-                {contentError ? <p className={styles.error}>{contentError}</p> : null}
-            </fieldset>
-            <div className={styles.pin}>
-                <p>Pin note?</p>
-                <SwitchButton isActivated={isPinned} onPress={()=>setIsPinned(prev=>!prev)} />
-            </div>
-            <div className={styles.buttons}>
-                <button onClick={close}>Close</button>
-                <button onClick={handleAddNote}>Add Note</button>
+        <div className={`${styles.newNote}`}>
+            <input type='text' name='title' value={title} onChange={(e)=>setTitle(e.target.value)} placeholder='New Note Title...'/>
+            <input type='text' name='content' value={content} onChange={(e)=>setContent(e.target.value)} placeholder='Note Content...'/>
+            {contentError ? <p className={styles.error}>{contentError}</p> : null}
+            <div className={styles.newNoteButtons}>
+                <div className={styles.pin}>
+                    <p>Pin note?</p>
+                    <SwitchButton isActivated={isPinned} onPress={()=>setIsPinned(prev=>!prev)} />
+                </div>
+                <button className={styles.closeButton} onClick={close}>Close</button>
+                <button className={styles.addNoteButton} onClick={handleAddNote}>Add Note</button>
             </div>
         </div>
     )

@@ -87,16 +87,19 @@ const Notes = () => {
                         <button><IconsLibrary.Bell /></button>
                     </div> 
                 : null}
-                <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
-                    <option value={'active'}>Active</option>
-                    <option value={'pinned'}>Pinned</option>
-                    <option value={'deleted'}>Deleted</option>
-                </select>
-                <div className={styles.notesContainer}>
-                    {showNewNote && groupId ? <NewNote close={()=>setShowNewNote(false)}  groupId={groupId} /> : null}
-                    {showNewNote ? null : <button onClick={()=>setShowNewNote(true)} className={styles.newNoteButton}>
+                {groupId && showNewNote ? <NewNote close={()=>setShowNewNote(false)} groupId={groupId} /> : <div/>}
+                <div className={styles.pageMenu}>
+                    <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
+                        <option value={'active'}>Active</option>
+                        <option value={'pinned'}>Pinned</option>
+                        <option value={'deleted'}>Deleted</option>
+                    </select>
+                    <button onClick={()=>setShowNewNote(true)}>
                         <IconsLibrary.Plus />
-                    </button>}
+                        <p>New Note</p>
+                    </button>
+                </div>
+                <div className={styles.notesContainer}>
                     {filteredNotes?.length > 0 ? filteredNotes.map((note: INote, index: number)=><Note data={note} key={index} />) : <p className='no-items-text'>There are no notes.</p>}
                 </div>
             </div>
