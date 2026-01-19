@@ -1,44 +1,51 @@
 .poll {
     width: 100%;
     padding: 20px;
-    border-radius: 15px;
+    border-radius: 10px;
     background-color: var(--item-bg);
     color: var(--text-color);
     display: flex;
     flex-direction: column;
+    border: 1px solid var(--white-10);
 }
 .header {
     width: 100%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--white-10);
 }
-.header h1 {
+.header .pollAuthor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.header .userPfp {
+    height: 30px;
+    width: 30px;
+    background-color: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+}
+.headerButtons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.header button {
+    background-color: transparent;
+    border: none;
+    color: var(--white-25);
+}
+.poll h1 {
     font-size: 1rem;
+    margin: 10px 0;
 }
-.header .meta .dueTime {
-    display: flex;
-    align-items: center;
-}
-.header .meta .dueTime svg {
-    height: 0.85rem;
-}
-.header .meta {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.header .meta p:last-child {
-    margin-left: auto;
-}
-.header p {
-    font-size: 0.75rem;
+.poll .description {
     color: var(--white-50);
 }
-
 .options {
     display: flex;
     flex-direction: column;
@@ -48,9 +55,9 @@
 
 .option {
     width: 100%;
-    padding: 10px;
-    background-color: transparent;
-    border: none;
+    padding: 15px 10px;
+    background-color: var(--modal-bg);
+    border: 1px solid var(--white-10);
     display: grid;
     grid-template-columns: 20px 1fr auto;
     gap: 10px;
@@ -75,10 +82,12 @@
 
 .managePoll {
     width: 100%;
-    padding: 0 10px;
+    padding: 10px 10px 0 10px;
     display: flex;
     align-items: center;
     gap: 10px;
+    border-top: 1px solid var(--white-10);
+    margin-top: 15px;
 }
 .managePoll button {
     padding: 5px 10px 0 10px;
@@ -96,13 +105,12 @@
     gap: 10px;
     align-items: center;
     height: 40px;
-    margin-bottom: 20px;
 }
 .newOption input {
     width: 100%;
     height: 40px;
     border-radius: 10px;
-    border: 1px solid var(--white-10);
+    border: 1px solid transparent;
     padding-left: 10px;
     background-color: transparent !important;
     color: white;

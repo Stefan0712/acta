@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { IconsLibrary } from '../../../../assets/icons';
-import { formatRelativeTime } from '../../../../helpers/dateFormat';
 import type { Poll as IPoll, PollOption } from '../../../../types/models';
 import styles from './Poll.module.css';
 import { addPollOption, deletePoll, endPoll, submitVote } from '../../../../services/pollService';
@@ -64,13 +63,19 @@ const Poll: React.FC<PollProps> = ({data}) => {
                 {showEndPollModal ? <ConfirmationModal cancel={()=>setShowEndPollModal(false)} confirm={()=>handleEndPoll()} content='Users will not be able to submit more answers if you end this poll. Continue?'/> : null}
                 {showEdit ? <EditPoll pollId={pollData._id} close={()=>setShowEdit(false)} handleUpdatePoll={handleUpdatePoll} /> : null}
                 <div className={styles.header}>
-                    <h1>{pollData.title}</h1>
-                    <div className={styles.meta}>
-                        <p>By {pollData.authorUsername}</p>
-                        {pollData.expiresAt ? <p className={styles.dueTime}><IconsLibrary.Time /> {formatRelativeTime(pollData.expiresAt)}</p> : null}
-                        <p className={styles.optionCoutner}>{pollData.options.length ?? 0} OPTIONS</p>
+                    <div className={styles.pollAuthor}>
+                        <div className={styles.userPfp}>
+                            <p>{data.authorUsername ? data?.authorUsername.charAt(0).toUpperCase() : '?'}</p>
+                        </div>
+                        <b>{pollData.authorUsername ?? 'Unknown Author'}</b>
+                    </div>
+                    <div className={styles.headerButtons}>
+                        <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /></button>
+                        <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /></button>
                     </div>
                 </div>
+                <h1>{pollData.title}</h1>
+                <p className={styles.description}>{data.description || "No context was given"}</p>
                 <div className={styles.options}>
                     {options?.map(option=><Option handleVote={handleVote} key={option._id} isEnded={pollData.isClosed || (pollData.expiresAt && pollData.expiresAt < new Date())} totalAnswers={totalAnswers} option={option} />)}
                     {pollData.allowCustomOptions ? <NewOption handleVote={handleVote} pollId={pollData._id} addOption={(newOption)=>setOptions(prev=>[...prev, newOption])} totalOptions={options.length} /> : null}
@@ -78,8 +83,6 @@ const Poll: React.FC<PollProps> = ({data}) => {
                 {pollData.authorId === userId ? 
                     <div className={styles.managePoll}>
                         <button onClick={()=>setShowEndPollModal(true)}>End Poll</button>
-                        <button onClick={()=>setShowEdit(true)}>Edit</button>
-                        <button onClick={()=>setShowDeleteModal(true)}>Delete</button>
                     </div> : null
                 }
             </div>

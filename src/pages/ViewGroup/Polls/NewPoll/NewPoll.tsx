@@ -2,14 +2,16 @@ import { useState } from 'react';
 import { IconsLibrary } from '../../../../assets/icons';
 import styles from './NewPoll.module.css';
 import SwitchButton from '../../../../components/SwitchButton/SwitchButton';
-import { createPoll } from '../../../../services/pollService';
 import { useParams } from 'react-router-dom';
 import { ObjectId } from 'bson';
+import { offlineCreate } from '../../../../services/offlineManager';
+import { db } from '../../../../db';
 
 
 const NewPoll = ({close}: {close: ()=>void}) => {
 
     const {groupId} = useParams();
+    const userId = localStorage.getItem('userId');
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -36,18 +38,22 @@ const NewPoll = ({close}: {close: ()=>void}) => {
             setTitleError("Title invalid. Must be between 1 and 140 characters");
         }else if(options.length < 2){
             setOptionsError("A poll MUST have at least two options.")
-        } else if (groupId) {
+        } else if (groupId && userId) {
             const newPoll = {
                 _id: new ObjectId().toHexString(),
                 title,
                 description,
-                options,
+                options: options.map(o=>({text: o, _id: new ObjectId().toHexString(), votes: []})),
                 groupId,
                 allowCustomOptions,
+                createdAt: new Date(),
+                updatedAt: new Date(),
                 expiresAt: new Date(`${endDate}T${endHour}`),
+                authorId: userId,
+                authorUsername: localStorage.getItem('username') ?? 'Unknown user'
             }
             try {
-                await createPoll(newPoll);
+                await offlineCreate(db.polls, newPoll, "CREATE_POLL");
                 close();
             } catch (error) {
                 console.error(error)

@@ -16,9 +16,9 @@ const Polls = () => {
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [showNewPoll, setShowNewPoll] = useState(false);
 
-    const polls = useLiveQuery(async () => {
-        return await db.polls.where({groupId}).toArray();
-    })
+    const polls = useLiveQuery( 
+        () =>  db.polls.where({groupId}).toArray()
+    )
 
 
     const filteredPolls = useMemo(() => {
@@ -43,14 +43,16 @@ const Polls = () => {
     return (
         <div className={styles.polls}>
             {showNewPoll ? <NewPoll close={()=>setShowNewPoll(false)} /> : null}
-            {showNewPoll ? null : <button onClick={()=>setShowNewPoll(true)} className={styles.newPollButton}>
-                <IconsLibrary.Plus />
-            </button>}
-            <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
-                <option value={'all'}>All</option>
-                <option value={'Active'}>Active</option>
-                <option value={'finished'}>Finished</option>
-            </select>
+            <div className={styles.pageMenu}>
+                <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
+                    <option value={'all'}>All</option>
+                    <option value={'Active'}>Active</option>
+                    <option value={'finished'}>Finished</option>
+                </select>
+                 <button onClick={()=>setShowNewPoll(true)} className={styles.newPollButton}>
+                    <IconsLibrary.Plus />
+                </button>
+            </div>
             <div className={styles.container}>
                 {filteredPolls?.length > 0 ? filteredPolls.map(poll => <Poll data={poll} key={poll._id} />) : <p className='no-items-text'>No polls</p>}
             </div>
