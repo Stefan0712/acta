@@ -46,11 +46,11 @@ const Polls = () => {
             {showNewPoll ? null : <button onClick={()=>setShowNewPoll(true)} className={styles.newPollButton}>
                 <IconsLibrary.Plus />
             </button>}
-            <div className={styles.filters}>
-                <button onClick={()=>setSelectedFilter('all')} className={selectedFilter === 'all' ? styles.selectedFilter : ''}>All</button>
-                <button onClick={()=>setSelectedFilter('active')} className={selectedFilter === 'active' ? styles.selectedFilter : ''}>Active</button>
-                <button onClick={()=>setSelectedFilter('finished')} className={selectedFilter === 'finished' ? styles.selectedFilter : ''}>Finished</button>
-            </div>
+            <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
+                <option value={'all'}>All</option>
+                <option value={'Active'}>Active</option>
+                <option value={'finished'}>Finished</option>
+            </select>
             <div className={styles.container}>
                 {filteredPolls?.length > 0 ? filteredPolls.map(poll => <Poll data={poll} key={poll._id} />) : <p className='no-items-text'>No polls</p>}
             </div>
