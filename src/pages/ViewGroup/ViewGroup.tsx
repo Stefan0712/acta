@@ -15,7 +15,6 @@ const ViewGroup = () => {
     const groupData = useLiveQuery(async () => {
         if (groupId) {
             const data = await db.groups.get(groupId);
-            console.log(data)
             return data;
         }
     }, [groupId])
@@ -34,7 +33,7 @@ const ViewGroup = () => {
                     Button={<button onClick={()=>navigate('./activity')}><IconsLibrary.Activity /></button>}
                 />
                 <div className={styles.content}>
-                    <Outlet context={{members: groupData.members, lists: groupData.listCount, notes: groupData.notesCount, polls: groupData.pollCount}} />
+                    <Outlet context={{members: groupData.members}} />
                 </div>
             </div>
         );

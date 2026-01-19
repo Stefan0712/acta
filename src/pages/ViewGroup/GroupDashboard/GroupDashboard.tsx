@@ -1,4 +1,4 @@
-import { Link, useOutletContext, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import styles from './GroupDashboard.module.css';
 import { IconsLibrary } from '../../../assets/icons';
 import { useEffect, useState } from 'react';
@@ -6,20 +6,33 @@ import { type ActivityLog } from '../../../types/models';
 import { getGroupActivity } from '../../../services/groupService';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
 import { useNotifications } from '../../../Notification/NotificationContext';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../../../db';
 
-interface GroupOutletContext {
-    lists: number;
-    notes: number;
-    polls: number;
-}
+
 const GroupDashboard = () => {
 
     const {groupId} = useParams();
-    const {lists, notes, polls} = useOutletContext<GroupOutletContext>();
+
     const {showNotification} = useNotifications();
 
     const [logs, setLogs] = useState<ActivityLog[]>([]);
-    const [loadingActivity, setLoadingAcvitiy] = useState(true)
+    const [loadingActivity, setLoadingAcvitiy] = useState(true);
+  
+    const stats = useLiveQuery(async () => {
+        if (!groupId) return { lists: 0, notes: 0, polls: 0 };
+
+        const [lists, notes, polls] = await Promise.all([
+        db.lists.where('groupId').equals(groupId).count(),
+        db.notes.where('groupId').equals(groupId).count(),
+        db.polls.where('groupId').equals(groupId).count()
+        ]);
+
+        return { lists, notes, polls };
+        
+    }, [groupId]);
+
+    const {lists, notes, polls} = stats ?? { lists: 0, notes: 0, polls: 0 };
     
     const getLogs = async () =>{
         if(groupId){

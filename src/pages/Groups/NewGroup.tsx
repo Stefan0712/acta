@@ -78,7 +78,7 @@ const NewGroup = ({close}: {close: ()=>void}) => {
             {showIconSelector ? <IconSelector close={()=>setShowIconSelector(false)} icon={icon} setIcon={(newIcon)=>setIcon(newIcon)} /> : null}
             {showColorSelector ? <ColorSelector close={()=>setShowColorSelector(false)} currentColor={color} setColor={(newColor)=>setColor(newColor)} /> : null}
             <div className={styles.content}>
-                <h3>New Group</h3>
+                <h3>Create a new group</h3>
                 <fieldset>
                     <label>Group Name</label>
                     <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} required minLength={0} placeholder='My Group' />

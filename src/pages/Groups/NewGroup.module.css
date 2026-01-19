@@ -10,6 +10,9 @@
   animation: showModal 0.2s;
   border: 1px solid var(--white-10);
 }
+.newGroup h3{
+  font-size: 1rem;
+}
 @keyframes showModal {
   from {
       opacity: 0;
