@@ -18,7 +18,7 @@ const NewGroup = ({close}: {close: ()=>void}) => {
     const [description, setDescription] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [icon, setIcon] = useState<string>('default-icon');
-    const [color, setColor] = useState('var(--item-bg)');
+    const [color, setColor] = useState('var(--accent)');
     const [isPinned, setIsPinned] = useState(false);
 
     const [showIconSelector, setShowIconSelector] = useState(false);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { IconsLibrary } from '../../../../assets/icons';
 import { formatRelativeTime } from '../../../../helpers/dateFormat';
-import type { Poll, PollOption } from '../../../../types/models';
+import type { Poll as IPoll, PollOption } from '../../../../types/models';
 import styles from './Poll.module.css';
 import { addPollOption, deletePoll, endPoll, submitVote } from '../../../../services/pollService';
 import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
@@ -9,13 +9,13 @@ import EditPoll from '../EditPoll/EditPoll';
 import Loading from '../../../../components/LoadingSpinner/Loading';
 
 interface PollProps {
-    data: Poll;
+    data: IPoll;
 }
 const Poll: React.FC<PollProps> = ({data}) => {
     const userId = localStorage.getItem('userId');
     const [options, setOptions] = useState([...data.options]);
     const [showEdit, setShowEdit] = useState(false);
-    const [pollData, setPollData] = useState<Poll | null>(data ?? null);
+    const [pollData, setPollData] = useState<IPoll | null>(data ?? null);
     
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEndPollModal, setShowEndPollModal] = useState(false);
@@ -38,7 +38,7 @@ const Poll: React.FC<PollProps> = ({data}) => {
             console.error(error);
         }
     }
-    const handleUpdatePoll = (updatedPoll: Poll) => {
+    const handleUpdatePoll = (updatedPoll: IPoll) => {
         setPollData(updatedPoll);
         setOptions(updatedPoll.options);
     }

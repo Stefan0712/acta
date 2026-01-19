@@ -1,32 +1,32 @@
 .newGroup {
-    width: calc(100vw - 20px);
-    position: fixed;
-    left: 10px;
-    bottom: var(--bottom-offset);
-    background-color: var(--modal-bg);
-    border-radius: 15px;
-    color: var(--text-color);
-    padding: 15px;
-    animation: showModal 0.2s;
-    border: 1px solid var(--white-10);
+  width: calc(100vw - 20px);
+  position: fixed;
+  left: 10px;
+  bottom: var(--bottom-offset);
+  background-color: var(--modal-bg);
+  border-radius: 15px;
+  color: var(--text-color);
+  padding: 15px;
+  animation: showModal 0.2s;
+  border: 1px solid var(--white-10);
 }
 @keyframes showModal {
-    from {
-        opacity: 0;
-        transform: scale(0);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+  from {
+      opacity: 0;
+      transform: scale(0);
+  }
+  to {
+      opacity: 1;
+      transform: scale(1);
+  }
 }
 .content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 label {
-    color: var(--white-25);
+  color: var(--white-25);
 }
 .pin {
   display: grid;
@@ -98,17 +98,18 @@ fieldset input {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  height: 40px;
+  height: 50px;
 }
 .bottomButtons button {
   width: 100%;
   height: 50px;
-  border-radius: 5px;
+  border-radius: 10px;
   border: none;
   font-size: 0.9rem;
+  background-color: var(--input-bg);
+  color: var(--text-color);
 }
 .saveButton {
-  color: var(--text-on-accent);
-  background-color: var(--accent);
-  border: 1px solid var(--white-10);
+  color: var(--text-on-accent) !important;
+  background-color: var(--accent) !important;
 }
