@@ -4,6 +4,7 @@ import styles from './NewPoll.module.css';
 import SwitchButton from '../../../../components/SwitchButton/SwitchButton';
 import { createPoll } from '../../../../services/pollService';
 import { useParams } from 'react-router-dom';
+import { ObjectId } from 'bson';
 
 
 const NewPoll = ({close}: {close: ()=>void}) => {
@@ -37,6 +38,7 @@ const NewPoll = ({close}: {close: ()=>void}) => {
             setOptionsError("A poll MUST have at least two options.")
         } else if (groupId) {
             const newPoll = {
+                _id: new ObjectId().toHexString(),
                 title,
                 description,
                 options,

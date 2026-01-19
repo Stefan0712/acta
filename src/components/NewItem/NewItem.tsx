@@ -6,6 +6,7 @@ import { db } from '../../db';
 import TagSelector from '../TagSelector/TagSelector.tsx';
 import { ChevronDown, ChevronUp, Hand } from 'lucide-react';
 import { offlineCreate } from '../../services/offlineManager.ts';
+import { ObjectId } from 'bson';
 
 interface NewListItemProps {
     listId: string;
@@ -75,6 +76,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, online}) => {
 
             // Prepare data
             const newItemData: any = {
+                _id: new ObjectId().toHexString(),
                 name,
                 unit,
                 qty,
@@ -104,11 +106,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, online}) => {
                 // Local only
                 // Bypass the OfflineManager and write directly to Dexie
                 // Generate the id manually here since offlineCreate isn't doing it
-                await db.listItems.add({
-                    ...newItemData,
-                    _id: crypto.randomUUID(), // Native browser UUID
-                    // No syncStatus means local
-                });
+                await db.listItems.add(newItemData);
             } else {
                 // Synced / pending
                 // Use offlineManager. It saves to Dexie and queues the job.

@@ -8,6 +8,7 @@ import IconSelector from '../IconSelector/IconSelector';
 import { getIcon } from '../IconSelector/iconCollection';
 import ColorSelector from '../ColorSelector/ColorSelector';
 import { offlineCreate } from '../../services/offlineManager';
+import { ObjectId } from 'bson';
 
 interface IProps {
     close: ()=>void;
@@ -22,7 +23,7 @@ const NewList: React.FC<IProps> = ({close, groupId}) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [isPinned, setIsPinned] = useState(false);
-    const [color, setColor] = useState('var(--modal-bg)');
+    const [color, setColor] = useState('var(--accent)');
     const [error, setError] = useState('');
     const [icon, setIcon] = useState('default-icon');
 
@@ -30,13 +31,14 @@ const NewList: React.FC<IProps> = ({close, groupId}) => {
     const [showColorSelector, setShowColorSelector] = useState(false);
 
 const handleSaveList = async () => {
-    if (!name || name.length < 3 || name.length > 20) {
-        setError("Invalid list name. It should be between 3 and 20 characters!");
+    if (!name || name.length < 3 || name.length > 50) {
+        setError("Invalid list name. It should be between 3 and 50 characters!");
         return;
     }
 
     try {
         const listData = {
+            _id: new ObjectId().toHexString(),
             name,
             description,
             color,
@@ -74,7 +76,7 @@ const handleSaveList = async () => {
                 <h3>New List</h3>
                 <fieldset>
                     <label>Name</label>
-                    <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='Shopping list name' />
+                    <input type='text' name='name' onChange={(e)=>setName(e.target.value)} value={name} minLength={0} placeholder='List name' />
                     {error ? <p className='error-message'>{error}</p> : null}
                 </fieldset>
                 <fieldset>

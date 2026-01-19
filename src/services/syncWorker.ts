@@ -107,31 +107,38 @@ async function handleCreateGroup(job: SyncAction) {
 
 // Create Item
 async function handleCreateItem(action: SyncAction) {
-    console.log('action:',action)
     const localId = action.tempId!;
-    const payload = action.payload;
+    const payload = {...action.payload, _id: localId};
 
-    // Check if the payload still have the old id in listId
+    // Check if the payload needs an updated listId
     const currentLocalItem = await db.listItems.get(localId);
     if (currentLocalItem) {
-        payload.listId = currentLocalItem.listId; // Ensure we send the latest id
+        payload.listId = currentLocalItem.listId; 
     }
 
-    const { data: serverResponse } = await API.post(`/items/${payload._id}`, payload);
+    // Send to Server
+    const { data: serverResponse } = await API.post(`/items/`, payload);
     const realServerId = serverResponse._id;
-    console.log(`Item created! API responded with the id ${realServerId}`);
-
+    console.log(payload)
     await db.transaction('rw', db.listItems, db.syncQueue, async () => {
-        // Swap ids
-        const item = await db.listItems.get(localId);
-        if (item) {
-            await db.listItems.delete(localId);
-            await db.listItems.add({
-                ...item,
-                _id: realServerId,
-                syncStatus: 'synced'
-            });
+        // Update status if ids match
+        console.log(realServerId)
+        if (realServerId === localId) {
+            await db.listItems.update(localId, { syncStatus: 'synced' });
+        } 
+        // Swap ids if the doesn't match
+        else {
+            const item = await db.listItems.get(localId);
+            if (item) {
+                await db.listItems.delete(localId);
+                await db.listItems.add({
+                    ...item,
+                    _id: realServerId,
+                    syncStatus: 'synced'
+                });
+            }
         }
+
         await db.syncQueue.update(action.id!, { status: 'completed' });
     });
 }

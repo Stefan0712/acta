@@ -20,7 +20,7 @@ export async function offlineCreate<T>(
   // Prepare the Action for the Queue
   const queueItem: SyncAction = {
     type: actionType,
-    payload: {...data, _id: tempId},
+    payload: {...data},
     tempId: tempId,      //Keep the UUID separate here to find the item later
     createdAt: Date.now(),
     status: 'pending',

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styles from './Notes.module.css';
 import SwitchButton from '../../../components/SwitchButton/SwitchButton';
 import { createNote } from '../../../services/notesServices';
+import { ObjectId } from 'bson';
 
 interface NoteProps {
     groupId: string;
@@ -21,6 +22,7 @@ const NewNote: React.FC<NoteProps> = ({groupId, close}) => {
             setContentError("Note should be between 0 and 10000 characters.")
         } else if(groupId) {
             const newNote = {
+                _id: new ObjectId().toHexString(),
                 title: title ?? 'Untitled Note',
                 content,
                 isPinned,
