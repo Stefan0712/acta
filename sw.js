@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acta-v3.6.2';
+const CACHE_NAME = 'acta-v3.6.5';
 
 const TASKS_TO_CACHE = [
   '.',
