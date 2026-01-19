@@ -93,6 +93,7 @@ export class MyDatabase extends Dexie {
       tags: '_id, name',
       syncQueue: '++id, status, type, createdAt'
     });
+
   }
 }
 export const db = new MyDatabase();

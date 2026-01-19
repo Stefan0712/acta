@@ -4,7 +4,7 @@ import { ObjectId } from 'bson';
 
 export async function offlineCreate<T>(
   table: Table<T, any>,
-  data: Omit<T, '_id' | 'syncStatus'>,
+  data: Omit<T, 'syncStatus'>,
   actionType: SyncAction['type']
 ) {
   const tempId = new ObjectId().toHexString();

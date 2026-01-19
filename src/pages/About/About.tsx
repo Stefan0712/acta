@@ -157,7 +157,7 @@ const About = () => {
                     {isApiOn ? <p>API is up</p> : <p>API is down</p>}
                     <div className={styles.statusCircle} style={isApiOn ? {backgroundColor: 'green'} : {backgroundColor: 'red'}} />
                 </div>
-                <p className={styles.versionText}>V3.4.2 - 1/14/2026 23:36</p>
+                <p className={styles.versionText}>V3.4.5 - 1/19/2026</p>
             </div>
         </div>
     )

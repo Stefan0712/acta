@@ -185,11 +185,10 @@ async function handleCreatePoll(action: SyncAction) {
 
 // Vote on a poll
 async function handleVotePoll(action: SyncAction) {
-    const { pollId, optionIndex } = action.payload;
+    const { pollId, optionId } = action.payload;
 
     // Send vote to server
-    await API.post(`/polls/${pollId}/vote`, { optionIndex });
-    console.log(`Vote added`);
+    await API.post(`/polls/vote/`, {pollId, optionId});
     // Mark as synced locally
     await db.transaction('rw', db.polls, db.syncQueue, async () => {
         await db.polls.update(pollId, { syncStatus: 'synced' });

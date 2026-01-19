@@ -2,16 +2,23 @@ import { useState } from 'react';
 import { IconsLibrary } from '../../../../assets/icons';
 import type { Poll as IPoll, PollOption } from '../../../../types/models';
 import styles from './Poll.module.css';
-import { addPollOption, deletePoll, endPoll, submitVote } from '../../../../services/pollService';
+import { addPollOption, deletePoll, endPoll, updatePoll } from '../../../../services/pollService';
 import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
 import EditPoll from '../EditPoll/EditPoll';
 import Loading from '../../../../components/LoadingSpinner/Loading';
+import { castVote } from '../../../../services/offlineManager';
+import { useNotifications } from '../../../../Notification/NotificationContext';
 
 interface PollProps {
     data: IPoll;
 }
 const Poll: React.FC<PollProps> = ({data}) => {
+    
     const userId = localStorage.getItem('userId');
+
+    const {showNotification} = useNotifications();
+
+
     const [options, setOptions] = useState([...data.options]);
     const [showEdit, setShowEdit] = useState(false);
     const [pollData, setPollData] = useState<IPoll | null>(data ?? null);
@@ -21,26 +28,34 @@ const Poll: React.FC<PollProps> = ({data}) => {
 
 
     const handleVote = async (optionId: string) => {
-        try {
-            const apiResponse = await submitVote(data._id, optionId);
-            if(apiResponse.options && apiResponse.options.length > 0){
-                setOptions(apiResponse.options)
+        if ( userId ) {
+            try {
+                await castVote(data._id, optionId, userId);
+            } catch (error) {
+                console.error(error)
             }
-        } catch (error) {
-            console.error(error)
         }
     }
+
     const handleDelete = async () => {
         try {
             await deletePoll(data._id);
+            setShowDeleteModal(false);
         } catch (error) {
             console.error(error);
         }
     }
-    const handleUpdatePoll = (updatedPoll: IPoll) => {
-        setPollData(updatedPoll);
-        setOptions(updatedPoll.options);
+    const handleUpdatePoll = async (updatedPoll: IPoll) => {
+        try{
+            const apiResponse = await updatePoll(data._id, updatedPoll);
+            setPollData(apiResponse);
+            setOptions(apiResponse.options);
+        } catch (error) {
+            console.error(error);
+            showNotification('Failed to update poll!', "error");
+        }
     }
+
     const handleEndPoll = async () => {
         try {
             const apiResponse = await endPoll(data._id);
