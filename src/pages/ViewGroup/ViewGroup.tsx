@@ -30,7 +30,7 @@ const ViewGroup = () => {
             <div className={styles.viewGroup}>
                 <Header 
                     title={groupData.name ?? 'View Group'}
-                    Button={<button onClick={()=>navigate('./activity')}><IconsLibrary.Activity /></button>}
+                    Button={<button onClick={()=>navigate('./manage')}><IconsLibrary.Dashboard /></button>}
                 />
                 <div className={styles.content}>
                     <Outlet context={{members: groupData.members}} />
