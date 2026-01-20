@@ -94,6 +94,7 @@ const ListItem: React.FC<ListItemProps> = ({data, groupId, online, members, show
                             {data.claimedBy ? <p>Claimed by {members?.find(u=>u.userId === data.claimedBy)?.username}</p> : null}
                         </div> : null}
                     </div>
+                    {data.syncStatus ? <p className={styles.createdAt}>{data.syncStatus === 'synced' ? 'Synced' : 'Not synced'}</p> : null}
                     {data.description ? <p className={styles.description}>{data.description}</p> : null}
                     {data.deadline ? <div className={styles.deadline}>
                         <IconsLibrary.Time />
