@@ -8,6 +8,8 @@ import EditPoll from '../EditPoll/EditPoll';
 import Loading from '../../../../components/LoadingSpinner/Loading';
 import { castVote } from '../../../../services/offlineManager';
 import { useNotifications } from '../../../../Notification/NotificationContext';
+import { ObjectId } from 'bson';
+import { db } from '../../../../db';
 
 interface PollProps {
     data: IPoll;
@@ -19,7 +21,6 @@ const Poll: React.FC<PollProps> = ({data}) => {
     const {showNotification} = useNotifications();
 
 
-    const [options, setOptions] = useState<PollOption[]>([...data.options]);
     const [showEdit, setShowEdit] = useState(false);
     const [pollData, setPollData] = useState<IPoll | null>(data ?? null);
     
@@ -48,8 +49,8 @@ const Poll: React.FC<PollProps> = ({data}) => {
     const handleUpdatePoll = async (updatedPoll: IPoll) => {
         try{
             const apiResponse = await updatePoll(data._id, updatedPoll);
+            await db.polls.put(apiResponse);
             setPollData(apiResponse);
-            setOptions(apiResponse.options);
         } catch (error) {
             console.error(error);
             showNotification('Failed to update poll!', "error");
@@ -92,8 +93,8 @@ const Poll: React.FC<PollProps> = ({data}) => {
                 <h1>{pollData.title}</h1>
                 <p className={styles.description}>{data.description || "No context was given"}</p>
                 <div className={styles.options}>
-                    {options?.map(option=><Option handleVote={handleVote} key={option._id} isEnded={pollData.isClosed || (pollData.expiresAt && pollData.expiresAt < new Date())} totalAnswers={totalAnswers} option={option} />)}
-                    {pollData.allowCustomOptions ? <NewOption handleVote={handleVote} pollId={pollData._id} addOption={(newOption)=>setOptions(prev=>[...prev, newOption])} totalOptions={options.length} /> : null}
+                    {data.options?.map(option=><Option handleVote={handleVote} key={option._id} isEnded={pollData.isClosed || (pollData.expiresAt && pollData.expiresAt < new Date())} totalAnswers={totalAnswers} option={option} />)}
+                    {pollData.allowCustomOptions ? <NewOption handleVote={handleVote} pollId={pollData._id} totalOptions={data.options.length} /> : null}
                 </div>
                 {pollData.authorId === userId ? 
                     <div className={styles.managePoll}>
@@ -130,32 +131,43 @@ const Option: React.FC<OptionProps> = ({option, totalAnswers, isEnded, handleVot
 
 
 interface NewOptionProps {
-    addOption: (option: PollOption) => void;
     totalOptions: number;
     pollId: string;
     handleVote: (optionId: string)=> void;
 }
 
-const NewOption: React.FC<NewOptionProps> = ({addOption, pollId, handleVote}) => {
+const NewOption: React.FC<NewOptionProps> = ({pollId, handleVote}) => {
 
     const [text, setText] = useState('');
     const [error, setError] = useState<string | null>(null);
 
+    const [isLoading, setIsLoading] = useState(false);
 
+    const {showNotification} = useNotifications();
+    const userId = localStorage.getItem('userId');
 
+    
     const handleAdd = async () => {
         if(!text || text.length < 1 || text.length > 50) {
             setError("Option invalid. It should be between 1 and 50 characters.")
         } else {
+            setIsLoading(true);
             try {
-                const apiResponse = await addPollOption(pollId, text);
+                const newOption = {
+                    _id: new ObjectId().toHexString(),
+                    text: text,
+                    votes: [userId ?? '']
+                }
+                const apiResponse = await addPollOption(pollId, newOption, userId ?? '');
                 if(apiResponse._id) {
                     handleVote(apiResponse._id);
-                    addOption(apiResponse);
                     setText('');
                 }
+                setIsLoading(false);
             } catch (error) {
                 console.error(error);
+                showNotification("Failed to add option", "error");
+                setIsLoading(false);
             }
         }
     }
@@ -163,7 +175,7 @@ const NewOption: React.FC<NewOptionProps> = ({addOption, pollId, handleVote}) =>
     return (
         <div className={styles.newOption}>
             <input type='text' value={text} onChange={(e)=>setText(e.target.value)} style={error ? {color: 'red', borderColor: 'red'} : {}} placeholder={error ? error : 'Add another answer...'} />
-            <button onClick={handleAdd}><IconsLibrary.Plus /></button>
+            <button onClick={handleAdd} disabled={isLoading}>{isLoading ? <IconsLibrary.Spinner /> :<IconsLibrary.Plus />}</button>
         </div>
     )
 }

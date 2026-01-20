@@ -75,9 +75,30 @@ export async function updatePoll(pollId: string, data: Partial<IPollUpdateData> 
 }
 // Adds a custom option to an existing poll
 // POST /api/polls/option
-export async function addPollOption(pollId: string, text: string): Promise<PollOption> {
+export async function addPollOption(pollId: string, option: PollOption, userId: string): Promise<PollOption> {
+    console.log(userId)
     try {
-        const response = await API.post('/polls/option', { pollId, text });
+        const response = await API.post('/polls/option', { pollId, option });
+        await db.transaction('rw', db.polls, db.syncQueue, async () => {
+            // Optimistic Update: Add option locally
+            await db.polls.where('_id').equals(pollId).modify(poll => {
+                
+                // Remove user's id from all existing options
+                if (poll.options) {
+                    poll.options.map(opt => {
+                        if (opt.votes && opt.votes.includes(userId)) {
+                            // Filter out user's id
+                            opt.votes = opt.votes.filter(id => id !== userId);
+                        }
+                    });
+                } else {
+                    poll.options = [];
+                }
+
+                // Push the new option (which already has user's id)
+                poll.options.push(response.data);
+            });
+        });
         return response.data;
     } catch (error) {
         throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to add option');
@@ -105,7 +126,7 @@ export async function deletePoll(pollId: string): Promise<{ message: string }> {
         } else {
         return response.data;
         }
-    } catch (error: any) {
+    } catch (error) {
          throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to delete poll');
     }
 }
