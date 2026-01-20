@@ -83,7 +83,7 @@ export interface GroupMember {
 }
 
 export interface Group {
-    _id?: string;
+    _id: string;
     name: string;
     description?: string;
     authorId: string;

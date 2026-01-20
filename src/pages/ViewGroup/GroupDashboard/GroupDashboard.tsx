@@ -23,9 +23,9 @@ const GroupDashboard = () => {
         if (!groupId) return { lists: 0, notes: 0, polls: 0 };
 
         const [lists, notes, polls] = await Promise.all([
-        db.lists.where('groupId').equals(groupId).count(),
-        db.notes.where('groupId').equals(groupId).count(),
-        db.polls.where('groupId').equals(groupId).count()
+            db.lists.where('groupId').equals(groupId).count(),
+            db.notes.where('groupId').equals(groupId).count(),
+            db.polls.where('groupId').equals(groupId).count()
         ]);
 
         return { lists, notes, polls };

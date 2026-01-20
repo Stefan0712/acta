@@ -8,8 +8,7 @@ import Loading from '../../components/LoadingSpinner/Loading';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 import Header from '../../components/Header/Header';
 import Auth from '../Auth/Auth';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../../db';
+import { useGroupsWithStats } from '../../helpers/useGroupsWithStats';
 
 
 const Groups = () => {
@@ -17,9 +16,7 @@ const Groups = () => {
     const userToken = localStorage.getItem('jwt-token');
     const [showNewGroup, setShowNewGroup] = useState(false);
 
-    const groups = useLiveQuery(()=>{
-        return db.groups.toArray()
-    })
+    const groups = useGroupsWithStats();
 
 
     if(!userToken) {
@@ -53,15 +50,15 @@ const Group = ({data}: {data: Group}) => {
                 <div className={styles.metaItems}>
                     <div className={styles.metaItem}>
                         <IconsLibrary.List2 />
-                        <b>{data.listCount ?? 0}</b>
+                        <b>{data.stats.lists ?? 0}</b>
                     </div>
                     <div className={styles.metaItem}>
                         <IconsLibrary.Note />
-                        <b>{data.notesCount ?? 0}</b>
+                        <b>{data.stats.notes ?? 0}</b>
                     </div>
                     <div className={styles.metaItem}>
                         <IconsLibrary.Poll />
-                        <b>{data.pollCount ?? 0}</b>
+                        <b>{data.stats.polls ?? 0}</b>
                     </div>
                 </div>
             </div>
