@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './LocalList.module.css';
-import { type ListItem as ItemType, type List as IList } from '../../types/models.ts';
 import { db } from '../../db.ts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotifications } from '../../Notification/NotificationContext.tsx';
@@ -13,6 +12,7 @@ import Loading from '../../components/LoadingSpinner/Loading.tsx';
 import Header from '../../components/Header/Header.tsx';
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal.tsx';
 import Summaries from '../../components/Summaries/Summaries.tsx';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 
 
@@ -22,15 +22,26 @@ const List = () => {
     const navigate = useNavigate();
     const { showNotification } = useNotifications();
 
-    const [showEdit, setShowEdit] = useState(false);
-
+    
     const [selectedCategory, setSelectedCategory] = useState('all');
-    const [listData, setListData] = useState<IList | null>(null);
-    const [listItems, setListItems] = useState<ItemType[]>([]);
-
+    
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+    const [showEdit, setShowEdit] = useState(false);
     const [showMore, setShowMore] = useState(false);
+
+
+    // Get list data and items
+    const data = useLiveQuery(async () => {
+        if (!id) return null;
+
+        const [listData, listItems] = await Promise.all([
+            db.lists.get(id),
+            db.listItems.where('listId').equals(id).toArray()
+        ]);
+        return { listData, listItems };
+    }, [id]);
+    const { listData, listItems } = data || { listData: null, listItems: [] };
+
 
     // Filter items based on the current category
     const filteredItems = useMemo(() => {
@@ -53,33 +64,7 @@ const List = () => {
         return filteredItems.filter(item => item.isChecked);
     },[filteredItems]);
 
-    useEffect(()=>{
-        if (!id){
-            showNotification("No id found in the url", "error");
-            return;
-        }
-        const fetchPageData = async () => {
-            try {
-                const listDataPromise = db.lists.get(id);
-                const listItemsPromise = db.listItems.where('listId').equals(id).toArray();
 
-                const [listDataResponse, listItemsResponse] = await Promise.all([
-                    listDataPromise,
-                    listItemsPromise
-                ]);
-                if (listDataResponse) {
-                    setListData(listDataResponse);
-                    setListItems(listItemsResponse);
-                } else {
-                    showNotification('No list data found', "error");
-                }
-            } catch (error) {
-                console.error("Failed to fetch page data:" , error);
-                showNotification("Error loading list", "error")
-            }
-        };
-        fetchPageData();
-    },[id, showNotification]);
 
     const deleteList = async () =>{
         try {
@@ -101,11 +86,7 @@ const List = () => {
             showNotification("Failed to restore list.", "error");
         }
     }
-    // Optimistically update item list
-    const updateItem = (updatedItem: ItemType) => {
-        const updatedList = listItems.map(item=>item._id===updatedItem._id ? updatedItem : item);
-        setListItems(updatedList);
-    };
+
     const handleCopyList = async () => {
         try {
             if(listData){
@@ -132,7 +113,7 @@ const List = () => {
     } else if(listData && listData._id) {
         return ( 
             <div className={styles.List}>
-                {showEdit ? <EditList close={()=>setShowEdit(false)} listData={listData} updateData={(newData)=>setListData(newData)} /> : null}
+                {showEdit ? <EditList close={()=>setShowEdit(false)} listData={listData} /> : null}
                 {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)}  confirm={deleteList} title='Delete this list?' content='Are you sure you want to delete this list? You can restore it later' /> : null}
                 <Header 
                     prevUrl={'/lists'} 
@@ -175,14 +156,14 @@ const List = () => {
                         <>
                             {uncompletedItems
                             .sort((a, b) => Number(b.isPinned) - Number(a.isPinned))
-                            .map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
+                            .map(item=><ListItem online={false} key={item._id} data={item} />)}
                             {completedItems.length > 0 ? <h3 className={styles.sectionTitle}>Completed</h3> : null}
-                            {completedItems.map(item=><ListItem online={false} updateItemLocally={updateItem} key={item._id} data={item} />)}
+                            {completedItems.map(item=><ListItem online={false} key={item._id} data={item} />)}
                         </>  : 
                             <p className='no-items-text'>No items yet</p>
                     }
                 </div>
-                <NewListItem listId={listData._id} addItemToList={(newItem)=>setListItems(prev=>[...prev, newItem])} />
+                <NewListItem listId={listData._id} />
             </div>
         );
     }
