@@ -20,7 +20,6 @@ export async function syncAllUserData() {
             cacheData(db.notes, notes),
             cacheData(db.polls, polls)
         ]);
-        console.log(`Fetched ${groups.length} groups, ${lists.length} lists, ${items.length} items, ${notes.length} notes, and ${polls.length} polls.`)
         console.log("Sync Complete");
 
     } catch (error) {
@@ -54,7 +53,6 @@ async function cacheData(table: any, onlineItems: any[]) {
             };
         }).filter(Boolean); // Remove nulls
 
-        console.log(`Saving ${itemsToSave.length} entries in ${table} table`)
         // Bulk Save
         if (itemsToSave.length > 0) {
             await table.bulkPut(itemsToSave);

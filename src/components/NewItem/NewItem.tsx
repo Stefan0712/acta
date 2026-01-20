@@ -101,6 +101,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, online}) => {
             }
 
             const isLocalList = !parentList.syncStatus; // If undefined, it's a device-only list
+            console.log(isLocalList, parentList.syncStatus);
 
             if (isLocalList) {
                 // Local only

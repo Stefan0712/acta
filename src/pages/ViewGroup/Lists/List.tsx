@@ -89,6 +89,7 @@ const List: React.FC<ListProps> = ({data}) => {
                 showNotification("Failed to delete list.", "error");
             }
         }
+        setShowDeleteModal(false);
     }
 
     const percentage = completed && total && completed > 0 && total > 0 ?  ((completed ?? 0)/(total ?? 0))*100 : 0;

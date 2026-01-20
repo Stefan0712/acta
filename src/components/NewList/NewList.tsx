@@ -49,18 +49,17 @@ const handleSaveList = async () => {
             isDeleted: false,
             icon
         };
-
-        const newList = await offlineCreate(db.lists, listData, 'CREATE_LIST');
-
-        showNotification("List created successfully", "success");
-
-        if (groupId) {
-            navigate(`/group/${groupId}/lists/${newList._id}`);
+        if(groupId){
+            await offlineCreate(db.lists, listData, 'CREATE_LIST');
+            showNotification("List created successfully", "success");
+            navigate(`/group/${groupId}/lists/${listData._id}`);
+            close();
         } else {
-            navigate(`/lists/${newList._id}`);
+            await db.lists.add(listData);
+            showNotification("List created successfully", "success");
+            navigate(`/lists/${listData._id}`);
+            close();
         }
-
-        close();
 
     } catch (error) {
         console.error("Failed to create list:", error);
