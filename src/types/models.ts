@@ -126,7 +126,7 @@ export interface Note {
     comments?: NoteComment[];
 }
 export interface PollOption {
-  _id?: string;
+  _id: string;
   text: string;
   votes?: string[]; 
 }

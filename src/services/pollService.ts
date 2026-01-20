@@ -1,3 +1,4 @@
+import { db } from '../db';
 import type { Poll, PollOption } from '../types/models';
 import API from './apiService';
 import axios from 'axios';
@@ -97,8 +98,14 @@ export async function endPoll(pollId: string): Promise<Poll> {
 export async function deletePoll(pollId: string): Promise<{ message: string }> {
     try {
         const response = await API.delete(`/polls/${pollId}`);
+        if (response.status === 404) {
+            console.warn("Poll removed");
+            await db.polls.delete(pollId);
+            return { message: 'Poll removed.' };
+        } else {
         return response.data;
-    } catch (error) {
-        throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to delete poll');
+        }
+    } catch (error: any) {
+         throw new Error(axios.isAxiosError(error) ? error.response?.data.message : 'Failed to delete poll');
     }
 }

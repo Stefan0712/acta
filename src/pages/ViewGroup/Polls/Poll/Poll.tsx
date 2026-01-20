@@ -19,7 +19,7 @@ const Poll: React.FC<PollProps> = ({data}) => {
     const {showNotification} = useNotifications();
 
 
-    const [options, setOptions] = useState([...data.options]);
+    const [options, setOptions] = useState<PollOption[]>([...data.options]);
     const [showEdit, setShowEdit] = useState(false);
     const [pollData, setPollData] = useState<IPoll | null>(data ?? null);
     

@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { ObjectId } from 'bson';
 import { offlineCreate } from '../../../../services/offlineManager';
 import { db } from '../../../../db';
+import type { PollOption } from '../../../../types/models';
 
 
 const NewPoll = ({close}: {close: ()=>void}) => {
@@ -17,7 +18,7 @@ const NewPoll = ({close}: {close: ()=>void}) => {
     const [description, setDescription] = useState('');
     const [endDate, setEndDate] = useState('');
     const [endHour, setEndHour] = useState('');
-    const [options, setOptions] = useState<string[]>([]);
+    const [options, setOptions] = useState<PollOption[]>([]);
     const [titleError, setTitleError] = useState<string | null>(null);
     const [allowCustomOptions, setAllowCustomOptions] = useState(false);
     const [optionsError, setOptionsError] = useState<string | null>(null)
@@ -29,8 +30,8 @@ const NewPoll = ({close}: {close: ()=>void}) => {
 
 
 
-    const handleRemoveOption = (text: string) =>{
-        setOptions(prev=>[...prev.filter(item=>item!==text)]);
+    const handleRemoveOption = (pollId: string) =>{
+        setOptions(prev=>[...prev.filter(item=>item._id!==pollId)]);
     }
 
     const handleAdd = async () =>{
@@ -43,7 +44,7 @@ const NewPoll = ({close}: {close: ()=>void}) => {
                 _id: new ObjectId().toHexString(),
                 title,
                 description,
-                options: options.map(o=>({text: o, _id: new ObjectId().toHexString(), votes: []})),
+                options,
                 groupId,
                 allowCustomOptions,
                 createdAt: new Date(),
@@ -53,6 +54,7 @@ const NewPoll = ({close}: {close: ()=>void}) => {
                 authorUsername: localStorage.getItem('username') ?? 'Unknown user'
             }
             try {
+                console.log("Creating poll offline", newPoll);
                 await offlineCreate(db.polls, newPoll, "CREATE_POLL");
                 close();
             } catch (error) {
@@ -83,7 +85,7 @@ const NewPoll = ({close}: {close: ()=>void}) => {
                         </div>
                     {optionsError ? <p className='error-message'>{optionsError}</p> : null}
                     <div className={styles.options}>
-                        {options?.map((option,index)=><Option key={option} data={option} handleRemove={handleRemoveOption} index={index} />)}
+                        {options?.map((option,index)=><Option key={option._id} data={option} handleRemove={handleRemoveOption} index={index} />)}
                         <NewOption addOption={(newOption)=>setOptions(prev=>[...prev, newOption])} totalOptions={options.length}/>
                     </div>
                 </div>
@@ -97,8 +99,8 @@ export default NewPoll;
 
 
 interface OptionProps {
-    data: string;
-    handleRemove: (text: string) => void;
+    data: PollOption;
+    handleRemove: (pollId: string) => void;
     index: number;
 }
 const Option: React.FC<OptionProps> = ({data, handleRemove, index}) => {
@@ -107,14 +109,14 @@ const Option: React.FC<OptionProps> = ({data, handleRemove, index}) => {
     return (
         <div className={styles.option}>
             <p>{index+1}</p>
-            <h2>{data}</h2>
-            <button onClick={()=>handleRemove(data)}><IconsLibrary.Close /></button>
+            <h2>{data.text}</h2>
+            <button onClick={()=>handleRemove(data._id)}><IconsLibrary.Close /></button>
         </div>
     )
 }
 
 interface NewOptionProps {
-    addOption: (option: string) => void;
+    addOption: (option: PollOption) => void;
     totalOptions: number;
 }
 
@@ -123,13 +125,16 @@ const NewOption: React.FC<NewOptionProps> = ({addOption, totalOptions}) => {
     const [text, setText] = useState('');
     const [error, setError] = useState<string | null>(null);
 
-
-
     const handleAdd = () => {
         if(!text || text.length < 1 || text.length > 140) {
             setError("Option invalid. It should be between 1 and 50 characters.")
         }
-        addOption(text);
+        const newOption = {
+            _id: new ObjectId().toHexString(),
+            text: text,
+            votes: []
+        }
+        addOption(newOption);
         setText('');
     }
 
