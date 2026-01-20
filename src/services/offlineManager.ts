@@ -72,28 +72,63 @@ export const toggleItemCheck = async (itemId: string, currentStatus: boolean) =>
 };
 
 export const castVote = async (pollId: string, optionId: string, userId: string) => {
-    
-  // Optimistic Update
-  const poll = await db.polls.get(pollId);
-  if (poll) {
-    const updatedOptions = poll.options.map(opt => {
-      if (opt._id === optionId) {
-        return { ...opt, votes: [...(opt.votes ?? []), userId] }; // Add user to votes
-      }
-      return opt;
-    });
-    await db.polls.update(pollId, { options: updatedOptions });
-  }
-
-  // Queue Logic
-  const queueItem: SyncAction = {
-    type: 'VOTE_POLL',
-    payload: { pollId, optionId, userId }, 
-    tempId: pollId, // Reference the Poll ID
-    createdAt: Date.now(),
-    status: 'pending',
-    retryCount: 0
-  };
+  console.log("Casting vote offline", {pollId, optionId, userId});
   
-  await db.syncQueue.add(queueItem);
+  await db.transaction('rw', db.polls, db.syncQueue, async () => {
+    
+    // Optimistic Update
+    await db.polls.where('_id').equals(pollId).modify(poll => {
+      if (!poll.options) return;
+
+      // Map through options to enforce a "Single Choice"
+      poll.options = poll.options.map(opt => {
+        const votes = opt.votes ?? []; // Handle undefined votes array
+
+        if (opt._id === optionId) {
+          // Add user if not already there
+          if (!votes.includes(userId)) {
+              return { ...opt, votes: [...votes, userId] };
+          }
+          return opt;
+        } 
+        
+        // Check if user is in this list, if so, remove them
+        if (votes.includes(userId)) {
+          return { ...opt, votes: votes.filter(id => id !== userId) };
+        }
+
+        return opt;
+      });
+    });
+
+    // Queue Logic
+    const existingJob = await db.syncQueue
+      .where('type').equals('VOTE_POLL')
+      .filter(job => 
+        job.status === 'pending' && 
+        job.payload.pollId === pollId
+      )
+      .first();
+
+    if (existingJob) {
+      // Update existing sync job
+      await db.syncQueue.update(existingJob.id!, {
+        payload: { pollId, optionId, userId },
+        createdAt: Date.now() 
+      });
+      
+      console.log("Merged vote into existing pending job");
+        
+    } else {
+        //No pending vote exists, create fresh job.
+        await db.syncQueue.add({
+          type: 'VOTE_POLL',
+          payload: { pollId, optionId, userId }, 
+          tempId: pollId,
+          createdAt: Date.now(),
+          status: 'pending',
+          retryCount: 0
+        });
+      }
+    });
 };
