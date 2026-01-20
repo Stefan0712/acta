@@ -22,7 +22,8 @@ const Poll: React.FC<PollProps> = ({data}) => {
 
 
     const [showEdit, setShowEdit] = useState(false);
-    const [pollData, setPollData] = useState<IPoll | null>(data ?? null);
+
+    const [processEnding, setProcessEnding] = useState(false);
     
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEndPollModal, setShowEndPollModal] = useState(false);
@@ -41,6 +42,7 @@ const Poll: React.FC<PollProps> = ({data}) => {
     const handleDelete = async () => {
         try {
             await deletePoll(data._id);
+            await db.polls.delete(data._id);
             setShowDeleteModal(false);
         } catch (error) {
             console.error(error);
@@ -50,7 +52,6 @@ const Poll: React.FC<PollProps> = ({data}) => {
         try{
             const apiResponse = await updatePoll(data._id, updatedPoll);
             await db.polls.put(apiResponse);
-            setPollData(apiResponse);
         } catch (error) {
             console.error(error);
             showNotification('Failed to update poll!', "error");
@@ -58,47 +59,49 @@ const Poll: React.FC<PollProps> = ({data}) => {
     }
 
     const handleEndPoll = async () => {
+        setProcessEnding(true);
         try {
             const apiResponse = await endPoll(data._id);
             if(apiResponse) {
-                setPollData(apiResponse);
                 setShowEndPollModal(false);
+                setProcessEnding(false);
             }
         } catch (error) {
             console.error(error);
+            setProcessEnding(false);
         }
     }
-    const totalAnswers = pollData ? pollData?.options?.reduce((sum, opt) => sum + (opt?.votes?.length ?? 0), 0) : 0;
+    const totalAnswers = data ? data?.options?.reduce((sum, opt) => sum + (opt?.votes?.length ?? 0), 0) : 0;
 
-    if(!pollData){
+    if(!data){
         return ( <Loading />)
     }else {
         return (
             <div className={styles.poll}>
-                {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)} confirm={()=>handleDelete()}/> : null}
+                {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)} confirm={()=>handleDelete()} content='Do you want to delete this poll?'/> : null}
                 {showEndPollModal ? <ConfirmationModal cancel={()=>setShowEndPollModal(false)} confirm={()=>handleEndPoll()} content='Users will not be able to submit more answers if you end this poll. Continue?'/> : null}
-                {showEdit ? <EditPoll pollId={pollData._id} close={()=>setShowEdit(false)} handleUpdatePoll={handleUpdatePoll} /> : null}
+                {showEdit ? <EditPoll pollId={data._id} close={()=>setShowEdit(false)} handleUpdatePoll={handleUpdatePoll} /> : null}
                 <div className={styles.header}>
                     <div className={styles.pollAuthor}>
                         <div className={styles.userPfp}>
                             <p>{data.authorUsername ? data?.authorUsername.charAt(0).toUpperCase() : '?'}</p>
                         </div>
-                        <b>{pollData.authorUsername ?? 'Unknown Author'}</b>
+                        <b>{data.authorUsername ?? 'Unknown Author'}</b>
                     </div>
                     <div className={styles.headerButtons}>
                         <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /></button>
                         <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /></button>
                     </div>
                 </div>
-                <h1>{pollData.title}</h1>
+                <h1>{data.title}</h1>
                 <p className={styles.description}>{data.description || "No context was given"}</p>
                 <div className={styles.options}>
-                    {data.options?.map(option=><Option handleVote={handleVote} key={option._id} isEnded={pollData.isClosed || (pollData.expiresAt && pollData.expiresAt < new Date())} totalAnswers={totalAnswers} option={option} />)}
-                    {pollData.allowCustomOptions ? <NewOption handleVote={handleVote} pollId={pollData._id} totalOptions={data.options.length} /> : null}
+                    {data.options?.map(option=><Option handleVote={handleVote} key={option._id} isEnded={data.isClosed || (data.expiresAt && data.expiresAt < new Date())} totalAnswers={totalAnswers} option={option} />)}
+                    {data.allowCustomOptions ? <NewOption handleVote={handleVote} pollId={data._id} totalOptions={data.options.length} /> : null}
                 </div>
-                {pollData.authorId === userId ? 
+                {data.authorId === userId ? 
                     <div className={styles.managePoll}>
-                        <button onClick={()=>setShowEndPollModal(true)}>End Poll</button>
+                        <button onClick={()=>setShowEndPollModal(true)} disabled={processEnding || data.isClosed}>{processEnding ? <IconsLibrary.Spinner /> : data.isClosed ? 'Poll Ended' : 'End Poll'}</button>
                     </div> : null
                 }
             </div>
@@ -121,7 +124,7 @@ const Option: React.FC<OptionProps> = ({option, totalAnswers, isEnded, handleVot
     const currentUser = localStorage.getItem('userId');
     const isOptionVoted = currentUser && option.votes?.includes(currentUser);
     return (
-        <button onClick={()=>option._id ? handleVote(option._id) : null} key={option._id} className={`${styles.option} ${isOptionVoted ? styles.selectedOption : ''}`} style={isEnded ? {background: `linear-gradient(to right, rgba(59, 130, 246, 0.5) ${percentage}%, transparent ${percentage}%)`} : {}}>
+        <button onClick={()=>option._id && !isEnded ? handleVote(option._id) : null} key={option._id} className={`${styles.option} ${isOptionVoted ? styles.selectedOption : ''}`} style={isEnded ? {background: `linear-gradient(to right, rgba(59, 130, 246, 0.5) ${percentage}%, transparent ${percentage}%)`} : {}}>
             <div className={`${styles.optionCircle}`} />
             <h3>{option.text}</h3>
             {isEnded ? <p>{totalAnswers}</p> : null}
