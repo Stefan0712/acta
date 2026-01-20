@@ -147,13 +147,13 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, online}) => {
         setClaimedBy(prev => prev ? null : userId);
     }
     const REMINDER_OPTIONS = [
-        { value: 0, label: "No Reminder" },
-        { value: 1, label: "1 Hour Before" },
-        { value: 2, label: "2 Hours Before" },
-        { value: 3, label: "3 Hours Before" },
-        { value: 6, label: "6 Hours Before" },
-        { value: 12, label: "12 Hours Before" },
-        { value: 24, label: "1 Day Before" },
+        { value: 0, label: "None" },
+        { value: 1, label: "1 Hour" },
+        { value: 2, label: "2 Hours" },
+        { value: 3, label: "3 Hours" },
+        { value: 6, label: "6 Hours" },
+        { value: 12, label: "12 Hours" },
+        { value: 24, label: "1 Day" },
     ];
     return ( 
         <div className={`${styles.newItem} ${showMoreInputs ? styles.expanded : ''}`}>
