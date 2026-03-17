@@ -41,15 +41,15 @@ const Polls = () => {
 
 
     return (
-        <div className={styles.polls}>
+        <div className='w-full h-full grid grid-rows-[auto_1fr] gap-3 px-4'>
             {showNewPoll ? <NewPoll close={()=>setShowNewPoll(false)} /> : null}
-            <div className={styles.pageMenu}>
-                <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
-                    <option value={'all'}>All</option>
-                    <option value={'Active'}>Active</option>
-                    <option value={'finished'}>Finished</option>
-                </select>
-                 <button onClick={()=>setShowNewPoll(true)} className={styles.newPollButton}>
+                <div className='w-full grid grid-cols-[1fr_auto] gap-2 mb-2'>
+                <div className='p-1 w-fit flex gap-2 items-center'>
+                    <button className={`px-2 py-1 border-1 border-white/50 rounded-full text-white text-sm ${selectedFilter === 'all' ? 'bg-yellow-500 border-yellow-500 text-zinc-900' : ''}`} onClick={()=>setSelectedFilter('all')}>All</button>
+                    <button className={`px-2 py-1 border-1 border-white/50 rounded-full text-white text-sm ${selectedFilter === 'active' ? 'bg-yellow-500 border-yellow-500 text-zinc-900' : ''}`} onClick={()=>setSelectedFilter('active')}>Active</button>
+                    <button className={`px-2 py-1 border-1 border-white/50 rounded-full text-white text-sm ${selectedFilter === 'finished' ? 'bg-yellow-500 border-yellow-500 text-zinc-900' : ''}`} onClick={()=>setSelectedFilter('finished')}>Finished</button>
+                </div>
+                <button onClick={()=>setShowNewPoll(true)} className='text-white/80 flex items-center gap-2'>
                     <IconsLibrary.Plus />
                 </button>
             </div>

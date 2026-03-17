@@ -121,7 +121,7 @@ const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
     }
     return (
         <div className='w-full h-full flex flex-col items-center justify-center p-2'>
-            <form className='flex flex-col items-center justify-center text-white'>
+            <form className='flex flex-col items-center justify-center text-white px-2 mt-auto'>
                 <img src='/logo512.png' className='size-16 rounded-xl border border-white/10' />
                 <h2 className='text-2xl font-bold'>Create account</h2>
                 <p className='text-sm text-white/60'>Create your account to access online features</p>
@@ -142,6 +142,7 @@ const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
                                 minLength={3} 
                                 maxLength={25}
                                 className='bg-zinc-950 text-white/50 pl-10 w-full'
+                                style={{paddingLeft: '40px'}}
                             />
                         </div>
                         {showUsernameError ? <p style={{color: 'red'}}>Username must be between 3 and 20 characters</p> : null}
@@ -159,6 +160,7 @@ const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
                                 onChange={(e)=>handleEmailInput(e.target.value)} 
                                 required 
                                 className='bg-zinc-950 text-white/50 pl-10 w-full'
+                                style={{paddingLeft: '40px'}}
                             />
                         </div>
                         {showEmailError ? <p style={{color: 'red'}}>Email is invalid!</p> : null}
@@ -176,6 +178,7 @@ const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
                                 onChange={(e)=>handlePasswordInput(e.target.value)} 
                                 required 
                                 className='bg-zinc-950 text-white/50 pl-10 w-full'
+                                style={{paddingLeft: '40px'}}
                             />
                         </div>
                         {showPasswordError ? <p style={{color: 'red'}}>Password is invalid!</p> : null}
@@ -205,7 +208,7 @@ const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
                     </div>
                 </div>
             </form>
-            <div className='text-sm'>Have an account already? <b onClick={toLogin}>Log in</b> instead {next ?  <p onClick={toLocal}>or create a <b>Local Account</b></p> : null}</div>
+            <div className='text-sm text-white/60 mt-auto mb-4'>Have an account already? <b onClick={toLogin}>Log in</b> instead {next ?  <p onClick={toLocal}>or create a <b>Local Account</b></p> : null}</div>
         </div>
     )
 }

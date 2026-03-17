@@ -37,9 +37,9 @@ const Menu = () => {
                 <div className='size-12 rounded-full bg-zinc-800 flex items-center justify-center'>
                     <User />
                 </div>
-                <div className='flex flex-col gap-1'>
+                <div className='flex flex-col gap-1 justify-center'>
                     <b onClick={()=>setExpandUserInfo(prev=>!prev)}>{isLoggedIn ? localStorage.getItem('username') : 'Local Account'}</b>
-                    <Link to={'/auth'}>Login</Link>
+                    {!isLoggedIn ? <Link to={'/auth'}>Login</Link> : null}
                 </div>
                 {isLoggedIn ? <button onClick={handleLogout} className='flex gap-1 items-center'><IconsLibrary.Logout /> <p>Logout</p></button> : null}
             </div>

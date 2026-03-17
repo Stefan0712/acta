@@ -10,7 +10,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal/Confirmatio
 import { IconsLibrary } from '../../../assets/icons';
 import EditGroup from '../../Groups/EditGroup';
 import { getDateAndHour } from '../../../helpers/dateFormat';
-import { UserPlus } from 'lucide-react';
+import { Search, UserPlus } from 'lucide-react';
 import { db } from '../../../db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -89,7 +89,7 @@ const Manage = () => {
         )
     } else {
         return ( 
-            <div className={styles.manage}>
+            <div className='h-full w-full flex flex-col gap-2 p-4 text-white overflow-y-auto'>
                 {showEdit && groupId ? <EditGroup close={()=>setShowEdit(false)} groupId={groupId} finishGroupEdit={()=>window.location.reload()} /> : null}
                 {showDelete ? <ConfirmationModal cancel={()=>setShowDelete(false)} confirm={handleDelete} title='Delete this group?' content='Are you sure you want to delete this group and all items related to it? This cannot be undone'/>  : null}
                 {showLeave ? <ConfirmationModal cancel={()=>setShowLeave(false)} confirm={handleLeaveGroup} title='Leave this group?' content='Are you sure you want to leave this group? If you want to rejoin, you must receive another invitation from a group member.'/>  : null}
@@ -113,17 +113,20 @@ const Manage = () => {
                     </div>
                 </div>
 
-                <button className={styles.inviteButton} onClick={()=>setShowInviteModal(prev=>!prev)}>
-                    {showInviteModal ? <><IconsLibrary.Close /> Close</> : <><UserPlus /> Invite members </>}
-                </button>
-                {showInviteModal && groupId ? <InviteModal groupId={groupId} /> : null}
+
+                {groupId ? <InviteModal groupId={groupId} /> : null}
                 <div className={styles.membersHeader}>
                     <h4>Members</h4>
                 </div>
-                <input type='text' className={styles.searchUserInput} value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} placeholder='Search user' />
-                <div className={styles.membersContainer}>
+                <div className='relative'>
+                    <div className='absolute left-2 h-full flex items-center justify-center'>
+                        <Search />
+                    </div>
+                    <input type='text' className='bg-zinc-900 pl-10 rounded-lg text-white/70 p-2 h-[40px] border border-white/10 w-full' value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} placeholder='Search user' />
+                </div>
+                <div className='flex flex-col max-height-[300px] overflow-y-auto'>
                     {filteredUsers?.length > 0 ? filteredUsers.map(member=>
-                    <div className={styles.member} key={member.userId}>
+                    <div className='bg-zinc-900 grid grid-cols-[auto_1fr_auto] gap-2 p-2 rounded' key={member.userId}>
                         <div className={styles.memberPicture}>
                             {member.username?.charAt(0).toUpperCase() || '?'}
                         </div>
@@ -136,9 +139,22 @@ const Manage = () => {
                         </button>
                     </div>) : <p>No members</p>}
                 </div>
-                <div className={styles.dangerZone}>
-                    <button className={styles.menuButton} onClick={()=>setShowDelete(true)} style={{backgroundColor: 'red', color: 'white'}}><IconsLibrary.Delete /><p>Delete Group</p></button>
-                    <button className={styles.menuButton} onClick={()=>setShowLeave(true)}><IconsLibrary.Logout /><p>Leave Group</p></button>
+                <b className='text-red-500'>Danger Zone</b>
+                <div className='rounded-xl p-3 bg-red-600/10 border border-red-400/20'>
+                    <div className='grid grid-cols-[1fr_auto] gap-2 items-center'>
+                        <div className='flex flex-col'>
+                            <b>Leave Group</b>
+                            <p className='text-white/70 text-sm'>You will lose access to content</p>
+                        </div>
+                        <button className='px-2 py-1 rounded bg-red-300 text-black flex gap-1 items-center' onClick={()=>setShowDelete(true)}><IconsLibrary.Delete /><p>Delete</p></button>
+                    </div>
+                    <div className='grid grid-cols-[1fr_auto] gap-2 items-center'>
+                        <div className='flex flex-col'>
+                            <b>Leave Group</b>
+                            <p className='text-white/70 text-sm'>You will lose access to content</p>
+                        </div>
+                        <button className='px-2 py-1 rounded bg-red-300 text-black flex gap-1 items-center' onClick={()=>setShowLeave(true)}><IconsLibrary.Logout /><p>Leave</p></button>
+                    </div>
                 </div>
             </div>
         );

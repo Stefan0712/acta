@@ -62,8 +62,6 @@ const Notes = () => {
             switch (selectedFilter) {
                 case 'active':
                     return !note.isDeleted;
-                case 'pinned':
-                    return !note.isDeleted && note.isPinned;
                 case 'deleted':
                     return note.isDeleted === true;
                 default:
@@ -79,24 +77,15 @@ const Notes = () => {
         return ( <Loading /> )
     } else if (notes) {
         return ( 
-            <div className={styles.notes} style={!groupId ? {gridTemplateRows: 'var(--page-header-height) 40px 1fr'} : {}}>
-                {!groupId ? 
-                    <div className={styles.header}>
-                        <button onClick={()=>navigate(-1)}><IconsLibrary.BackArrow fill='white'/></button>
-                        <h3>My Notes</h3>
-                        <button><IconsLibrary.Bell /></button>
-                    </div> 
-                : null}
+            <div className='h-full w-full px-2'>
                 {groupId && showNewNote ? <NewNote close={()=>setShowNewNote(false)} groupId={groupId} /> : <div/>}
-                <div className={styles.pageMenu}>
-                    <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
-                        <option value={'active'}>Active</option>
-                        <option value={'pinned'}>Pinned</option>
-                        <option value={'deleted'}>Deleted</option>
-                    </select>
-                    <button onClick={()=>setShowNewNote(true)}>
+                <div className='w-full grid grid-cols-[1fr_auto] gap-2 mb-2'>
+                    <div className='p-1 w-fit ml-2 flex gap-2 items-center'>
+                        <button className={`px-2 py-1 border-1 border-white/50 rounded-full text-white text-sm ${selectedFilter === 'active' ? 'bg-yellow-500 border-yellow-500 text-zinc-900' : ''}`} onClick={()=>setSelectedFilter('active')}>Active</button>
+                        <button className={`px-2 py-1 border-1 border-white/50 rounded-full text-white text-sm ${selectedFilter === 'deleted' ? 'bg-yellow-500 border-yellow-500 text-zinc-900' : ''}`} onClick={()=>setSelectedFilter('deleted')}>Deleted</button>
+                    </div>
+                    <button onClick={()=>setShowNewNote(true)} className='text-white/80 flex items-center gap-2'>
                         <IconsLibrary.Plus />
-                        <p>New Note</p>
                     </button>
                 </div>
                 <div className={styles.notesContainer}>

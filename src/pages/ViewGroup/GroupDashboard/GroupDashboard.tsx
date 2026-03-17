@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { type ActivityLog } from '../../../types/models';
 import { getGroupActivity } from '../../../services/groupService';
 import { formatRelativeTime } from '../../../helpers/dateFormat';
-import { useNotifications } from '../../../Notification/NotificationContext';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 
@@ -14,7 +13,6 @@ const GroupDashboard = () => {
 
     const {groupId} = useParams();
 
-    const {showNotification} = useNotifications();
 
     const [logs, setLogs] = useState<ActivityLog[]>([]);
     const [loadingActivity, setLoadingAcvitiy] = useState(true);
@@ -44,7 +42,6 @@ const GroupDashboard = () => {
                 }
             } catch (error) {
                 console.error(error);
-                showNotification("Failed to get group activity", "error")
             }
         }
     };
@@ -56,45 +53,7 @@ const GroupDashboard = () => {
     },[groupId])
 
     return (
-        <div className={styles.groupDashboard}>
-            <div className={styles.groupNavigation}>
-                <Link to={'lists'}>
-                    <div className={styles.buttonName}>
-                        <div className={styles.navigationIcon}>
-                            <IconsLibrary.List2 />
-                        </div>
-                        <b>Lists</b>
-                    </div>
-                    <p>{lists ?? 0} active</p>
-                </Link>
-                <Link to={'notes'}>
-                    <div className={styles.buttonName}>
-                        <div className={styles.navigationIcon}>
-                            <IconsLibrary.Note />
-                        </div>
-                        <b>Notes</b>
-                    </div>
-                    <p>{notes ?? 0} Notes</p>
-                </Link>
-                <Link to={'polls'}>
-                    <div className={styles.buttonName}>
-                        <div className={styles.navigationIcon}>
-                            <IconsLibrary.Poll2 />
-                        </div>
-                        <b>Polls</b>
-                    </div>
-                    <p>{polls ?? 0} Ongoing</p>
-                </Link>
-                <Link to={'manage'}>
-                    <div className={styles.buttonName}>
-                        <div className={styles.navigationIcon}>
-                            <IconsLibrary.Settings />
-                        </div>
-                        <b>Manage</b>
-                    </div>
-                    <p>Group settings</p>
-                </Link>
-            </div>
+        <div className='h-full w-full flex flex-col gap-2'>
             <div className={styles.activity}>
                 <div className={styles.sectionTitle}>
                     <IconsLibrary.Activity />
