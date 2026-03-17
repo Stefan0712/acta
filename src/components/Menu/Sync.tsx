@@ -23,7 +23,7 @@ const queue: SyncAction[] | undefined = useLiveQuery(()=>db.syncQueue.toArray())
 
 
 return (
-    <div className="w-full h-full grid grid-rows-[auto_auto_1fr] gap-2 p-2">
+    <div className="w-full h-full grid grid-rows-[40px_auto_1fr] gap-2 p-2 overflow-hidden">
         <Header title="Sync" />
         <div className="flex flex-col gap-2">
             <button 
@@ -39,7 +39,7 @@ return (
                 </div>
             </button>
         </div>
-        <div className="flex flex-col gap-2 overflow-y-auto w-full h-full">
+        <div className="flex flex-col gap-2 overflow-y-auto w-full h-full flex-grow-1">
             {queue && queue.length > 0 ? queue.map(item=><SyncActionCard action={item} key={item.createdAt} />) : <p className="text-sm text-white/60">No items in queue</p>}
         </div>
     </div>

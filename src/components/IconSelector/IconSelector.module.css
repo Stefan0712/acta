@@ -1,6 +1,6 @@
 .iconSelector {
-    width: calc(100dvw - 20px);
-    height: calc(100dvh - var(--navigation-height) - 20px);
+    width: calc(100% - 20px);
+    height: calc(100% - var(--navigation-height) - 20px);
     border-radius: 10px;
     padding: 10px;
     position: fixed;

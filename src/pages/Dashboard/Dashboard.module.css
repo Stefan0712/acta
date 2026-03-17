@@ -1,5 +1,5 @@
 .dashboard {
-    height: calc(100dvh - var(--navigation-height));
+    height: calc(100% - var(--navigation-height));
     width: 100%;
     padding: 10px;
     color: var(--text-color);

@@ -1,5 +1,5 @@
 .notes {
-    height: calc(100dvh - var(--navigation-height) - var(--page-header-height));
+    height: calc(100% - var(--navigation-height) - var(--page-header-height));
     width: 100%;
     display: grid;
     grid-template-rows: auto 40px 1fr;

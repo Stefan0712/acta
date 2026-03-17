@@ -70,40 +70,38 @@ function App() {
     return (<NewUserFlow onLoginSuccess={()=>setIsAuthenticated(true)} />)
   } else {
     return (
-      <div className="app-container">
-        <UserProvider>
-          <NotificationDisplay />
-          <div className='w-screen h-screen grid grid-rows-[1fr_60px] overflow-hidden'>
-            <Routes>
-              <Route path="/" element={<Navigate to="/lists" replace />} />
-              <Route path='/welcome' element={<Welcome />} />
-              <Route path="/lists" element={<Lists />} />
-              <Route path="/lists/:id" element={<LocalList />} />
-              <Route path="/group/:groupId" element={<ViewGroup />}>
-                <Route index element={<GroupDashboard />} />            
-                <Route path='lists' element={<Lists />} />            
-                <Route path='notes' element={<Notes />} />            
-                <Route path='polls' element={<Polls />} />            
-                <Route path='activity' element={<Activity />} />            
-                <Route path="lists/:listId" element={<ViewList />} />  
-                <Route path='manage' element={<Manage />} />            
-              </Route>        
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/groups" element={<Groups />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/invite" element={<AcceptInvite />} />
-              <Route path="/export" element={<Export />} />
-              <Route path="/import" element={<Import />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/changelogs" element={<Changelogs />} />
-              <Route path="/menu" element={<Menu />} />
-              <Route path="/sync" element={<Sync />} />
-            </Routes>
-            <Navigation />
-          </div>
-        </UserProvider>
-      </div>
+      <UserProvider>
+        <NotificationDisplay />
+        <div className='w-full h-full grid grid-rows-[1fr_60px] overflow-hidden bg-[#09090B]'>
+          <Routes>
+            <Route path="/" element={<Navigate to="/lists" replace />} />
+            <Route path='/welcome' element={<Welcome />} />
+            <Route path="/lists" element={<Lists />} />
+            <Route path="/lists/:id" element={<LocalList />} />
+            <Route path="/group/:groupId" element={<ViewGroup />}>
+              <Route index element={<GroupDashboard />} />            
+              <Route path='lists' element={<Lists />} />            
+              <Route path='notes' element={<Notes />} />            
+              <Route path='polls' element={<Polls />} />            
+              <Route path='activity' element={<Activity />} />            
+              <Route path="lists/:listId" element={<ViewList />} />  
+              <Route path='manage' element={<Manage />} />            
+            </Route>        
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/groups" element={<Groups />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/invite" element={<AcceptInvite />} />
+            <Route path="/export" element={<Export />} />
+            <Route path="/import" element={<Import />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/changelogs" element={<Changelogs />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/sync" element={<Sync />} />
+          </Routes>
+          <Navigation />
+        </div>
+      </UserProvider>
     )
   }
 }

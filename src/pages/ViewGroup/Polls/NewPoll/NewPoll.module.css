@@ -1,6 +1,6 @@
 .newPollBackground {
-    width: 100dvw;
-    height: calc(100dvh - var(--navigation-height));
+    width: 100%;
+    height: calc(100% - var(--navigation-height));
     backdrop-filter: blur(25px);
     position: fixed;
     top: 0px;

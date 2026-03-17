@@ -3,7 +3,7 @@
     flex-direction: column;
     gap: 10px;
     height: 100%;
-    max-height: calc(100dvh - var(--navigation-height) - var(--page-header-height) - 10px);
+    max-height: calc(100% - var(--navigation-height) - var(--page-header-height) - 10px);
 }
 
 .groupNavigation {

@@ -1,6 +1,6 @@
 .activity {
-    width: 100dvw;
-    height: calc(100dvh - var(--navigation-height) - var(--page-header-height));
+    width: 100%;
+    height: calc(100% - var(--navigation-height) - var(--page-header-height));
     padding: 10px;
     color: var(--text-color);
     display: grid;

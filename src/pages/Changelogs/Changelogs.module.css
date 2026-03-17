@@ -4,7 +4,7 @@
     grid-template-rows: 50px 1fr;
     gap: 10px;
     width: 100%;
-    height: calc(100dvh - var(--navigation-height));
+    height: calc(100% - var(--navigation-height));
 }
 .changelogsContainer {
     display: flex;

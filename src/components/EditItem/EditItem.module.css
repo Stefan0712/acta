@@ -1,6 +1,6 @@
 .newItem {
     padding: 10px;
-    width: 100dvw;
+    width: 100%;
     left: 0;
     background-color: var(--modal-bg);
     position: fixed;

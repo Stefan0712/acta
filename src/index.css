@@ -1,5 +1,33 @@
 @import "tailwindcss";
+#root {
+  width: 100dvw;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+  height: 100dvh;
+}
 
+@media (min-width: 600px) {
+  body {
+    background-color: #464646;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    min-height: 100dvh;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 400px;
+    max-height: 800px !important;
+    min-height: auto;
+    
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
+    transform: translateX(0); 
+    overflow: hidden;
+  }
+}
 
 :root {
     --bg-primary: #09090B;
@@ -11,7 +39,7 @@
     --border: rgba(211, 211, 211, 0.3);
     --page-header-height: 50px;
     --navigation-height: 60px;
-    --page-height: calc(100dvh - var(--navigation-height));
+    --page-height: calc(100% - var(--navigation-height));
     --white-50: rgba(255, 255, 255, 0.5);
     --white-25: rgba(255, 255, 255, 0.25);
     --white-10: rgba(255, 255, 255, 0.1);

@@ -4,8 +4,8 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    height: calc(100dvh - var(--bottom-offset));
-    width: 100dvw;
+    height: calc(100% - var(--bottom-offset));
+    width: 100%;
     color: var(--text-color);
     padding: 20px;
 }

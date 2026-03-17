@@ -9,7 +9,7 @@
     transition: all 0.1s;
 }
 .editItem {
-    width: 100dvw;
+    width: 100%;
     position: fixed;
     left: 0;
     z-index: 999;
