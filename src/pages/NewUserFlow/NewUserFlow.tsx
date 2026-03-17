@@ -3,16 +3,14 @@ import styles from './NewUserFlow.module.css';
 import { ArrowBigLeft, ArrowBigRight, Flag, Info } from 'lucide-react';
 import Step1 from './Step1/Step1';
 import Auth from '../Auth/Auth';
-import { useNavigate } from 'react-router-dom';
 
 type Step = 1 | 2 ;
 
 interface NewUserFlowProps {
     onLoginSuccess: () => void;
 }
-const NewUserFlow: React.FC<NewUserFlowProps> = ({onLoginSuccess}) => {
+const NewUserFlow: React.FC<NewUserFlowProps> = () => {
 
-    const navigate = useNavigate();
 
     const [step, setStep] = useState<Step>(1);
 
@@ -38,7 +36,7 @@ const NewUserFlow: React.FC<NewUserFlowProps> = ({onLoginSuccess}) => {
                 </button>
             </div>
             <div className={styles.stepContainer}>
-                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth onLoginSuccess={onLoginSuccess} next={()=>navigate('/groups')}/>  : null}
+                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth />  : null}
             </div>
             <div className={styles.stepNavigator}>
                 <button onClick={prevStep}>

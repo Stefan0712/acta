@@ -20,7 +20,6 @@ import Polls from './pages/ViewGroup/Polls/Polls.tsx';
 import NewUserFlow from './pages/NewUserFlow/NewUserFlow.tsx';
 import Export from './pages/Export/Export.tsx';
 import Import from './pages/Import/Import.tsx';
-import Welcome from './pages/NewUserFlow/Welcome/Welcome.tsx';
 import About from './pages/About/About.tsx';
 import Auth from './pages/Auth/Auth.tsx';
 import Changelogs from './pages/Changelogs/Changelogs.tsx';
@@ -75,7 +74,6 @@ function App() {
         <div className='w-full h-full grid grid-rows-[1fr_60px] overflow-hidden bg-[#09090B]'>
           <Routes>
             <Route path="/" element={<Navigate to="/lists" replace />} />
-            <Route path='/welcome' element={<Welcome />} />
             <Route path="/lists" element={<Lists />} />
             <Route path="/lists/:id" element={<LocalList />} />
             <Route path="/group/:groupId" element={<ViewGroup />}>
