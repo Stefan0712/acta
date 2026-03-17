@@ -39,7 +39,7 @@ const Login: React.FC<LoginProps> = ({toRegister}) => {
             const authResponse: AuthResponse = await login(loginData);
             await finalizeAuthentication(authResponse); 
             showNotification("Logged in successfully", "success");
-            navigate('/groups')
+            navigate('/groups');
         } catch (error) {
             setLoginError('Incorrect email or password. Please try again.');
             showNotification("Failed to login", "error")

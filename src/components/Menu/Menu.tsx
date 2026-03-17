@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
 import { IconsLibrary } from '../../assets/icons';
 import { logout } from '../../services/authService';
-import { useState } from 'react';
 import { ChevronRight, CloudSync, Download, Info, List, Settings, Upload, User } from 'lucide-react';
 import { useNotifications } from '../../Notification/NotificationContext';
-import { db } from '../../db';
 
 
 const Menu = () => {
@@ -12,7 +10,6 @@ const Menu = () => {
     const {showNotification} = useNotifications();
 
     const isLoggedIn = localStorage.getItem('jwt-token');
-    const [expandUserInfo, setExpandUserInfo] = useState(false);
 
 
     const handleLogout = () => {
@@ -38,7 +35,7 @@ const Menu = () => {
                     <User />
                 </div>
                 <div className='flex flex-col gap-1 justify-center'>
-                    <b onClick={()=>setExpandUserInfo(prev=>!prev)}>{isLoggedIn ? localStorage.getItem('username') : 'Local Account'}</b>
+                    <b>{isLoggedIn ? localStorage.getItem('username') : 'Local Account'}</b>
                     {!isLoggedIn ? <Link to={'/auth'}>Login</Link> : null}
                 </div>
                 {isLoggedIn ? <button onClick={handleLogout} className='flex gap-1 items-center'><IconsLibrary.Logout /> <p>Logout</p></button> : null}
@@ -114,7 +111,7 @@ const Menu = () => {
                 </div>
                 <ChevronRight className="size-5 text-white/30" />
             </Link>
-            <p className='text-sm text-white/50 text-center mt-auto mb-4'>Latest updated on 17/03/2026 at 1:07 PM</p>
+            <p className='text-sm text-white/50 text-center mt-auto mb-4'>Latest updated on 17/03/2026 at 5:00 PM</p>
         </div>
      );
 }

@@ -1,27 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Groups.module.css';
 import NewGroup from './NewGroup';
 import { type Group } from '../../types/models';
 import { IconsLibrary } from '../../assets/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Loading from '../../components/LoadingSpinner/Loading';
 import { getIcon } from '../../components/IconSelector/iconCollection';
 import Header from '../../components/Header/Header';
-import Auth from '../Auth/Auth';
 import { useGroupsWithStats } from '../../helpers/useGroupsWithStats';
 
 
 const Groups = () => {
     
+    const navigate = useNavigate();
     const userToken = localStorage.getItem('jwt-token');
     const [showNewGroup, setShowNewGroup] = useState(false);
 
     const groups = useGroupsWithStats();
 
+    useEffect(()=>{
+        if(!userToken) {
+            navigate('/auth');
+        }
+    },[ userToken])
 
-    if(!userToken) {
-        return (<Auth />)
-    }else if (!groups) {
+if (!groups) {
         return (<Loading />)
     } else {
         return ( 
@@ -38,7 +41,13 @@ const Groups = () => {
  
 export default Groups;
 
-const Group = ({data}: {data: Group}) => {
+interface IStats {
+    notes: number;
+    lists: number;
+    polls: number;
+}
+
+const Group = ({data}: {data: Group & {stats: IStats}}) => {
     const Icon = getIcon(data.icon);
     return (
         <Link to={`/group/${data._id}`} className={styles.group}>
