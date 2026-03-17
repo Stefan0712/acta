@@ -25,15 +25,7 @@ const Menu = () => {
         }
     }
 
-    const handleResetQueue = async () => {
-        try {
-            await db.syncQueue.clear();
-            showNotification("Sync Queue reset!","success")
-        } catch (error) {
-            console.error(error);
-            showNotification("Failed to reset Sync Queue", "success")
-        }
-    }
+
     const itemClass = "rounded-xl bg-zinc-900 w-full p-4 grid grid-cols-[50px_1fr_20px] items-center hover:bg-zinc-800 transition-colors active:scale-[0.98]";
     const iconBoxClass = "size-[40px] rounded-xl bg-zinc-700 flex items-center justify-center";
     return ( 
@@ -76,7 +68,7 @@ const Menu = () => {
             </Link>
 
             {/* Sync */}
-            <Link to={'/'} className={itemClass}>
+            <Link to={'/sync'} className={itemClass}>
                 <div className={iconBoxClass}>
                     <CloudSync className="size-5" />
                 </div>

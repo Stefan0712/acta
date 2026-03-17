@@ -27,6 +27,7 @@ import Changelogs from './pages/Changelogs/Changelogs.tsx';
 import { syncAllUserData } from './services/syncService.ts';
 import { processSyncQueue } from './services/syncWorker.ts';
 import Menu from './components/Menu/Menu.tsx';
+import Sync from './components/Menu/Sync.tsx';
 
 
 function App() {
@@ -97,6 +98,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/changelogs" element={<Changelogs />} />
               <Route path="/menu" element={<Menu />} />
+              <Route path="/sync" element={<Sync />} />
             </Routes>
             <Navigation />
           </div>
