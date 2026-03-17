@@ -24,8 +24,9 @@ const Notifications = () => {
     const fetchNotifications = async () => {
         try {
             const apiResponse = await getNotifications();
-                setNotifications(apiResponse);
-                console.log(apiResponse);
+                if(apiResponse && apiResponse.length > 0 && Array.isArray(apiResponse)) {
+                    setNotifications(apiResponse);
+                }
                 setIsLoading(false);
         } catch (error) {
             console.error(error);
@@ -35,8 +36,9 @@ const Notifications = () => {
     const fetchInvites = async () => {
         try {
             const invitesResponse = await getInvites();
-            console.log(invitesResponse)
-            setInvites(invitesResponse);
+            if(invitesResponse && invitesResponse.length > 0 && Array.isArray(invitesResponse)){
+                setInvites(invitesResponse);
+            }
         } catch (error) {
             console.error(error)
         }

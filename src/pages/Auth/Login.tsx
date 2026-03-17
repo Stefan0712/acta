@@ -56,22 +56,40 @@ const Login: React.FC<LoginProps> = ({toRegister, onLoginSuccess, next}) => {
     };
 
     return (
-        <div className={styles.login}>
-            <form>
-                <h2>Login</h2>
+        <div className='w-full h-full flex flex-col items-center justify-center p-2'>
+            <form className='flex flex-col items-center justify-center text-white'>
+                <img src='/logo512.png' className='size-16 rounded-xl border border-white/10' />
+                <h2 className='text-2xl font-bold'>Welcome Back</h2>
+                <p className='text-sm text-white/60'>Sign in to your account to continue</p>
                 {loginError ? <p className='error-message'>{loginError}</p> : null}
-                <fieldset>
-                    <label>Email</label>
-                    <input type='email' value={email} name='email' onChange={(e)=>setEmail(e.target.value)} required />
-                </fieldset>
-                <fieldset>
-                    <label>Password</label>
-                    <input type='password' value={password} name='password' onChange={(e)=>setPassword(e.target.value)} required />
-                </fieldset>
-                <p className={styles.forgotPasswordLink}>Forgot Password?</p>
-                <button type='button' onClick={handleLogin}>Sign in</button>
+                <div className='w-full p-4 flex flex-col gap-2 rounded-xl border border-white/5 bg-[#121214] mt-2'>
+                    <fieldset>
+                        <label className='text-sm text-white/60'>Email</label>
+                        <input 
+                            type='email' 
+                            value={email} 
+                            name='email' 
+                            onChange={(e)=>setEmail(e.target.value)} 
+                            required
+                            className='bg-zinc-950 text-white/50'
+                            />
+                    </fieldset>
+                    <fieldset>
+                        <label className='text-sm text-white/60'>Password</label>
+                        <input 
+                            type='password' 
+                            value={password} 
+                            name='password' 
+                            onChange={(e)=>setPassword(e.target.value)} 
+                            required 
+                            className='bg-zinc-950 text-white/50'
+                        />
+                    </fieldset>
+                    <p className={`${styles.forgotPasswordLink} text-sm`}>Forgot Password?</p>
+                    <button type='button' onClick={handleLogin}>Sign in</button>
+                </div>
             </form>
-            <p className={styles.bottomLink}>Don't have an account? <b onClick={toRegister}>Create one</b></p>
+            <p className='text-sm text-white/60 mt-4'>Don't have an account? <b onClick={toRegister}>Create one</b></p>
             
         </div>
     )

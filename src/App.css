@@ -28,12 +28,9 @@ body {
 
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
   flex-shrink: 0;
   font-family: "Roboto", sans-serif;
-  flex-shrink: 0;
 }
 .app-container {
   width: 100dvw;

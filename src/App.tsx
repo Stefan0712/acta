@@ -26,6 +26,7 @@ import Auth from './pages/Auth/Auth.tsx';
 import Changelogs from './pages/Changelogs/Changelogs.tsx';
 import { syncAllUserData } from './services/syncService.ts';
 import { processSyncQueue } from './services/syncWorker.ts';
+import Menu from './components/Menu/Menu.tsx';
 
 
 function App() {
@@ -71,7 +72,7 @@ function App() {
       <div className="app-container">
         <UserProvider>
           <NotificationDisplay />
-          <main className="content">
+          <div className='w-screen h-screen grid grid-rows-[1fr_60px] overflow-hidden'>
             <Routes>
               <Route path="/" element={<Navigate to="/lists" replace />} />
               <Route path='/welcome' element={<Welcome />} />
@@ -95,9 +96,10 @@ function App() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/about" element={<About />} />
               <Route path="/changelogs" element={<Changelogs />} />
+              <Route path="/menu" element={<Menu />} />
             </Routes>
-          </main>
-          <Navigation />
+            <Navigation />
+          </div>
         </UserProvider>
       </div>
     )

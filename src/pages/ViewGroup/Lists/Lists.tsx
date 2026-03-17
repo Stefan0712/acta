@@ -6,7 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../../../components/LoadingSpinner/Loading';
 import { db } from '../../../db';
 import Header from '../../../components/Header/Header';
-import Summaries from '../../../components/Summaries/Summaries';
 import { useLiveQuery } from 'dexie-react-hooks';
 import List from './List';
 
@@ -57,16 +56,15 @@ const Lists = () => {
         return ( <Loading /> )
     } else if (lists) {
         return ( 
-            <div className={styles.lists} style={!groupId ? {gridTemplateRows: 'var(--page-header-height) auto 40px 1fr'} : {}}>
+            <div className='w-full h-full grid grid-rows-[auto_auto_1fr] gap-3 p-2'>
                 {!groupId ? 
                     <Header title='My Lists' />
                 : null}
-                <Summaries totalItems={lists.length} completedItems={lists.filter(list=>list.completedItemsCounter === list.totalItemsCounter && list.completedItemsCounter && list.completedItemsCounter > 0).length} />
-                <select className='category-selector' value={selectedFilter} onChange={(e)=>setSelectedFilter(e.target.value)}>
-                    <option value={'active'}>Active</option>
-                    <option value={'deleted'}>Deleted</option>
-                </select>
-                <div className={styles.listsContainer}>
+                <div className='p-1 w-fit ml-2 flex gap-2 items-center'>
+                    <button className={`px-2 py-1 border-1 border-white/50 rounded-full text-white text-sm ${selectedFilter === 'active' ? 'bg-yellow-500 border-yellow-500 text-zinc-900' : ''}`} onClick={()=>setSelectedFilter('active')}>Active</button>
+                    <button className={`px-2 py-1 border-1 border-white/50 rounded-full text-white text-sm ${selectedFilter === 'deleted' ? 'bg-yellow-500 border-yellow-500 text-zinc-900' : ''}`} onClick={()=>setSelectedFilter('deleted')}>Deleted</button>
+                </div>
+                <div className='w-full h-full flex flex-col gap-2 overflow-y-auto'>
                     {showNewList ? <NewList close={()=>setShowNewList(false)} groupId={groupId} /> : null}
                     {showNewList ? null : <button onClick={()=>setShowNewList(true)} className={styles.newListButton}>
                         <IconsLibrary.Plus />

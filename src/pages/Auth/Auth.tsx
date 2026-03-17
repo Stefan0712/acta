@@ -6,43 +6,22 @@ import { db } from '../../db';
 import { MessageCircleWarning } from 'lucide-react';
 import Login from './Login';
 import Register from './Register';
-import Header from '../../components/Header/Header';
 
 
 interface AuthProps {
     next: ()=>void;
     onLoginSuccess: ()=>void;
 }
-const Auth: React.FC<AuthProps> = ({next, onLoginSuccess}) => {
+const Auth: React.FC<AuthProps> = () => {
 
     const [currentScreen, setCurrentScreen] = useState('login');
 
-    const localUserToken = localStorage.getItem('jwt-token');
-    if (next) {
-        if(localUserToken){
-            next()
-        } else {
-            return (
-                <div className={styles.auth}>
-                    <div className={styles.authContainer}>
-                            {currentScreen === 'login' ? <Login onLoginSuccess={onLoginSuccess} next={next} toRegister={()=>setCurrentScreen('register')} /> 
-                            : currentScreen === 'local' ? <Local onLoginSuccess={onLoginSuccess} back={()=>setCurrentScreen('login')} next={next} /> 
-                            : <Register next={next} toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
-                    </div>
-                </div>
-            )
-        }
-    } else {
-        return (
-            <div className={styles.auth}>
-                {!next ? <Header title="Welcome" /> : null}
-                <div className={styles.authContainer}>
-                        {currentScreen === 'login' ? <Login toRegister={()=>setCurrentScreen('register')} /> 
-                        : <Register toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
-                </div>
-            </div>
-        )
-    }
+    return (
+        <div className='h-full w-full flex flex-col items-center justify-center'>
+            {currentScreen === 'login' ? <Login toRegister={()=>setCurrentScreen('register')} /> 
+            : <Register toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
+        </div>
+    )
 }
 
 export default Auth;

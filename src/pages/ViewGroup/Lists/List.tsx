@@ -95,24 +95,23 @@ const List: React.FC<ListProps> = ({data}) => {
     const percentage = completed && total && completed > 0 && total > 0 ?  ((completed ?? 0)/(total ?? 0))*100 : 0;
     const Icon = getIcon(data.icon ?? 'default-list-icon')
     return (
-        <div className={styles.list}>
+        <div className='w-full p-4 bg-zinc-900 rounded-xl flex gap-2 border border-white/10'>
         {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)}  confirm={permanentlyDelete} title='Delete this list?' content='This will permanently delete this list and all items inside of it and cannot be undone later. Are you sure?' /> : null}
-            <Link to={`${data._id}`} className={styles.listInfo}>
-              
-                <div className={styles.listTop}>
-                    <div className={styles.iconContainer} style={{backgroundColor: data.color}}>
-                        <Icon />
-                    </div>
-                    <div className={styles.listInfo}>
-                        <h3>{data.name}</h3>
-                        <p>{total} items</p>
-                    </div>
+            <Link to={`${data._id}`} className='w-full h-full text-white flex gap-2 items-center'>
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center' style={{backgroundColor: data.color}}>
+                    <Icon />
                 </div>
-                <div className={styles.listProgress}>
-                    <div className={styles.progressBarBackground}>
-                        <div className={styles.progressBar} style={{backgroundColor: data.color, width: total === 0 ? '0px' : `${percentage}%`}} />
+                <div className='h-full flex-grow-1 flex flex-col items-center'>
+                    <div className='w-full flex items-center justify-between'>
+                        <h3>{data.name}</h3>
+                        <p className='bg-white/10 px-2 rounded text-sm'>{completed} / {total}</p>
                     </div>
-                    <p>{percentage.toFixed(0)}%</p>
+                    <div className={styles.listProgress}>
+                        <div className={styles.progressBarBackground}>
+                            <div className={styles.progressBar} style={{backgroundColor: data.color, width: total === 0 ? '0px' : `${percentage}%`}} />
+                        </div>
+                        <p>{percentage.toFixed(0)}%</p>
+                    </div>
                 </div>
             </Link>
             {data.isDeleted ? <div className={styles.deleteButtons}>

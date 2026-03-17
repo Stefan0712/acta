@@ -156,7 +156,7 @@ const NewListItem: React.FC<NewListItemProps> = ({listId, online}) => {
         { value: 24, label: "1 Day" },
     ];
     return ( 
-        <div className={`${styles.newItem} ${showMoreInputs ? styles.expanded : ''}`}>
+        <div className={`${styles.newItem} ${showMoreInputs ? styles.expanded : ''} pb-2`}>
             {showMoreInputs ? <div className={styles.header}>
                 <h2>New Item</h2>
                 <button onClick={()=>setShowMoreInputs(false)}>

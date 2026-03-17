@@ -117,29 +117,30 @@ const List = () => {
                 {showDeleteModal ? <ConfirmationModal cancel={()=>setShowDeleteModal(false)}  confirm={deleteList} title='Delete this list?' content='Are you sure you want to delete this list? You can restore it later' /> : null}
                 <Header 
                     prevUrl={'/lists'} 
-                    title={listData.name} 
+                    title={'View List'} 
                 />
                 <div className={styles.listInfo}>
+                    {showMore ? <>
+                        <div className={styles.listMeta}>
+                            <h1 className='text-xl'>{listData.name}</h1>
+                            <div className={styles.listTimestamps}>
+                                <p className={styles.createdAt}><IconsLibrary.Calendar />{getDateAndHour(listData.createdAt)}</p>
+                                <p className={styles.updatedAt}><IconsLibrary.Sync /> {listData.updatedAt ? getDateAndHour(listData.updatedAt) : getDateAndHour(listData.createdAt)}</p>
+                            </div>
+                            <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
+                            {listData.lastSyncedAt ? <p style={{color: 'var(--white-25)', fontSize: '0.8rem'}}>Last updated at {getDateAndHour(listData.lastSyncedAt)}</p> : null}
+                            <div className='w-full flex items-center gap-2 justify-end'>
+                                {listData.isDeleted ? null : <button className='flex gap-1 text-sm text-white/80 bg-zinc-800 px-2 py-1 rounded'  onClick={handleCopyList}>{listData.lastSyncedAt ? <><IconsLibrary.Sync /> Update</> : <> <IconsLibrary.Copy /> Copy List</>}</button>}
+                                {listData.isDeleted ? null : <button className='flex gap-1 text-sm text-white/80 bg-zinc-800 px-2 py-1 rounded' onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
+                                {listData.isDeleted ? <button className='flex gap-1 text-sm text-white/80 bg-zinc-800 px-2 py-1 rounded' onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
+                                {listData.isDeleted ? null : <button className='flex gap-1 text-sm text-white/80 bg-red-500/60 px-2 py-1 rounded' onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /></button>}
+                            </div>
+                        </div>
+                    </> : null}
                     <Summaries 
                         totalItems={listItems && listItems.length >= 0 ? listItems.filter(item=>!item.isDeleted).length : 0} 
                         completedItems={listItems && listItems.length >= 0 ? listItems.filter(item=>item.isChecked && !item.isDeleted).length : 0}
                     />
-                    {showMore ? <>
-                    <div className={styles.listMeta}>
-                        <div className={styles.listTimestamps}>
-                            <p className={styles.createdAt}><IconsLibrary.Calendar />{getDateAndHour(listData.createdAt)}</p>
-                            <p className={styles.updatedAt}><IconsLibrary.Sync /> {listData.updatedAt ? getDateAndHour(listData.updatedAt) : getDateAndHour(listData.createdAt)}</p>
-                        </div>
-                        <p className={styles.description}>{listData.description || "Description was not set for this list."}</p>
-                        {listData.lastSyncedAt ? <p style={{color: 'var(--white-25)', fontSize: '0.8rem'}}>Last updated at {getDateAndHour(listData.lastSyncedAt)}</p> : null}
-                    </div>
-                    <div className={styles.listButtons}>
-                        {listData.isDeleted ? null : <button onClick={handleCopyList}>{listData.lastSyncedAt ? <><IconsLibrary.Sync /> Update</> : <> <IconsLibrary.Copy /> Copy List</>}</button>}
-                        {listData.isDeleted ? null : <button onClick={()=>setShowEdit(true)}><IconsLibrary.Edit /> Edit List</button>}
-                        {listData.isDeleted ? <button onClick={restoreList}><IconsLibrary.Sync /> Restore List</button> : null}
-                        {listData.isDeleted ? null : <button onClick={()=>setShowDeleteModal(true)}><IconsLibrary.Delete /> Delete List</button>}
-                    </div>
-                    </> : null}
                 </div>
                 <div className={styles.listFilters}>
                     <select className='category-selector' value={selectedCategory} onChange={(e)=>setSelectedCategory(e.target.value)}>

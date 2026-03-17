@@ -8,7 +8,7 @@ import { useNotifications } from '../../Notification/NotificationContext';
 import { db } from '../../db';
 
 
-const Menu = ({close}: {close:()=>void}) => {
+const Menu = () => {
 
     const {showNotification} = useNotifications();
 

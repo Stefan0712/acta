@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNotifications } from '../../Notification/NotificationContext';
-import styles from './Auth.module.css';
 import { IconsLibrary } from '../../assets/icons';
 import { finalizeAuthentication } from '../../sync/authSync';
 import { register } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
+import { LockIcon, Mail, User } from 'lucide-react';
 
 
 interface RegisterProps {
@@ -120,51 +120,92 @@ const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
         }
     }
     return (
-        <div className={styles.register}>
-            <form>
-                <h2>Register</h2>
-                {apiError ? <p className={styles.apiError}>{apiError}</p> : null}
-                <fieldset>
-                    <label>Email</label>
-                    <input type='email' value={email} name='email' onChange={(e)=>handleEmailInput(e.target.value)} required />
-                    {showEmailError ? <p style={{color: 'red'}}>Email is invalid!</p> : null}
-                </fieldset>
-                <fieldset>
-                    <label>Username</label>
-                    <input type='string' value={username} name='username' onChange={(e)=>handleUsernameInput(e.target.value)} required minLength={3} maxLength={25}/>
-                    {showUsernameError ? <p style={{color: 'red'}}>Username must be between 3 and 20 characters</p> : null}
-                </fieldset>
-                <fieldset>
-                    <label>Password</label>
-                    <input type='password' value={password} name='password' onChange={(e)=>handlePasswordInput(e.target.value)} required />
-                    {showPasswordError ? <p style={{color: 'red'}}>Password is invalid!</p> : null}
-                </fieldset>
-                <button type='button' onClick={handleRegister}>Register</button>
-                <div className={styles.validations}>
-                    <b>The password must have</b>
-                    <div className={`${styles.rule} ${validations.upper ? styles.active : ''}`}>
-                        {validations.upper ? <IconsLibrary.Checkmark /> : <div className={styles.circle} />}
+        <div className='w-full h-full flex flex-col items-center justify-center p-2'>
+            <form className='flex flex-col items-center justify-center text-white'>
+                <img src='/logo512.png' className='size-16 rounded-xl border border-white/10' />
+                <h2 className='text-2xl font-bold'>Create account</h2>
+                <p className='text-sm text-white/60'>Create your account to access online features</p>
+                {apiError ? <p >{apiError}</p> : null}
+                <div className='w-full p-4 flex flex-col gap-2 rounded-xl border border-white/5 bg-[#121214] mt-2'>
+                    <fieldset>
+                        <label className='text-sm text-white/60'>Username</label>
+                        <div className='relative'>
+                            <div className='absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none'>
+                                <User className="size-5 text-gray-400"/>
+                            </div>
+                            <input 
+                                type='string' 
+                                value={username} 
+                                name='username' 
+                                onChange={(e)=>handleUsernameInput(e.target.value)} 
+                                required 
+                                minLength={3} 
+                                maxLength={25}
+                                className='bg-zinc-950 text-white/50 pl-10 w-full'
+                            />
+                        </div>
+                        {showUsernameError ? <p style={{color: 'red'}}>Username must be between 3 and 20 characters</p> : null}
+                    </fieldset>
+                    <fieldset>
+                        <label className='text-sm text-white/60'>Email</label>
+                        <div className='relative'>
+                            <div className='absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none'>
+                                <Mail className="size-5 text-gray-400"/>
+                            </div>
+                            <input 
+                                type='email' 
+                                value={email} 
+                                name='email' 
+                                onChange={(e)=>handleEmailInput(e.target.value)} 
+                                required 
+                                className='bg-zinc-950 text-white/50 pl-10 w-full'
+                            />
+                        </div>
+                        {showEmailError ? <p style={{color: 'red'}}>Email is invalid!</p> : null}
+                    </fieldset>
+                    <fieldset>
+                        <label className='text-sm text-white/60'>Password</label>
+                        <div className='relative'>
+                            <div className='absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none'>
+                                <LockIcon className="size-5 text-gray-400"/>
+                            </div>
+                            <input 
+                                type='password' 
+                                value={password} 
+                                name='password' 
+                                onChange={(e)=>handlePasswordInput(e.target.value)} 
+                                required 
+                                className='bg-zinc-950 text-white/50 pl-10 w-full'
+                            />
+                        </div>
+                        {showPasswordError ? <p style={{color: 'red'}}>Password is invalid!</p> : null}
+                    </fieldset>
+                    <button type='button' onClick={handleRegister} className='mt-2'>Register</button>
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                    <div className={`pl-4 grid grid-cols-[20px_1fr] gap-2 ${validations.upper ? 'text-orange-500' : ''}`}>
+                        {validations.upper ? <IconsLibrary.Checkmark /> : <div className='w-4 h-4 border border-white/60 rounded-full' />}
                         <p>One upper case character</p>
                     </div>
-                    <div className={`${styles.rule} ${validations.lower ? styles.active : ''}`}>
-                        {validations.lower ? <IconsLibrary.Checkmark /> : <div className={styles.circle} />}
+                    <div className={`pl-4 grid grid-cols-[20px_1fr] gap-2 ${validations.lower ? 'text-orange-500' : ''}`}>
+                        {validations.lower ? <IconsLibrary.Checkmark /> : <div className='w-4 h-4 border border-white/60 rounded-full' />}
                         <p>One lower case character</p>
                     </div>
-                    <div className={`${styles.rule} ${validations.number ? styles.active : ''}`}>
-                        {validations.number ? <IconsLibrary.Checkmark /> : <div className={styles.circle} />}
+                    <div className={`pl-4 grid grid-cols-[20px_1fr] gap-2 ${validations.number ? 'text-orange-500' : ''}`}>
+                        {validations.number ? <IconsLibrary.Checkmark /> : <div className='w-4 h-4 border border-white/60 rounded-full' />}
                         <p>At least one number</p>
                     </div>
-                    <div className={`${styles.rule} ${validations.symbol ? styles.active : ''}`}>
-                        {validations.symbol ? <IconsLibrary.Checkmark /> : <div className={styles.circle} />}
+                    <div className={`pl-4 grid grid-cols-[20px_1fr] gap-2 ${validations.symbol ? 'text-orange-500' : ''}`}>
+                        {validations.symbol ? <IconsLibrary.Checkmark /> : <div className='w-4 h-4 border border-white/60 rounded-full' />}
                         <p>At least one special character</p>
                     </div>
-                    <div className={`${styles.rule} ${validations.length ? styles.active : ''}`}>
-                        {validations.length ? <IconsLibrary.Checkmark /> : <div className={styles.circle} />}
+                    <div className={`pl-4 grid grid-cols-[20px_1fr] gap-2 ${validations.length ? 'text-orange-500' : ''}`}>
+                        {validations.length ? <IconsLibrary.Checkmark /> : <div className='w-4 h-4 border border-white/60 rounded-full' />}
                         <p>At least 12 characters</p>
                     </div>
                 </div>
             </form>
-            <div className={styles.bottomLink}>Have an account already? <b onClick={toLogin}>Log in</b> instead {next ?  <p onClick={toLocal}>or create a <b>Local Account</b></p> : null}</div>
+            <div className='text-sm'>Have an account already? <b onClick={toLogin}>Log in</b> instead {next ?  <p onClick={toLocal}>or create a <b>Local Account</b></p> : null}</div>
         </div>
     )
 }
