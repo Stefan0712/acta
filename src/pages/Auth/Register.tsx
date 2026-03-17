@@ -9,11 +9,9 @@ import { LockIcon, Mail, User } from 'lucide-react';
 
 interface RegisterProps {
     toLogin: ()=>void;
-    toLocal: ()=>void;
-    next?: ()=>void;
 }
 
-const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
+const Register: React.FC<RegisterProps> = ({toLogin}) => {
 
     const {showNotification} = useNotifications();
     const navigate = useNavigate();
@@ -93,13 +91,7 @@ const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
                 const authResponse = await register(registrationData);
                 await finalizeAuthentication(authResponse); 
                 showNotification("You registered successfully", "success");
-                if (next) {
-                    next();
-                } else {
-                    navigate('/groups')
-                }
-                
-                
+                navigate('/groups') 
             } catch (error) {
                 showNotification("Failed to register", "error");
                 const errorMessage = (error instanceof Error) 
@@ -208,7 +200,7 @@ const Register: React.FC<RegisterProps> = ({toLogin, toLocal, next}) => {
                     </div>
                 </div>
             </form>
-            <div className='text-sm text-white/60 mt-auto mb-4'>Have an account already? <b onClick={toLogin}>Log in</b> instead {next ?  <p onClick={toLocal}>or create a <b>Local Account</b></p> : null}</div>
+            <div className='text-sm text-white/60 mt-auto mb-4'>Have an account already? <b onClick={toLogin}>Log in</b> instead</div>
         </div>
     )
 }

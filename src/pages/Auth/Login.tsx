@@ -8,10 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
     toRegister: ()=>void;
-    next?: ()=>void;
-    onLoginSuccess?: ()=>void;
 }
-const Login: React.FC<LoginProps> = ({toRegister, onLoginSuccess, next}) => {
+const Login: React.FC<LoginProps> = ({toRegister}) => {
 
     const {showNotification} = useNotifications();
     const navigate = useNavigate();
@@ -41,13 +39,7 @@ const Login: React.FC<LoginProps> = ({toRegister, onLoginSuccess, next}) => {
             const authResponse: AuthResponse = await login(loginData);
             await finalizeAuthentication(authResponse); 
             showNotification("Logged in successfully", "success");
-            if(next && onLoginSuccess){
-                onLoginSuccess();
-                next();
-            } else {
-                navigate('/groups')
-            }
-            
+            navigate('/groups')
         } catch (error) {
             setLoginError('Incorrect email or password. Please try again.');
             showNotification("Failed to login", "error")
@@ -57,7 +49,7 @@ const Login: React.FC<LoginProps> = ({toRegister, onLoginSuccess, next}) => {
 
     return (
         <div className='w-full h-full flex flex-col items-center justify-center p-2'>
-            <form className='flex flex-col items-center justify-center text-white'>
+            <form className='flex flex-col items-center justify-center text-white px-2'>
                 <img src='/logo512.png' className='size-16 rounded-xl border border-white/10' />
                 <h2 className='text-2xl font-bold'>Welcome Back</h2>
                 <p className='text-sm text-white/60'>Sign in to your account to continue</p>

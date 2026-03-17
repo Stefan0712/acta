@@ -19,7 +19,7 @@ const Auth: React.FC<AuthProps> = () => {
     return (
         <div className='h-full w-full flex flex-col items-center justify-center'>
             {currentScreen === 'login' ? <Login toRegister={()=>setCurrentScreen('register')} /> 
-            : <Register toLocal={()=>setCurrentScreen("local")} toLogin={()=>setCurrentScreen('login')} />}
+            : <Register toLogin={()=>setCurrentScreen('login')} />}
         </div>
     )
 }
