@@ -5,6 +5,11 @@ import API from "./apiService";
 
 
 export async function processSyncQueue() {
+    const isLoggedIn = localStorage.getItem('jwt-token');
+    if(!isLoggedIn){
+        console.log("Cannot sync. Not logged in");
+        return;
+    }
     // Check if we are online
     if (!navigator.onLine) return;
     // Get all pending actions, ordered by creation time
@@ -27,6 +32,7 @@ export async function processSyncQueue() {
 
 // Decides what API call to make
 async function processAction(action: SyncAction) {
+
     switch (action.type) {
         case 'CREATE_LIST':
             await handleCreateList(action);
@@ -62,36 +68,44 @@ async function handleCreateList(action: SyncAction) {
 
 
     // Send to Server
-    const { data: serverResponse } = await API.post('/lists', payload);
-    const realServerId = serverResponse._id; // The new MongoDB id
-    console.log(`List created! API responded with the id ${realServerId}`);
-
-    // Swap the temporary id with the new permanent one
-    await db.transaction('rw', db.lists, db.listItems, db.syncQueue, async () => {
-        
-        // Update the List itself
-        const list = await db.lists.get(localId);
-        if (list) {
-            // Delete old entry, add new one
-            await db.lists.delete(localId);
-            await db.lists.add({
-                ...list,
-                _id: realServerId, // new id
-                syncStatus: 'synced'
+    try {
+        const { data: serverResponse } = await API.post('/lists', payload);
+        const realServerId = serverResponse._id; // The new MongoDB id
+        console.log(`List created! API responded with the id ${realServerId}`);
+    
+        // Swap the temporary id with the new permanent one
+        await db.transaction('rw', db.lists, db.listItems, db.syncQueue, async () => {
+            
+            // Update the List itself
+            const list = await db.lists.get(localId);
+            if (list) {
+                // Delete old entry, add new one
+                await db.lists.delete(localId);
+                await db.lists.add({
+                    ...list,
+                    _id: realServerId, // new id
+                    syncStatus: 'synced'
+                });
+            }
+    
+            // Update any Items belonging to this list
+            await db.listItems.where('listId').equals(localId).modify({
+                listId: realServerId
             });
-        }
-
-        // Update any Items belonging to this list
-        await db.listItems.where('listId').equals(localId).modify({
-            listId: realServerId
+    
+            // Mark action as done
+            await db.syncQueue.update(action.id!, { status: 'completed' });
         });
-
-        // Mark action as done
-        await db.syncQueue.update(action.id!, { status: 'completed' });
-    });
+    } catch (error){
+        console.log(action)
+        console.error(error)
+    }
 }
 // Create the group
 async function handleCreateGroup(job: SyncAction) {
+    if(job.retryCount > 5) {
+        console.log("Retried too many times")
+    }
     const groupData = job.payload; 
     try {
         // Send to Server 
@@ -100,6 +114,7 @@ async function handleCreateGroup(job: SyncAction) {
         // Update Local Status
         await db.groups.update(groupData._id, { syncStatus: 'synced' });
     } catch (error) {
+        await db.syncQueue.update(job.id!, { retryCount: job.retryCount+1 });
         console.error("Failed to sync group:", error);
         throw error; 
     }

@@ -3,6 +3,11 @@ import API from "./apiService";
 
 
 export async function syncAllUserData() {
+    const isLoggedIn = localStorage.getItem('jwt-token');
+    if(!isLoggedIn){
+        console.log("Cannot sync. Not logged in");
+        return;
+    }
     try {
         console.log("Starting Background Sync...");
         
