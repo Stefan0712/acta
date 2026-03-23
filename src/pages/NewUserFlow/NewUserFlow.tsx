@@ -9,7 +9,7 @@ type Step = 1 | 2 ;
 interface NewUserFlowProps {
     onLoginSuccess: () => void;
 }
-const NewUserFlow: React.FC<NewUserFlowProps> = () => {
+const NewUserFlow: React.FC<NewUserFlowProps> = ({onLoginSuccess}) => {
 
 
     const [step, setStep] = useState<Step>(1);
@@ -36,17 +36,17 @@ const NewUserFlow: React.FC<NewUserFlowProps> = () => {
                 </button>
             </div>
             <div className={styles.stepContainer}>
-                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth />  : null}
+                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth onLoginSuccess={onLoginSuccess} />  : null}
             </div>
             <div className={styles.stepNavigator}>
-                <button onClick={prevStep}>
+                <button onClick={prevStep} className='flex items-center justify-center'>
                     <ArrowBigLeft />
                 </button>
                 <div className={styles.stepsCircles}>
-                    <div className={`${styles.circle} ${step === 1 ? styles.currentStep : ''}`} onClick={()=>setStep(1)}><p>1</p></div>
-                    <div className={`${styles.circle} ${step === 2 ? styles.currentStep : ''}`} onClick={()=>setStep(2)}><p>2</p></div>
+                    <div className={`${styles.circle} cursor-pointer ${step === 1 ? styles.currentStep : ''}`} onClick={()=>setStep(1)}><p>1</p></div>
+                    <div className={`${styles.circle} cursor-pointer ${step === 2 ? styles.currentStep : ''}`} onClick={()=>setStep(2)}><p>2</p></div>
                 </div>
-                <button onClick={nextStep}>
+                <button onClick={nextStep} className='flex items-center justify-center'>
                     <ArrowBigRight />
                 </button>
             </div>

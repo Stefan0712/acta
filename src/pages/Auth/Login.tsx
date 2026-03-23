@@ -9,8 +9,9 @@ import Logo from '../../assets/logo.png';
 
 interface LoginProps {
     toRegister: ()=>void;
+    onLoginSuccess: ()=> void;
 }
-const Login: React.FC<LoginProps> = ({toRegister}) => {
+const Login: React.FC<LoginProps> = ({toRegister, onLoginSuccess}) => {
 
     const {showNotification} = useNotifications();
     const navigate = useNavigate();
@@ -38,9 +39,10 @@ const Login: React.FC<LoginProps> = ({toRegister}) => {
 
         try {
             const authResponse: AuthResponse = await login(loginData);
-            await finalizeAuthentication(authResponse); 
+            await finalizeAuthentication(authResponse);
             showNotification("Logged in successfully", "success");
             navigate('/groups');
+            onLoginSuccess();
         } catch (error) {
             setLoginError('Incorrect email or password. Please try again.');
             showNotification("Failed to login", "error")
@@ -79,10 +81,10 @@ const Login: React.FC<LoginProps> = ({toRegister}) => {
                         />
                     </fieldset>
                     <p className={`${styles.forgotPasswordLink} text-sm`}>Forgot Password?</p>
-                    <button type='button' onClick={handleLogin}>Sign in</button>
+                    <button type='button' onClick={handleLogin} className='cursor-pointer'>Sign in</button>
                 </div>
             </form>
-            <p className='text-sm text-white/60 mt-4'>Don't have an account? <b onClick={toRegister}>Create one</b></p>
+            <p className='text-sm text-white/60 mt-4'>Don't have an account? <b onClick={toRegister} className='cursor-pointer'>Create one</b></p>
             
         </div>
     )

@@ -4,14 +4,14 @@ import Register from './Register';
 
 
 
-const Auth = () => {
+const Auth = ({onLoginSuccess}: {onLoginSuccess: ()=>void}) => {
 
     const [currentScreen, setCurrentScreen] = useState('login');
 
     return (
         <div className='h-full w-full flex flex-col items-center justify-center'>
-            {currentScreen === 'login' ? <Login toRegister={()=>setCurrentScreen('register')} /> 
-            : <Register toLogin={()=>setCurrentScreen('login')} />}
+            {currentScreen === 'login' ? <Login onLoginSuccess={onLoginSuccess} toRegister={()=>setCurrentScreen('register')} /> 
+            : <Register onLoginSuccess={onLoginSuccess} toLogin={()=>setCurrentScreen('login')} />}
         </div>
     )
 }

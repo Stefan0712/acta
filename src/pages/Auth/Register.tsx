@@ -9,9 +9,10 @@ import { LockIcon, Mail, User } from 'lucide-react';
 
 interface RegisterProps {
     toLogin: ()=>void;
+    onLoginSuccess: ()=>void;
 }
 
-const Register: React.FC<RegisterProps> = ({toLogin}) => {
+const Register: React.FC<RegisterProps> = ({toLogin, onLoginSuccess}) => {
 
     const {showNotification} = useNotifications();
     const navigate = useNavigate();
@@ -91,7 +92,8 @@ const Register: React.FC<RegisterProps> = ({toLogin}) => {
                 const authResponse = await register(registrationData);
                 await finalizeAuthentication(authResponse); 
                 showNotification("You registered successfully", "success");
-                navigate('/groups') 
+                navigate('/groups');
+                onLoginSuccess();
             } catch (error) {
                 showNotification("Failed to register", "error");
                 const errorMessage = (error instanceof Error) 
@@ -114,7 +116,6 @@ const Register: React.FC<RegisterProps> = ({toLogin}) => {
     return (
         <div className='w-full h-full flex flex-col items-center justify-center p-2'>
             <form className='flex flex-col items-center justify-center text-white px-2 mt-auto'>
-                <img src='/logo512.png' className='size-16 rounded-xl border border-white/10' />
                 <h2 className='text-2xl font-bold'>Create account</h2>
                 <p className='text-sm text-white/60'>Create your account to access online features</p>
                 {apiError ? <p >{apiError}</p> : null}
@@ -175,7 +176,7 @@ const Register: React.FC<RegisterProps> = ({toLogin}) => {
                         </div>
                         {showPasswordError ? <p style={{color: 'red'}}>Password is invalid!</p> : null}
                     </fieldset>
-                    <button type='button' onClick={handleRegister} className='mt-2'>Register</button>
+                    <button type='button' onClick={handleRegister} className='mt-2 cursor-pointer'>Register</button>
                 </div>
                 <div className="flex flex-col gap-2 w-full">
                     <div className={`pl-4 grid grid-cols-[20px_1fr] gap-2 ${validations.upper ? 'text-orange-500' : ''}`}>
@@ -200,7 +201,7 @@ const Register: React.FC<RegisterProps> = ({toLogin}) => {
                     </div>
                 </div>
             </form>
-            <div className='text-sm text-white/60 mt-auto mb-4'>Have an account already? <b onClick={toLogin}>Log in</b> instead</div>
+            <div className='text-sm text-white/60 mt-auto mb-4'>Have an account already? <b onClick={toLogin} className='cursor-pointer'>Log in</b> instead</div>
         </div>
     )
 }
