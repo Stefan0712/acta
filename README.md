@@ -135,7 +135,7 @@ Acta is fully optimized as a PWA for a native mobile experience.
 1. Clone the repository
 
    ```bash
-   git clone [https://github.com/Stefan0712/acta.git](https://github.com/Stefan0712/acta.git)
+   git clone https://github.com/Stefan0712/acta.git
    ```
 2. Install dependencies
 
