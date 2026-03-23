@@ -4,6 +4,7 @@ import styles from './Auth.module.css';
 import { login, type AuthResponse } from '../../services/authService';
 import { finalizeAuthentication } from '../../sync/authSync';
 import { useNavigate } from 'react-router-dom';
+import Logo from '../../assets/logo.png';
 
 
 interface LoginProps {
@@ -50,7 +51,7 @@ const Login: React.FC<LoginProps> = ({toRegister}) => {
     return (
         <div className='w-full h-full flex flex-col items-center justify-center p-2'>
             <form className='flex flex-col items-center justify-center text-white px-2'>
-                <img src='/logo512.png' className='size-16 rounded-xl border border-white/10' />
+                <img src={Logo} className='size-16 rounded-xl border border-white/10' />
                 <h2 className='text-2xl font-bold'>Welcome Back</h2>
                 <p className='text-sm text-white/60'>Sign in to your account to continue</p>
                 {loginError ? <p className='error-message'>{loginError}</p> : null}
