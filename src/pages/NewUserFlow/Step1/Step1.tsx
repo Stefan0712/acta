@@ -4,8 +4,11 @@ import { checkApi } from '../../../services/authService';
 import { Github } from 'lucide-react';
 import LocalUserForm from '../../Auth/LocalUserForm';
 
-
-const Step1 = ({next}: {next: ()=>void}) =>{    
+interface Props {
+    next: ()=>void;
+    onLoginSuccess: ()=>void;
+}
+const Step1: React.FC<Props> = ({onLoginSuccess, next}) =>{    
     
     const [isApiOn, setIsApiOn] = useState(false);
 
@@ -35,7 +38,7 @@ const Step1 = ({next}: {next: ()=>void}) =>{
             <div className={styles.message}>
                 <h1>Offline Only</h1>
                 <p>If you want to use the app only offline, you can do that by just setting your username</p>
-                <LocalUserForm />
+                <LocalUserForm onLoginSuccess={onLoginSuccess} />
             </div>
             <div className={styles.message}>
                 <h1>Having issues?</h1>

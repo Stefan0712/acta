@@ -4,7 +4,7 @@ import { db } from "../../db";
 import { useNavigate } from "react-router-dom";
 
 
-const LocalUserForm = () => {
+const LocalUserForm = ({onLoginSuccess}: {onLoginSuccess: ()=>void}) => {
 
     const {showNotification} = useNotifications();
     const navigate = useNavigate();
@@ -30,7 +30,8 @@ const LocalUserForm = () => {
             localStorage.setItem('userId','local-user-id')
             localStorage.setItem('username', username);
             showNotification(`A local account with username ${username} was created!`, "success");
-            navigate('/')
+            navigate('/');
+            onLoginSuccess();
         } else {
             setUsernameError("Username is invalid. It should be between 1 and 16 characters!")
         }

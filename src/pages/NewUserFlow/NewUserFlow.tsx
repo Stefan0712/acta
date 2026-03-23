@@ -36,7 +36,7 @@ const NewUserFlow: React.FC<NewUserFlowProps> = ({onLoginSuccess}) => {
                 </button>
             </div>
             <div className={styles.stepContainer}>
-                {step === 1 ? <Step1 next={nextStep}/> : step === 2 ? <Auth onLoginSuccess={onLoginSuccess} />  : null}
+                {step === 1 ? <Step1 onLoginSuccess={onLoginSuccess} next={nextStep}/> : step === 2 ? <Auth onLoginSuccess={onLoginSuccess} />  : null}
             </div>
             <div className={styles.stepNavigator}>
                 <button onClick={prevStep} className='flex items-center justify-center'>
