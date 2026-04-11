@@ -13,6 +13,7 @@ import Header from '../../components/Header/Header.tsx';
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal.tsx';
 import Summaries from '../../components/Summaries/Summaries.tsx';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { ChevronDown, ChevronLeft } from 'lucide-react';
 
 
 
@@ -24,6 +25,8 @@ const List = () => {
 
     
     const [selectedCategory, setSelectedCategory] = useState('all');
+
+    const [showCompleted, setShowCompleted] = useState(false);
     
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
@@ -158,8 +161,13 @@ const List = () => {
                             {uncompletedItems
                             .sort((a, b) => Number(b.isPinned) - Number(a.isPinned))
                             .map(item=><ListItem online={false} key={item._id} data={item} />)}
-                            {completedItems.length > 0 ? <h3 className={styles.sectionTitle}>Completed</h3> : null}
-                            {completedItems.map(item=><ListItem online={false} key={item._id} data={item} />)}
+                            {completedItems.length > 0 ? 
+                                <div style={{display: 'flex', justifyContent: 'space-between'}} onClick={()=>setShowCompleted(prev=>!prev)}>
+                                    <h3 className={styles.sectionTitle}>Completed ({completedItems.length})</h3>
+                                    {showCompleted ? <ChevronDown /> : <ChevronLeft />}
+                                </div>
+                             : null}
+                            {showCompleted ? completedItems.map(item=><ListItem online={false} key={item._id} data={item} />) : null}
                         </>  : 
                             <p className='no-items-text'>No items yet</p>
                     }
